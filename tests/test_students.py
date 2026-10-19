@@ -24,8 +24,8 @@ def test_post_student_parses_resume_and_persists(client: TestClient, monkeypatch
         experience=[],
     )
     monkeypatch.setattr(
-        "app.routers.students.extract_pdf_text",
-        lambda data: "Python FastAPI. Project: Campus portal. Education: B.Tech CSE.",
+        "app.routers.students.text_from_upload",
+        lambda filename, data: "Python FastAPI. Project: Campus portal. Education: B.Tech CSE.",
     )
     monkeypatch.setattr(
         "app.routers.students.extract_structured",
@@ -36,8 +36,8 @@ def test_post_student_parses_resume_and_persists(client: TestClient, monkeypatch
         "/students",
         data={
             "name": "Ada Lovelace",
-            "branch": "CSE",
-            "batch": "2026",
+            "branch": "Computer Science & Engineering",
+            "batch": "2022-2026",
             "cgpa": "9.1",
             "active_backlogs": "0",
         },
@@ -47,6 +47,9 @@ def test_post_student_parses_resume_and_persists(client: TestClient, monkeypatch
     payload = response.json()
     assert payload["parsed_resume"]["skills"] == ["Python", "FastAPI"]
     assert payload["profile"]["name"] == "Ada Lovelace"
+    assert payload["profile"]["branch"] == "CSE"
+    assert payload["profile"]["batch"] == "2026"
+    assert payload["profile"]["is_placed"] is False
 
     conn = get_connection()
     try:

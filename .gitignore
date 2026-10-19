@@ -12,5 +12,5 @@ wheels/
 # Secrets and local data
 .env
 .chroma/
-data/
+data/*.db
 *.db

@@ -14,11 +14,12 @@ class Settings(BaseSettings):
         populate_by_name=True,
     )
 
-    openai_api_key: str = Field(default="OPENAI_API_KEY")
+    openai_api_key: str = Field(default="")
     openai_chat_model: str = "gpt-4o-mini"
     openai_embedding_model: str = "text-embedding-3-small"
     sqlite_path: Path = Path("./data/placement.db")
     chroma_path: Path = Path("./.chroma")
+    auto_apply_threshold: float = 80.0
 
 
 _settings: Settings | None = None

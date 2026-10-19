@@ -1,7 +1,7 @@
 [project]
-name = "project"
+name = "placement-agent"
 version = "0.1.0"
-description = "Add your description here"
+description = "Campus placement backend: deterministic eligibility and evidence-based JD matching"
 readme = "README.md"
 authors = [
     { name = "AkashB-17", email = "aakashbbiswas17@email.com" }
@@ -15,21 +15,16 @@ dependencies = [
     "pydantic-settings>=2.15.0",
     "pypdf>=6.20.1",
     "python-multipart>=0.0.32",
-    "supabase>=2.32.0",
     "uvicorn[standard]>=0.54.0",
     "python-dotenv>=1.2.4",
 ]
-
-[project.scripts]
-project = "project:main"
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
 testpaths = ["tests"]
 
-[build-system]
-requires = ["uv_build>=0.12.17,<0.13.0"]
-build-backend = "uv_build"
+[tool.uv]
+package = false
 
 [dependency-groups]
 dev = [

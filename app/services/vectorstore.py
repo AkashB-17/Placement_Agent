@@ -45,10 +45,13 @@ def ingest_document(
     if not chunks:
         return 0
 
+    # Compute embeddings BEFORE deleting old vectors so a transient
+    # embedding failure leaves existing data intact.
+    embeddings = embed_texts(chunks)
+
     collection = get_collection(collection_name)
     collection.delete(where={"doc_id": doc_id})
 
-    embeddings = embed_texts(chunks)
     ids = [f"{doc_id}:{index}" for index in range(len(chunks))]
     metadatas: list[dict[str, Any]] = []
     for index in range(len(chunks)):
