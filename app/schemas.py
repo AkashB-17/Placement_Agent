@@ -1,3 +1,5 @@
+from typing import Any, Literal
+
 from pydantic import BaseModel, Field
 
 
@@ -104,3 +106,70 @@ class StudentDetail(BaseModel):
     profile: StudentProfile
     parsed_resume: ParsedResume
     resume_text: str
+
+
+# ── Eligibility / scoring / match ───────────────────────────────────────────
+
+RuleSource = Literal["policy", "jd"]
+
+
+class FailedRule(BaseModel):
+    rule: str
+    source: RuleSource
+    description: str
+    student_value: Any
+    required_value: Any
+
+
+class EligibilityResult(BaseModel):
+    eligible: bool
+    failed_rules: list[FailedRule] = Field(default_factory=list)
+
+
+class SkillQuote(BaseModel):
+    skill: str
+    quote: str
+
+
+class ScoreBreakdown(BaseModel):
+    score: float | None
+    matched_required: list[str] = Field(default_factory=list)
+    missing_required: list[str] = Field(default_factory=list)
+    matched_preferred: list[str] = Field(default_factory=list)
+    missing_preferred: list[str] = Field(default_factory=list)
+    evidence: list[SkillQuote] = Field(default_factory=list)
+
+
+class CitationChunk(BaseModel):
+    text: str
+    distance: float
+
+
+class Citation(BaseModel):
+    rule: str
+    source: RuleSource
+    source_id: str
+    chunks: list[CitationChunk] = Field(default_factory=list)
+
+
+class MatchRequest(BaseModel):
+    jd_id: str
+    student_id: str
+    policy_id: str
+
+
+class MatchResult(BaseModel):
+    student_id: str
+    student_name: str
+    eligibility: EligibilityResult
+    score_breakdown: ScoreBreakdown | None
+    auto_apply_recommended: bool
+    citations: list[Citation] = Field(default_factory=list)
+
+
+class RankedResponse(BaseModel):
+    jd_id: str
+    policy_id: str
+    auto_apply_threshold: float
+    eligible: list[MatchResult]
+    ineligible: list[MatchResult]

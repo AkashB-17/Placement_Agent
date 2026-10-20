@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from app.db import init_db
-from app.routers import jds, policies, students
+from app.routers import jds, match, policies, students
 
 
 @asynccontextmanager
@@ -23,3 +23,4 @@ def health() -> dict[str, str]:
 app.include_router(policies.router)
 app.include_router(jds.router)
 app.include_router(students.router)
+app.include_router(match.router)
