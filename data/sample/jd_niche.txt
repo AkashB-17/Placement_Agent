@@ -1,0 +1,29 @@
+Company: CircuitWorks
+Role: Embedded Firmware Engineer
+Location: Bengaluru
+
+About Us:
+CircuitWorks is a pioneer in building smart hardware solutions for industrial automation. We are seeking hardware-oriented software engineers to program the next generation of our connected devices.
+
+Required skills:
+C
+Embedded C
+RTOS
+Microcontrollers
+I2C
+
+Preferred skills:
+ARM Cortex-M
+Oscilloscope
+Python
+
+Eligibility Criteria:
+Open to branches: ECE only.
+Compensation: 9 LPA (Lakhs Per Annum).
+Application Deadline: November 20, 2026.
+
+Role and Responsibilities:
+You will develop low-level firmware for custom boards.
+You will write driver code for various sensors and peripherals.
+You will debug hardware-software interface issues.
+You will optimize code for constrained memory environments.

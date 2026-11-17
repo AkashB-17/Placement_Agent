@@ -1,0 +1,20 @@
+Kabir Singh
+Computer Science and Engineering
+Northbridge Institute of Technology
+CGPA: 8.0
+
+Skills:
+Python, SQL, Git, Java, HTML, CSS
+
+Projects:
+
+Inventory Tracker
+I built a desktop application to manage warehouse stock. I wrote the application logic in Python. I used SQL to interact with the local database. I used Git to manage my project versions.
+
+Personal Portfolio Website
+I created a responsive website using HTML and CSS. I used Git to publish the site to GitHub Pages.
+
+Experience:
+
+IT Support Intern at Campus Tech Desk
+I helped resolve network issues for students. I wrote scripts in Python to automate log backups. I ran SQL queries to find corrupted user profiles in the campus system. I documented my changes and maintained the script repository using Git.

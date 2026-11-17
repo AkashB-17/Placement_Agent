@@ -1,0 +1,20 @@
+Aditi Desai
+Electronics and Communication Engineering
+Northbridge Institute of Technology
+CGPA: 7.8
+
+Skills:
+C, Embedded C, RTOS, Microcontrollers, I2C, ARM Cortex-M
+
+Projects:
+
+Smart Home Thermostat
+I wrote the core logic in C. I developed low-level drivers in Embedded C to interface with the temperature sensor. I deployed a lightweight RTOS to manage concurrent tasks like reading sensors and updating the display. I programmed 8-bit Microcontrollers to handle the power management. I used the I2C protocol to communicate between the main processor and the sensor module. I ported the final design to an ARM Cortex-M processor for better performance.
+
+Drone Flight Controller
+I used Embedded C to write the motor control algorithms. I implemented communication with the gyroscope over I2C. I used an RTOS to ensure the control loops executed with strict timing constraints. I worked extensively with 32-bit Microcontrollers.
+
+Experience:
+
+Hardware Intern at AeroTech
+I tested custom circuit boards. I wrote test scripts in C. I debugged timing issues on ARM Cortex-M platforms. I developed drivers for new peripherals in Embedded C. I configured Microcontrollers for various test rigs. I sniffed I2C traffic to troubleshoot sensor failures.

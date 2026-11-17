@@ -36,6 +36,7 @@ class ParsedResume(BaseModel):
 
 class StudentProfile(BaseModel):
     name: str
+    email: str | None = None
     branch: str
     batch: str
     cgpa: float
@@ -47,11 +48,13 @@ class StudentProfile(BaseModel):
 class PolicyIngestResponse(BaseModel):
     id: str
     rules: PolicyRules
+    warnings: list[str] = Field(default_factory=list)
 
 
 class JDIngestResponse(BaseModel):
     id: str
     requirements: JDRequirements
+    warnings: list[str] = Field(default_factory=list)
 
 
 class StudentIngestResponse(BaseModel):
@@ -94,6 +97,7 @@ class JDDetail(BaseModel):
 class StudentSummary(BaseModel):
     id: str
     name: str
+    email: str | None = None
     branch: str
     batch: str
     cgpa: float
@@ -106,6 +110,32 @@ class StudentDetail(BaseModel):
     profile: StudentProfile
     parsed_resume: ParsedResume
     resume_text: str
+    has_resume_file: bool = False
+
+
+class ResumeLink(BaseModel):
+    url: str
+    expires_in: int
+
+
+# ── Admin ───────────────────────────────────────────────────────────────────
+
+Role = Literal["student", "officer", "recruiter", "admin"]
+
+
+class InviteRequest(BaseModel):
+    email: str
+    role: Role
+
+
+class RoleUpdate(BaseModel):
+    role: Role
+
+
+class ProfileOut(BaseModel):
+    id: str
+    email: str | None
+    role: Role
 
 
 # ── Eligibility / scoring / match ───────────────────────────────────────────

@@ -1,0 +1,20 @@
+Rohan Gupta
+Computer Science and Engineering
+Northbridge Institute of Technology
+CGPA: 8.8
+
+Skills:
+Python, FastAPI, SQL, REST API, Git, Docker, PostgreSQL, Redis
+
+Projects:
+
+Real-Time Chat Server
+I built a backend service in Python. I implemented a robust REST API using FastAPI to handle user authentication and message routing. I used PostgreSQL as the primary database for long-term storage of user profiles. To ensure low latency for online status checks, I integrated Redis for caching. I containerized the service with Docker and managed the source code using Git.
+
+Task Manager Pro
+I wrote SQL queries to handle complex joins for filtering tasks by priority and deadline. I exposed these data views via a REST API. I used Git to manage collaboration. I deployed the test database using Docker.
+
+Experience:
+
+Backend Intern at CloudSync
+I developed caching layers using Redis to speed up data retrieval. I migrated legacy databases to PostgreSQL. I wrote automated tests for the REST API endpoints. I wrote various background workers in Python. I used Git for daily commits. I used Docker to replicate the production environment locally.

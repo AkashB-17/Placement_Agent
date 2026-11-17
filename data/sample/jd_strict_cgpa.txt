@@ -1,0 +1,31 @@
+Company: DataSphere
+Role: Data Scientist
+Location: Pune
+
+About Us:
+DataSphere delivers predictive analytics solutions to global retail partners. We turn raw transactional data into actionable business intelligence.
+
+Minimum CGPA of 8.5 is required for this role.
+
+Required skills:
+Python
+Machine Learning
+Pandas
+SQL
+Statistics
+
+Preferred skills:
+Deep Learning
+PyTorch
+Tableau
+
+Eligibility Criteria:
+Open to branches: CSE, AI-ML, IT.
+Compensation: 18 LPA (Lakhs Per Annum).
+Application Deadline: November 25, 2026.
+
+Role and Responsibilities:
+You will clean and explore massive datasets.
+You will build predictive models to forecast demand.
+You will present findings to stakeholders.
+You will deploy models into production environments.

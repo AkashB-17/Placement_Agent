@@ -5,7 +5,7 @@ from chromadb.api import ClientAPI
 from chromadb.api.models.Collection import Collection
 
 from app.config import get_settings
-from app.services.chunking import chunk_text
+from app.services.chunking import CHUNK_OVERLAP, CHUNK_SIZE, chunk_text
 from app.services.embeddings import embed_texts
 
 COLLECTION_POLICIES = "policies"
@@ -24,6 +24,7 @@ def _client() -> ClientAPI:
 
 def reset_clients() -> None:
     _clients.clear()
+    _query_embeddings.clear()
 
 
 def get_collection(name: str) -> Collection:
@@ -40,8 +41,10 @@ def ingest_document(
     doc_type: str,
     text: str,
     extra_metadata: dict[str, Any] | None = None,
+    chunk_size: int = CHUNK_SIZE,
+    chunk_overlap: int = CHUNK_OVERLAP,
 ) -> int:
-    chunks = chunk_text(text)
+    chunks = chunk_text(text, chunk_size, chunk_overlap)
     if not chunks:
         return 0
 
@@ -73,13 +76,29 @@ def ingest_document(
     return len(chunks)
 
 
+# Citation queries are a handful of fixed rule descriptions, so their embeddings are
+# computed once per process instead of one OpenAI call per failed rule.
+_QUERY_CACHE_SIZE = 256
+_query_embeddings: dict[str, list[float]] = {}
+
+
+def _embed_query(query: str) -> list[float]:
+    cached = _query_embeddings.get(query)
+    if cached is None:
+        cached = embed_texts([query])[0]
+        if len(_query_embeddings) >= _QUERY_CACHE_SIZE:
+            _query_embeddings.clear()
+        _query_embeddings[query] = cached
+    return cached
+
+
 def retrieve(
     collection: str,
     query: str,
     k: int,
     where: dict[str, Any] | None = None,
 ) -> list[dict[str, Any]]:
-    query_embedding = embed_texts([query])[0]
+    query_embedding = _embed_query(query)
     result = get_collection(collection).query(
         query_embeddings=[query_embedding],
         n_results=k,

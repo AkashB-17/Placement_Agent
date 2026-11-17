@@ -55,6 +55,7 @@ def extract_structured(text: str, schema: type[T], instructions: str) -> T:
                 {"role": "user", "content": text},
             ],
             response_format=schema,
+            temperature=0,
         )
         parsed = completion.choices[0].message.parsed
         if parsed is None:

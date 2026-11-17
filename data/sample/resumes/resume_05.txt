@@ -1,0 +1,20 @@
+Ananya Rao
+Artificial Intelligence and Machine Learning
+Northbridge Institute of Technology
+CGPA: 9.1
+
+Skills:
+Python, Machine Learning, Pandas, SQL, Statistics, PyTorch
+
+Projects:
+
+Financial Market Analyzer
+I developed a pipeline in Python to ingest daily stock prices. I used SQL to store and retrieve historical pricing data. I applied Statistics to calculate rolling averages and volatility indicators. I used Pandas to manipulate large time-series datasets efficiently. I designed a Machine Learning model to predict weekly price movements. 
+
+Sentiment Analysis Engine
+I built a neural network to classify movie reviews as positive or negative. I built the architecture using PyTorch. I used Python to scrape the reviews from the web. I used Pandas to clean the text data before feeding it into the model.
+
+Experience:
+
+Research Assistant at University Lab
+I assisted in a project focused on predictive modeling. I used SQL to extract experimental results. I applied rigorous Statistics to validate our hypotheses. I built baseline Machine Learning models to compare against our novel approach. I implemented the final algorithm using PyTorch.

@@ -134,7 +134,7 @@ def test_policy_and_jd_branches_batches_normalized(client: TestClient, monkeypat
             allowed_batches=["2023-2027"],
         ),
     )
-    policy = client.post("/policies", data={"text": "policy"}).json()
+    policy = client.post("/policies", data={"text": "Open to the 2023-2027 batch."}).json()
     assert policy["rules"]["allowed_branches"] == ["CSE", "ECE"]
     assert policy["rules"]["allowed_batches"] == ["2027"]
 
@@ -142,7 +142,7 @@ def test_policy_and_jd_branches_batches_normalized(client: TestClient, monkeypat
         "app.routers.jds.extract_structured",
         lambda *a: JDRequirements(allowed_branches=["Information Technology"], allowed_batches=["Class of 2027"]),
     )
-    jd = client.post("/jds", data={"text": "jd"}).json()
+    jd = client.post("/jds", data={"text": "Only the class of 2027 may apply."}).json()
     assert jd["requirements"]["allowed_branches"] == ["IT"]
     assert jd["requirements"]["allowed_batches"] == ["2027"]
 
@@ -193,7 +193,7 @@ def test_student_unsupported_resume_type_is_415(client: TestClient) -> None:
 def test_list_and_get_endpoints(client: TestClient, monkeypatch) -> None:
     monkeypatch.setattr("app.routers.policies.extract_structured", lambda *a: PolicyRules(min_cgpa=7.0))
     monkeypatch.setattr("app.routers.jds.extract_structured", lambda *a: JDRequirements(company="Acme"))
-    policy_id = client.post("/policies", data={"text": "policy"}).json()["id"]
+    policy_id = client.post("/policies", data={"text": "Minimum CGPA 7.0."}).json()["id"]
     jd_id = client.post("/jds", data={"text": "jd"}).json()["id"]
 
     assert [p["id"] for p in client.get("/policies").json()] == [policy_id]
@@ -206,3 +206,28 @@ def test_list_and_get_endpoints(client: TestClient, monkeypatch) -> None:
 @pytest.mark.parametrize("path", ["/policies/nope", "/jds/nope", "/students/nope"])
 def test_get_unknown_id_is_404(client: TestClient, path: str) -> None:
     assert client.get(path).status_code == 404
+
+
+def test_windows_line_endings_normalized(client: TestClient, monkeypatch) -> None:
+    monkeypatch.setattr("app.routers.jds.extract_structured", lambda *a: JDRequirements())
+    jd_id = client.post("/jds", files={"file": ("jd.txt", b"\xef\xbb\xbfLine one\r\nLine two\r\n", "text/plain")}).json()["id"]
+    assert client.get(f"/jds/{jd_id}").json()["source_text"] == "Line one\nLine two"
+
+
+def test_policy_chunked_by_clause(client: TestClient, monkeypatch) -> None:
+    from app.services.vectorstore import COLLECTION_POLICIES, get_collection
+
+    monkeypatch.setattr("app.routers.policies.extract_structured", lambda *a: PolicyRules())
+    clauses = "\n\n".join(f"Clause {i}: " + "word " * 60 for i in range(1, 5))  # ~310 chars each
+    client.post("/policies", data={"text": clauses})
+    documents = get_collection(COLLECTION_POLICIES).get()["documents"]
+    assert len(documents) == 4
+    assert all(doc.startswith("Clause") for doc in documents)
+
+
+@pytest.mark.parametrize(
+    "raw",
+    ["https://abc.supabase.co", "https://abc.supabase.co/", "https://abc.supabase.co/rest/v1/", " https://abc.supabase.co/auth/v1 "],
+)
+def test_supabase_url_normalized_to_project_root(raw) -> None:
+    assert Settings(_env_file=None, supabase_url=raw).supabase_url == "https://abc.supabase.co"

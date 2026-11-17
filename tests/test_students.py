@@ -58,8 +58,6 @@ def test_post_student_parses_resume_and_persists(client: TestClient, monkeypatch
     finally:
         conn.close()
 
-    collection = get_collection(COLLECTION_RESUMES)
-    assert collection.count() >= 1
-    records = collection.get(include=["metadatas"])
-    assert records["metadatas"][0]["student_id"] == payload["id"]
-    assert records["metadatas"][0]["doc_type"] == "resume"
+    # Resumes are scored from full text and deliberately not embedded, so no student
+    # data ends up in the local vector store.
+    assert get_collection(COLLECTION_RESUMES).count() == 0

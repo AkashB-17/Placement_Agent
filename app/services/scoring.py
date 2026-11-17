@@ -25,6 +25,9 @@ from app.services.llm import extract_structured
 
 REQUIRED_WEIGHT = 0.75
 PREFERRED_WEIGHT = 0.25
+# Quote fragments: split on "..." / ellipsis, and between sentences.
+_FRAGMENT_SPLIT = re.compile(r"\.{3}|\u2026|(?<=[.!?])\s+")
+_EDGE_PUNCTUATION = re.compile(r"^[\s\"'.,;:!?\-]+|[\s\"'.,;:!?\-]+$")
 _STOPWORDS = {"a", "an", "and", "or", "of", "the", "in", "with", "for", "to", "on"}
 
 
@@ -42,9 +45,10 @@ def _evidence_instructions(skills: list[str]) -> str:
     return (
         "You are given a student's resume. For EACH skill listed below, return one entry "
         "with the skill name exactly as written. Set evidenced=true only if the resume shows "
-        "the skill, and copy a short verbatim excerpt (under 120 characters) that mentions it "
-        "into evidence_quote. Otherwise set evidenced=false and evidence_quote=null. "
-        "Never paraphrase or invent quotes.\n\n"
+        "the skill, and set evidence_quote to a contiguous span copied character-for-character "
+        "from the resume (under 120 characters) that names the skill. A sentence fragment is "
+        "fine; do not shorten, reword, join separate sentences, or add punctuation. Otherwise set evidenced=false and "
+        "evidence_quote=null. Never invent quotes.\n\n"
         f"Skills: {skills}"
     )
 
@@ -60,8 +64,25 @@ def _skill_tokens(skill: str) -> list[str]:
 
 
 def quote_in_resume(quote: str, resume_text: str) -> bool:
-    normalized_quote = _normalize_text(quote)
-    return bool(normalized_quote) and normalized_quote in _normalize_text(resume_text)
+    """True if the quote is a verbatim span of the resume.
+
+    Tolerated: case, whitespace, surrounding quote marks and edge punctuation (LLMs often
+    end a truncated sentence with a period), and several verbatim sentences or
+    "..."-joined fragments glued together, each of which must appear in order.
+    Reworded text still fails.
+    """
+    resume = _normalize_text(resume_text)
+    fragments = [_EDGE_PUNCTUATION.sub("", f) for f in _FRAGMENT_SPLIT.split(_normalize_text(quote))]
+    fragments = [f for f in fragments if f]
+    if not fragments:
+        return False
+    position = 0
+    for fragment in fragments:
+        found = resume.find(fragment, position)
+        if found < 0:
+            return False
+        position = found + len(fragment)
+    return True
 
 
 def quote_mentions_skill(quote: str, skill: str) -> bool:

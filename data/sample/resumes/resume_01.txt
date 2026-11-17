@@ -1,0 +1,23 @@
+Aarav Sharma
+Computer Science and Engineering
+Northbridge Institute of Technology
+CGPA: 8.2
+
+Skills:
+Programming: Python, SQL
+Frameworks: FastAPI
+Tools: Git, Docker, PostgreSQL
+Other: REST API
+
+Projects:
+
+Library Management System
+I designed the database architecture using PostgreSQL to store user records. I wrote the core business logic in Python. To expose the functionalities, I built a REST API using FastAPI. I containerized the service with Docker to ensure smooth deployment across different environments. I managed version control for the entire codebase using Git.
+
+E-Commerce Analytics Dashboard
+I wrote complex SQL queries to extract sales trends over the past five years. I created scripts in Python to clean the data before sending it to the dashboard frontend. I used Git to collaborate with two other students on this project.
+
+Experience:
+
+Intern at TechNova Solutions
+I contributed to an internal web application. I maintained the REST API endpoints and documented the payload structures. I utilized Docker for local testing. I tracked my daily code changes using Git.

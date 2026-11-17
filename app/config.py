@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from pydantic import Field
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 _PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -20,6 +20,31 @@ class Settings(BaseSettings):
     sqlite_path: Path = Path("./data/placement.db")
     chroma_path: Path = Path("./.chroma")
     auto_apply_threshold: float = 80.0
+
+    # Supabase. When database_url is set, Postgres replaces SQLite.
+    supabase_url: str = ""  # https://<project-ref>.supabase.co
+    supabase_publishable_key: str = ""  # sb_publishable_... (safe for clients; used to log in)
+    supabase_secret_key: str = ""  # sb_secret_... (server only; bypasses RLS)
+    database_url: str = ""  # Session pooler connection string
+    resume_bucket: str = "resumes"
+    signed_url_ttl_seconds: int = 60
+
+    # Local-only escape hatch so the SQLite demo runs without Supabase. Every request is
+    # treated as an admin. Refused at startup when database_url is set.
+    dev_auth_bypass: bool = False
+
+    # Browser origins allowed to call the API (the Next.js app). JSON list in .env.
+    cors_origins: list[str] = ["http://localhost:3000", "http://127.0.0.1:3000"]
+
+    @field_validator("supabase_url")
+    @classmethod
+    def _project_url_only(cls, value: str) -> str:
+        """Accept the dashboard's Data API URL too: keep only https://<ref>.supabase.co."""
+        value = value.strip().rstrip("/")
+        for suffix in ("/rest/v1", "/auth/v1", "/storage/v1"):
+            if value.endswith(suffix):
+                value = value[: -len(suffix)]
+        return value
 
 
 _settings: Settings | None = None

@@ -8,15 +8,24 @@ Backend for a campus placement system. A placement officer uploads a placement p
 
 | Step | Who decides | Notes |
 |---|---|---|
-| Parse policy / JD / resume | LLM (gpt-4o-mini, structured outputs) | Validated against Pydantic schemas; branches and batches are then normalized in code (`CSE`, `2027`) |
+| Parse policy / JD / resume | LLM (gpt-4o-mini, structured outputs, temperature 0) | Validated against Pydantic schemas; branches and batches are then normalized in code (`CSE`, `2027`) |
+| Rule grounding | Code | An extracted batch or CGPA rule is dropped (and returned as a `warning`) unless the document states it, e.g. a 2026 deadline is not read as "batch 2026" |
 | Eligibility | Plain Python | CGPA (stricter of policy and JD), active backlogs, branch, batch, placed-student rule. Every failure is reported. Unstated rules are not enforced |
 | Skill evidence | LLM | Per JD skill: evidenced yes/no plus a verbatim resume quote |
-| Evidence check | Code | Quote must appear in the resume and mention the skill; skills the LLM omits count as missing |
+| Evidence check | Code | Quote must appear verbatim in the resume (case, whitespace and edge punctuation ignored; glued sentences must each appear in order) and mention the skill; skills the LLM omits count as missing |
 | Score | Code | `100 × (0.75 × required coverage + 0.25 × preferred coverage)`; no preferred skills → required only; no required skills → `null` |
-| Citations | RAG (ChromaDB) | For each failed rule, the top-2 chunks from the policy or JD the rule came from |
+| Citations | RAG (ChromaDB) | For each failed rule, the top-2 chunks from the policy or JD the rule came from (policies and JDs are chunked by paragraph, ~400 chars) |
 | Auto-apply | Code | `auto_apply_recommended = eligible AND score ≥ AUTO_APPLY_THRESHOLD` (default 80). Nothing is applied |
 
-Known limits: the "quote mentions the skill" check is a token heuristic and can reject paraphrased evidence (it errs toward under-scoring). `/ranked` makes one LLM call per eligible student on every request; results aren't cached yet.
+Known limits: the "quote mentions the skill" check is a token heuristic and can reject paraphrased evidence (it errs toward under-scoring). `/ranked` makes one LLM call per eligible student on every request (run in parallel, 8 at a time); scores aren't stored yet.
+
+Performance, measured against the hosted database (region ap-northeast-1):
+
+| | Before | After |
+|---|---|---|
+| Database call | ~2.3 s (new connection + query + COMMIT) | ~0.27 s (pooled connection, autocommit, one round trip) |
+| Role lookup per request | one DB call | cached 60 s; cleared at once when an admin changes the role through the API |
+| Ranking one JD (live OpenAI) | 10.6 s | 4.1 s (parallel scoring; citation query embeddings cached) |
 
 ## Setup
 
@@ -26,16 +35,52 @@ Python 3.12, managed with `uv`.
 uv sync --group dev
 ```
 
-Create `.env` in the project root (never commit it):
+Copy `.env.example` to `.env` and fill it in (never commit `.env`). With only `OPENAI_API_KEY` set and `DEV_AUTH_BYPASS=true`, the app runs fully offline on SQLite (every request acts as admin). Adding the Supabase values switches on real auth, Postgres and resume storage.
 
-```
-OPENAI_API_KEY=sk-...
-OPENAI_CHAT_MODEL=gpt-4o-mini
-OPENAI_EMBEDDING_MODEL=text-embedding-3-small
-SQLITE_PATH=./data/placement.db
-CHROMA_PATH=./.chroma
-AUTO_APPLY_THRESHOLD=80
-```
+## Supabase (auth, Postgres, resume storage)
+
+**How access works**
+
+- **Auth:** users log in through Supabase Auth and get a signed access token (JWT). The API verifies it against the project's public keys (JWKS, ES256), plus expiry, audience and issuer. No shared secret is stored.
+- **Roles:** stored in `public.profiles.role` and read on every request. Never taken from the token or `user_metadata`, which users can edit.
+- **Sign-up:** every new user starts as `student`, set by a database trigger. Officers, recruiters and admins are granted by an admin (`POST /admin/invite` or `PUT /admin/users/{id}/role`).
+- **RLS:** enabled on every table, for direct client access (the future Next.js app). The API uses the secret key, which bypasses RLS, so every endpoint also checks roles in code (`require_role` in `app/auth.py`).
+- **Resumes:** go to a private Storage bucket from memory, under content-addressed paths (one immutable path per resume version). They are only readable through 60-second signed links. Resumes are not embedded in the local vector store.
+
+| | admin | officer | recruiter | student |
+|---|---|---|---|---|
+| Upload policy | ✓ | ✓ | | |
+| Upload JD | ✓ | ✓ | own JDs | |
+| Read policies / JDs | ✓ | ✓ | ✓ | ✓ |
+| Add / list / read students, `/ranked` | ✓ | ✓ | | |
+| `/students/me`, `/match` and resume link for **own** record | | | | ✓ |
+| Invite users, change roles | ✓ | | | |
+
+A student's record is linked by the email the officer enters, matched against the student's verified login email.
+
+**One-time setup**
+
+1. Create a free project at supabase.com. New projects use asymmetric JWT signing keys (ES256), which this API expects.
+2. Put `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY` and `DATABASE_URL` in `.env`. Use the **Session pooler** URI from the dashboard's *Connect* button.
+3. Dashboard -> SQL Editor: paste and run `supabase/migrations/20261105000000_init.sql`.
+4. Dashboard -> Authentication -> Users -> *Add user*: create your own account (auto-confirm).
+5. SQL Editor: make yourself the first admin:
+
+   ```sql
+   update public.profiles set role = 'admin' where email = 'you@example.com';
+   ```
+
+   If you created users *before* running the migration, backfill their profiles first:
+
+   ```sql
+   insert into public.profiles (id, email) select id, email from auth.users on conflict do nothing;
+   ```
+
+6. Get a token, then paste it into *Authorize* in `/docs`:
+
+   ```bash
+   uv run python scripts/get_token.py --email you@example.com
+   ```
 
 ## Run
 
@@ -48,18 +93,50 @@ Open http://127.0.0.1:8000/docs.
 | Endpoint | Purpose |
 |---|---|
 | `POST /policies`, `POST /jds` | Form field `text` **or** a `.pdf`/`.txt` `file` (not both) |
-| `POST /students` | Form fields `name`, `branch`, `batch`, `cgpa` (0–10), `active_backlogs`, `is_placed`, plus a `.pdf`/`.txt` `resume` |
+| `POST /students` | Form fields `name`, `email`, `branch`, `batch`, `cgpa` (0–10), `active_backlogs`, `is_placed`, plus a `.pdf`/`.txt` `resume` |
 | `GET /policies`, `/jds`, `/students` and `GET /{resource}/{id}` | Discover ids, inspect extracted JSON |
+| `GET /students/me`, `GET /students/{id}/resume` | A student's own record; a short-lived signed link to the resume file |
 | `POST /match` | `{jd_id, student_id, policy_id}` → eligibility, score breakdown, citations |
 | `GET /jds/{jd_id}/ranked?policy_id=...` | Eligible students by score, then ineligible students with failed rules and citations |
+| `GET /admin/users`, `POST /admin/invite`, `PUT /admin/users/{id}/role`, `GET /admin/me` | List users and roles, invite with a role, change a role, show who you are |
 
-Error codes: `400` nothing supplied, `404` unknown id, `415` unsupported file type, `422` bad input or unparseable file, `502` OpenAI unavailable.
+Error codes: `400` nothing supplied, `401` missing/invalid/expired token, `403` your role can't do this, `404` unknown id (or not yours), `409` conflict, `415` unsupported file type, `422` bad input or unparseable file, `502` OpenAI or Supabase unavailable, `503` database or auth keys unreachable.
 
-Demo flow: ingest one policy, a JD and ~10 students from `data/sample/`, then call `/jds/{id}/ranked`.
+Demo flow: with the server running, load the sample policy, 3 JDs and 10 students from `data/sample/`, rank every JD and compare against `data/sample/expected_outcomes.txt`. With Supabase, pass an officer or admin token; offline, run the server with `DEV_AUTH_BYPASS=true` and omit it:
+
+```bash
+uv run python scripts/seed_sample.py --token <access token>
+```
+
+This makes real OpenAI calls (about 20 per run). Re-running is safe: ids are content hashes.
+
+## Web app (Next.js)
+
+`web/` is a Next.js + Tailwind front end over the same API. The browser uses Supabase only to sign in; every data call goes to FastAPI with the user's token, so roles are enforced in one place (`require_role`). Pages hide what a role can't use, but that's convenience: the API refuses it anyway.
+
+| Page | Role | What it does |
+|---|---|---|
+| `/login` | everyone | Email + password sign-in (Supabase Auth) |
+| `/jobs` | officer, admin | Pick a policy and a JD, rank students: score, matched/missing skills, verified resume quotes, failed rules with the policy/JD clause |
+| `/students` | officer, admin | Student list, parsed skills, 60-second signed link to the resume file |
+| `/upload` | officer, admin (recruiter: JD only) | Policy, JD and student forms; shows grounding warnings |
+| `/me` | student | Own record, and an eligibility + score check per JD |
+| `/admin` | admin | Invite users with a role, change roles |
+
+```bash
+cd web
+npm install
+cp .env.local.example .env.local   # Supabase URL, publishable key, API URL; never the secret key
+npm run dev                        # http://localhost:3000, with the API running on :8000
+```
+
+The API allows browser calls only from `CORS_ORIGINS` (default `http://localhost:3000` and `http://127.0.0.1:3000`).
+
+Tradeoff: the session lives in the browser's localStorage (supabase-js default), which page scripts can read. That's acceptable for a client-rendered app with no third-party scripts. Moving to httpOnly cookies (`@supabase/ssr`) is the upgrade if the app ever renders data on the server.
 
 ## Tests
 
-LLM and embedding calls are mocked; tests make no OpenAI requests.
+LLM, embedding and Supabase calls are mocked; tests never read `.env`, so they never touch OpenAI or your Supabase project. Auth tests sign real ES256 tokens with a throwaway key.
 
 ```bash
 uv run pytest
@@ -67,4 +144,4 @@ uv run pytest
 
 ## Roadmap
 
-Hosted Supabase (Postgres, Auth with roles, private Storage for resumes, RLS) → Next.js frontend → staged auto-apply with a 24h withdraw window → student-side agent (drive watcher, resume-gap nudges).
+Done: hosted Supabase (Postgres, Auth with roles, private Storage for resumes, RLS), Next.js front end. Next: staged auto-apply with a 24h withdraw window → student-side agent (drive watcher, resume-gap nudges).

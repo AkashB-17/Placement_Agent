@@ -1,0 +1,20 @@
+Sneha Iyer
+Computer Science and Engineering
+Northbridge Institute of Technology
+CGPA: 8.4
+
+Skills:
+Python, FastAPI, SQL, Git, JavaScript, React
+
+Projects:
+
+Blog Platform
+I created the backend logic using Python. I built the web endpoints with FastAPI. I designed the database schema and used SQL to manage posts and comments. I maintained the project history using Git. I built the frontend interface using React and JavaScript.
+
+Event Registration System
+I developed the registration backend in Python. I created routing functions with FastAPI. I used SQL to store attendee details. I pushed my code regularly using Git.
+
+Experience:
+
+Frontend Developer Intern
+I built user interfaces using React. I connected the frontend to external APIs. I tracked bugs and code updates using Git. I wrote scripts in Python to analyze user click data. I extracted user metrics using SQL.

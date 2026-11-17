@@ -1,0 +1,92 @@
+[
+  {
+    "file": "resume_01.txt",
+    "name": "Aarav Sharma",
+    "branch": "CSE",
+    "batch": "2027",
+    "cgpa": 8.2,
+    "active_backlogs": 0,
+    "is_placed": false
+  },
+  {
+    "file": "resume_02.txt",
+    "name": "Ishita Verma",
+    "branch": "B.Tech IT",
+    "batch": "2023-2027",
+    "cgpa": 7.6,
+    "active_backlogs": 0,
+    "is_placed": false
+  },
+  {
+    "file": "resume_03.txt",
+    "name": "Rohan Gupta",
+    "branch": "Computer Science and Engineering",
+    "batch": "2027",
+    "cgpa": 8.8,
+    "active_backlogs": 1,
+    "is_placed": false
+  },
+  {
+    "file": "resume_04.txt",
+    "name": "Meera Patel",
+    "branch": "AI&ML",
+    "batch": "Class of 2027",
+    "cgpa": 6.8,
+    "active_backlogs": 0,
+    "is_placed": false
+  },
+  {
+    "file": "resume_05.txt",
+    "name": "Ananya Rao",
+    "branch": "Artificial Intelligence and Machine Learning",
+    "batch": "2027",
+    "cgpa": 9.1,
+    "active_backlogs": 0,
+    "is_placed": false
+  },
+  {
+    "file": "resume_06.txt",
+    "name": "Kabir Singh",
+    "branch": "CSE",
+    "batch": "2023-27",
+    "cgpa": 8.0,
+    "active_backlogs": 0,
+    "is_placed": false
+  },
+  {
+    "file": "resume_07.txt",
+    "name": "Aditi Desai",
+    "branch": "ECE",
+    "batch": "2027",
+    "cgpa": 7.8,
+    "active_backlogs": 0,
+    "is_placed": false
+  },
+  {
+    "file": "resume_08.txt",
+    "name": "Vikram Malhotra",
+    "branch": "Mechanical Engineering",
+    "batch": "2027",
+    "cgpa": 8.5,
+    "active_backlogs": 0,
+    "is_placed": false
+  },
+  {
+    "file": "resume_09.txt",
+    "name": "Sneha Iyer",
+    "branch": "CSE",
+    "batch": "2027",
+    "cgpa": 8.4,
+    "active_backlogs": 0,
+    "is_placed": true
+  },
+  {
+    "file": "resume_10.txt",
+    "name": "Arjun Nair",
+    "branch": "IT",
+    "batch": "2026",
+    "cgpa": 8.0,
+    "active_backlogs": 0,
+    "is_placed": false
+  }
+]

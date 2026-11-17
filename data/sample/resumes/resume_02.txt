@@ -1,0 +1,20 @@
+Ishita Verma
+Information Technology
+Northbridge Institute of Technology
+CGPA: 7.6
+
+Skills:
+Python, SQL, FastAPI, Git, Docker
+
+Projects:
+
+Weather Alert Bot
+I developed an automated bot in Python that fetches data from public weather services. I created the web server components using FastAPI to handle incoming user requests. I packaged the application using Docker so it could be hosted easily on a cloud virtual machine.
+
+Student Registration Portal
+I designed the backend database and wrote SQL scripts to insert and retrieve student records securely. I used Git to maintain my code history and manage feature branches. I used Python to write validation scripts for the input forms. I deployed the test environment using Docker.
+
+Experience:
+
+Freelance Developer
+I helped a local bakery digitize their inventory. I built a lightweight web tool using FastAPI. I wrote SQL queries to manage their daily ingredient stock. I used Git to keep track of the different versions of the software delivered to the client.

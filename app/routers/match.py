@@ -6,10 +6,12 @@ only for eligible students, or citations of the clause behind each failed rule.
 """
 from __future__ import annotations
 
+from concurrent.futures import ThreadPoolExecutor
 from typing import Any
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 
+from app.auth import CurrentUser, require_role, staff_only
 from app.config import get_settings
 from app.db import get_all_students, get_jd, get_policy, get_student
 from app.schemas import (
@@ -22,6 +24,7 @@ from app.schemas import (
     PolicyRules,
     RankedResponse,
 )
+from app.routers.students import owns_student_record
 from app.services.eligibility import check_eligibility
 from app.services.scoring import score_student
 from app.services.vectorstore import COLLECTION_JDS, COLLECTION_POLICIES, retrieve
@@ -29,6 +32,7 @@ from app.services.vectorstore import COLLECTION_JDS, COLLECTION_POLICIES, retrie
 router = APIRouter(tags=["match"])
 
 CITATION_K = 2
+RANK_WORKERS = 8  # parallel OpenAI calls per /ranked request
 
 
 def _load_policy(policy_id: str) -> PolicyRules:
@@ -95,10 +99,16 @@ def evaluate_student(
 
 
 @router.post("/match", response_model=MatchResult)
-def match(body: MatchRequest) -> MatchResult:
+def match(
+    body: MatchRequest,
+    user: CurrentUser = Depends(require_role("officer", "admin", "student")),
+) -> MatchResult:
+    student = _load_student(body.student_id)
+    if user.role == "student" and not owns_student_record(user, student):
+        # A student may check their own fit only; same 404 as an unknown id.
+        raise HTTPException(status_code=404, detail=f"Student '{body.student_id}' not found.")
     policy = _load_policy(body.policy_id)
     jd = _load_jd(body.jd_id)
-    student = _load_student(body.student_id)
     return evaluate_student(student, policy, jd, body.policy_id, body.jd_id)
 
 
@@ -106,11 +116,16 @@ def match(body: MatchRequest) -> MatchResult:
 def ranked(
     jd_id: str,
     policy_id: str = Query(..., description="Policy ID to evaluate against"),
+    _: CurrentUser = Depends(staff_only),
 ) -> RankedResponse:
     policy = _load_policy(policy_id)
     jd = _load_jd(jd_id)
 
-    results = [evaluate_student(s, policy, jd, policy_id, jd_id) for s in get_all_students()]
+    # Each eligible student costs one OpenAI call (~2-4 s), and the calls are independent,
+    # so run them side by side. Results are sorted below, so completion order doesn't matter.
+    students = get_all_students()
+    with ThreadPoolExecutor(max_workers=RANK_WORKERS) as pool:
+        results = list(pool.map(lambda s: evaluate_student(s, policy, jd, policy_id, jd_id), students))
     eligible = [r for r in results if r.eligibility.eligible]
     ineligible = [r for r in results if not r.eligibility.eligible]
 

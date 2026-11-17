@@ -1,0 +1,20 @@
+Vikram Malhotra
+Mechanical Engineering
+Northbridge Institute of Technology
+CGPA: 8.5
+
+Skills:
+AutoCAD, SolidWorks, Python, SQL
+
+Projects:
+
+Automated Part Sorter
+I designed a mechanical sorting arm using SolidWorks. I wrote a control script in Python to actuate the pneumatic valves. I used SQL to log the sorted part numbers into a local database for inventory tracking.
+
+Thermal Analysis of Engine Block
+I created 3D models in AutoCAD. I exported the data to run simulations. I wrote a script in Python to format the output data into readable reports. I stored the simulation parameters using SQL.
+
+Experience:
+
+Design Intern at AutoBuild
+I assisted in designing chassis components using SolidWorks. I used Python to automate the generation of bill of materials from the CAD files. I used SQL to query the supplier database for parts availability. I drafted 2D drawings in AutoCAD.

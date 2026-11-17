@@ -1,0 +1,20 @@
+Meera Patel
+Artificial Intelligence and Machine Learning
+Northbridge Institute of Technology
+CGPA: 6.8
+
+Skills:
+Python, Machine Learning, Pandas, SQL, Statistics, Deep Learning, PyTorch, Tableau
+
+Projects:
+
+Customer Churn Predictor
+I extracted raw data using SQL from a simulated corporate database. I processed the data using Pandas to handle missing values. I applied core concepts of Statistics to normalize the features. I trained a Machine Learning model using random forests to identify high-risk customers. I visualized the final insights using Tableau.
+
+Image Recognition Pipeline
+I built a Deep Learning model to classify different species of plants. I implemented the neural network using PyTorch. I wrote the preprocessing scripts in Python.
+
+Experience:
+
+Data Intern at AI-Labs
+I used Pandas for daily data wrangling tasks. I applied Statistics to A/B test results. I created dashboards in Tableau for the marketing team. I developed a prototype Machine Learning model for product recommendations. I experimented with PyTorch for advanced text analysis. I wrote SQL queries to gather the necessary data.

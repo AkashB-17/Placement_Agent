@@ -19,13 +19,17 @@ def extract_pdf_text(data: bytes) -> str:
         raise HTTPException(status_code=422, detail="Could not parse PDF.") from exc
 
 
+def normalize_newlines(text: str) -> str:
+    return text.replace("\r\n", "\n").replace("\r", "\n")
+
+
 def text_from_upload(filename: str | None, data: bytes) -> str:
     name = (filename or "").lower()
     if name.endswith(".pdf"):
         return extract_pdf_text(data)
     if name.endswith(".txt"):
         try:
-            return data.decode("utf-8").strip()
+            return normalize_newlines(data.decode("utf-8-sig")).strip()
         except UnicodeDecodeError as exc:
             raise HTTPException(status_code=422, detail="File is not valid UTF-8 text.") from exc
     raise HTTPException(
@@ -55,5 +59,5 @@ async def resolve_source_text(text: str | None, file: UploadFile | None) -> str:
             )
         return extracted
     if has_text:
-        return text.strip()
+        return normalize_newlines(text).strip()
     raise HTTPException(status_code=400, detail="Provide either text or a file.")

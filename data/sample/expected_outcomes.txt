@@ -1,0 +1,56 @@
+Backend Software Engineer (Vanguard Systems)
+ELIGIBLE STUDENTS:
+Aarav Sharma - ELIGIBLE - required skills matched 5/5, preferred matched 2/3, expected score = 91.7
+Ishita Verma - ELIGIBLE - required skills matched 4/5, preferred matched 1/3, expected score = 68.3
+Ananya Rao - ELIGIBLE - required skills matched 2/5, preferred matched 0/3, expected score = 30.0
+Kabir Singh - ELIGIBLE - required skills matched 3/5, preferred matched 0/3, expected score = 45.0
+
+INELIGIBLE STUDENTS:
+Rohan Gupta - INELIGIBLE - active backlogs 1 > 0 allowed by policy
+Meera Patel - INELIGIBLE - CGPA 6.8 < policy minimum 7.0
+Aditi Desai - INELIGIBLE - branch ECE not allowed by JD
+Vikram Malhotra - INELIGIBLE - branch Mechanical Engineering not allowed by policy
+Sneha Iyer - INELIGIBLE - already placed, CTC does not meet 2x dream company rule
+Arjun Nair - INELIGIBLE - batch 2026 not allowed by policy
+
+RANKING:
+1. Aarav Sharma (91.7)
+2. Ishita Verma (68.3)
+3. Kabir Singh (45.0)
+4. Ananya Rao (30.0)
+
+Embedded Firmware Engineer (CircuitWorks)
+ELIGIBLE STUDENTS:
+Aditi Desai - ELIGIBLE - required skills matched 5/5, preferred matched 1/3, expected score = 83.3
+
+INELIGIBLE STUDENTS:
+Aarav Sharma - INELIGIBLE - branch CSE not allowed by JD
+Ishita Verma - INELIGIBLE - branch IT not allowed by JD
+Rohan Gupta - INELIGIBLE - active backlogs 1 > 0 allowed by policy
+Meera Patel - INELIGIBLE - CGPA 6.8 < policy minimum 7.0
+Ananya Rao - INELIGIBLE - branch AI-ML not allowed by JD
+Kabir Singh - INELIGIBLE - branch CSE not allowed by JD
+Vikram Malhotra - INELIGIBLE - branch Mechanical Engineering not allowed by policy
+Sneha Iyer - INELIGIBLE - already placed
+Arjun Nair - INELIGIBLE - batch 2026 not allowed by policy
+
+RANKING:
+1. Aditi Desai (83.3)
+
+Data Scientist (DataSphere)
+ELIGIBLE STUDENTS:
+Ananya Rao - ELIGIBLE - required skills matched 5/5, preferred matched 1/3, expected score = 83.3
+
+INELIGIBLE STUDENTS:
+Aarav Sharma - INELIGIBLE - CGPA 8.2 < JD minimum 8.5
+Ishita Verma - INELIGIBLE - CGPA 7.6 < JD minimum 8.5
+Rohan Gupta - INELIGIBLE - active backlogs 1 > 0 allowed by policy
+Meera Patel - INELIGIBLE - CGPA 6.8 < policy minimum 7.0
+Kabir Singh - INELIGIBLE - CGPA 8.0 < JD minimum 8.5
+Aditi Desai - INELIGIBLE - CGPA 7.8 < JD minimum 8.5
+Vikram Malhotra - INELIGIBLE - branch Mechanical Engineering not allowed by policy
+Sneha Iyer - INELIGIBLE - already placed
+Arjun Nair - INELIGIBLE - batch 2026 not allowed by policy
+
+RANKING:
+1. Ananya Rao (83.3)

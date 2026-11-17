@@ -1,0 +1,20 @@
+Arjun Nair
+Information Technology
+Northbridge Institute of Technology
+CGPA: 8.0
+
+Skills:
+Python, SQL, REST API, C++, HTML
+
+Projects:
+
+Book Recommendation Engine
+I wrote the recommendation algorithm in Python. I used SQL to query the book ratings database. I exposed the recommendations to the frontend through a REST API. 
+
+Student Directory
+I built a simple web portal using HTML. I wrote the backend search functions in Python. I created a REST API to handle search queries from the frontend. I managed the student data using SQL.
+
+Experience:
+
+Software Intern
+I assisted the data team by writing scripts in Python. I optimized existing SQL queries for reporting. I consumed third-party data via a REST API to enrich our internal datasets. I wrote performance-critical modules in C++.

@@ -1,0 +1,30 @@
+Company: Vanguard Systems
+Role: Backend Software Engineer
+Location: Hyderabad
+
+About Us:
+Vanguard Systems builds scalable cloud infrastructure for enterprise clients. We are looking for passionate engineers to join our core backend team and help optimize our high-traffic systems.
+
+Required skills:
+Python
+FastAPI
+SQL
+REST API
+Git
+
+Preferred skills:
+Docker
+PostgreSQL
+Redis
+
+Eligibility Criteria:
+Open to branches: CSE, IT, AI-ML.
+Experience: 0-1 years.
+Compensation: 12 LPA (Lakhs Per Annum).
+Application Deadline: November 15, 2026.
+
+Role and Responsibilities:
+You will design and implement robust backend services. 
+You will collaborate with frontend engineers to integrate user-facing elements.
+You will troubleshoot and debug applications.
+You will optimize application for maximum speed and scalability.

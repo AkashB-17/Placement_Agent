@@ -153,3 +153,28 @@ def test_no_required_skills_gives_null_score_without_llm_call(monkeypatch):
     monkeypatch.setattr(scoring, "extract_structured", _boom)
     result = score_student(STUDENT, JDRequirements(preferred_skills=["Docker"]))
     assert result.score is None
+
+
+# ── Live-run regressions: LLM truncates long sentences ───────────────────────
+
+def test_truncated_sentence_with_added_period_accepted():
+    resume = "I containerized the service with Docker to ensure smooth deployment across environments."
+    assert quote_in_resume("I containerized the service with Docker to ensure smooth deployment.", resume)
+
+
+def test_quoted_and_ellipsis_joined_fragments_accepted_in_order():
+    resume = "Built a REST API using FastAPI. Later deployed it with Docker on a VM."
+    assert quote_in_resume('"Built a REST API ... deployed it with Docker"', resume)
+    assert not quote_in_resume("deployed it with Docker ... Built a REST API", resume)
+
+
+def test_reworded_quote_still_rejected():
+    resume = "I containerized the service with Docker."
+    assert not quote_in_resume("I dockerized the service.", resume)
+    assert not quote_in_resume("...", resume)
+
+
+def test_glued_separate_sentences_accepted():
+    resume = "I wrote the core logic in C. I used an RTOS. I wrote test scripts in C."
+    assert quote_in_resume("I wrote the core logic in C. I wrote test scripts in C.", resume)
+    assert not quote_in_resume("I wrote test scripts in C. I wrote the core logic in C.", resume)
