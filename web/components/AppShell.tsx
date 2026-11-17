@@ -1,6 +1,6 @@
 "use client";
 
-import { BarChart3, GraduationCap, LogOut, Menu, ShieldCheck, Sparkles, Upload, UserRound, Users, X, type LucideIcon } from "lucide-react";
+import { BarChart3, GraduationCap, LogOut, Menu, Send, ShieldCheck, Sparkles, Upload, UserRound, Users, X, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, type ReactNode } from "react";
@@ -13,6 +13,7 @@ import { Avatar } from "./ui";
 const LINKS: { href: string; label: string; icon: LucideIcon; roles: Role[] }[] = [
   { href: "/jobs", label: "Rank candidates", icon: BarChart3, roles: ["officer", "admin"] },
   { href: "/students", label: "Students", icon: GraduationCap, roles: ["officer", "admin"] },
+  { href: "/applications", label: "Applications", icon: Send, roles: ["officer", "admin", "recruiter"] },
   { href: "/upload", label: "Upload", icon: Upload, roles: ["officer", "admin", "recruiter"] },
   { href: "/me", label: "My placements", icon: UserRound, roles: ["student"] },
   { href: "/admin", label: "Users & roles", icon: Users, roles: ["admin"] },

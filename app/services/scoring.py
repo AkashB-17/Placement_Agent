@@ -14,12 +14,17 @@ an auto-apply threshold.
 """
 from __future__ import annotations
 
+import hashlib
+import json
 import re
 import unicodedata
+from datetime import UTC, datetime
 from typing import Any
 
 from pydantic import BaseModel, Field
 
+from app import db
+from app.config import get_settings
 from app.schemas import JDRequirements, ScoreBreakdown, SkillQuote
 from app.services.llm import extract_structured
 
@@ -167,3 +172,51 @@ def score_student(student: dict[str, Any], jd: JDRequirements) -> ScoreBreakdown
         missing_preferred=[s for s in preferred if s not in accepted],
         evidence=list(accepted.values()),
     )
+
+
+# ── Cache ───────────────────────────────────────────────────────────────────
+
+# Bump when the validation or score code above changes in a way that changes results.
+# (Prompt and model changes are already part of the key.)
+SCORING_VERSION = "1"
+
+
+def score_cache_key(resume_text: str, jd: JDRequirements) -> str | None:
+    """Hash of every input the score depends on; None when no LLM call is needed."""
+    required = _dedupe(jd.required_skills)
+    preferred = _dedupe(jd.preferred_skills, exclude={s.casefold() for s in required})
+    if not required:
+        return None
+    payload = json.dumps(
+        {
+            "version": SCORING_VERSION,
+            "model": get_settings().openai_chat_model,
+            "instructions": _evidence_instructions(required + preferred),
+            "resume_sha256": hashlib.sha256(resume_text.encode("utf-8")).hexdigest(),
+        },
+        sort_keys=True,
+    )
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
+def score_student_cached(
+    student: dict[str, Any], jd: JDRequirements, jd_id: str, refresh: bool = False
+) -> tuple[ScoreBreakdown, str]:
+    """score_student with a database cache. Returns (breakdown, "cache" | "fresh" | "none").
+
+    The cached value is the *verified* breakdown (quotes already checked against the
+    resume), so a cache hit is exactly what a fresh call would have produced at that time.
+    refresh=True re-scores and overwrites."""
+    key = score_cache_key(student.get("resume_text") or "", jd)
+    if key is None:
+        return score_student(student, jd), "none"
+    if not refresh:
+        cached = db.get_cached_score(key)
+        if cached is not None:
+            return ScoreBreakdown(**cached), "cache"
+    breakdown = score_student(student, jd)
+    db.put_cached_score(
+        key, student["id"], jd_id, get_settings().openai_chat_model,
+        breakdown.model_dump_json(), datetime.now(UTC),
+    )
+    return breakdown, "fresh"

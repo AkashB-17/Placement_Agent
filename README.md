@@ -2,7 +2,7 @@
 
 Backend for a campus placement system. A placement officer uploads a placement policy and a job description; students are checked for eligibility and scored against the JD from their resumes. The officer gets a ranked list with matched/missing skills, the resume evidence behind each match, and, for ineligible students, the exact rule they failed plus the policy or JD clause it comes from.
 
-**Honest framing:** the pipeline (parse JD → filter → score → threshold) is a deterministic workflow with LLM steps, not an autonomous agent. Auto-apply is only a recommendation flag at this stage.
+**Honest framing:** the pipeline (parse JD → filter → score → threshold → staged apply) is a deterministic workflow with LLM steps, not an autonomous agent. The LLM extracts rules and finds resume evidence; every decision (eligible, score, apply, release) is made by code.
 
 ## How it decides
 
@@ -15,9 +15,9 @@ Backend for a campus placement system. A placement officer uploads a placement p
 | Evidence check | Code | Quote must appear verbatim in the resume (case, whitespace and edge punctuation ignored; glued sentences must each appear in order) and mention the skill; skills the LLM omits count as missing |
 | Score | Code | `100 × (0.75 × required coverage + 0.25 × preferred coverage)`; no preferred skills → required only; no required skills → `null` |
 | Citations | RAG (ChromaDB) | For each failed rule, the top-2 chunks from the policy or JD the rule came from (policies and JDs are chunked by paragraph, ~400 chars) |
-| Auto-apply | Code | `auto_apply_recommended = eligible AND score ≥ AUTO_APPLY_THRESHOLD` (default 80). Nothing is applied |
+| Auto-apply | Code | Opted-in students who are eligible and score ≥ max(`AUTO_APPLY_THRESHOLD`, their own bar) get a *pending* application; it is sent only after a withdraw window (see below) |
 
-Known limits: the "quote mentions the skill" check is a token heuristic and can reject paraphrased evidence (it errs toward under-scoring). `/ranked` makes one LLM call per eligible student on every request (run in parallel, 8 at a time); scores aren't stored yet.
+Known limits: the "quote mentions the skill" check is a token heuristic and can reject paraphrased evidence (it errs toward under-scoring). Scores are cached (below), so only a new resume/JD pair costs an LLM call.
 
 Performance, measured against the hosted database (region ap-northeast-1):
 
@@ -25,7 +25,9 @@ Performance, measured against the hosted database (region ap-northeast-1):
 |---|---|---|
 | Database call | ~2.3 s (new connection + query + COMMIT) | ~0.27 s (pooled connection, autocommit, one round trip) |
 | Role lookup per request | one DB call | cached 60 s; cleared at once when an admin changes the role through the API |
-| Ranking one JD (live OpenAI) | 10.6 s | 4.1 s (parallel scoring; citation query embeddings cached) |
+| Ranking one JD (live OpenAI) | 10.6 s | 4.1 s first time (parallel scoring), **~1 s after** (score cache, 0 AI calls) |
+
+**Score cache.** The only LLM call per student per JD is the evidence step, and its output depends only on the resume text, the JD's skill lists, the model, the prompt and the validation code. The backend stores the *verified* breakdown under a SHA-256 of exactly those inputs (`score_cache` table). Change any input and the key changes, so a stale score is never read; there is no invalidation logic to get wrong. Eligibility is never cached: it is cheap and must follow the current policy. `GET /jds/{id}/ranked?refresh=true` (the *Re-score with AI* button) ignores and overwrites the cache. Each result says whether its score came from the cache or a fresh call. Bump `SCORING_VERSION` in `app/services/scoring.py` when the validation/score code changes.
 
 ## Setup
 
@@ -54,6 +56,9 @@ Copy `.env.example` to `.env` and fill it in (never commit `.env`). With only `O
 | Read policies / JDs | ✓ | ✓ | ✓ | ✓ |
 | Add / list / read students, `/ranked` | ✓ | ✓ | | |
 | `/students/me`, `/match` and resume link for **own** record | | | | ✓ |
+| Run auto-apply for a JD, see all applications | ✓ | ✓ | | |
+| See **sent** applications to own JDs (and the pinned resume) | | | ✓ | |
+| Opt in to auto-apply, withdraw own pending applications | | | | ✓ |
 | Invite users, change roles | ✓ | | | |
 
 A student's record is linked by the email the officer enters, matched against the student's verified login email.
@@ -110,6 +115,33 @@ uv run python scripts/seed_sample.py --token <access token>
 
 This makes real OpenAI calls (about 20 per run). Re-running is safe: ids are content hashes.
 
+## Staged auto-apply
+
+The feature that saves students and officers the most time, built so nothing is sent behind a student's back.
+
+1. **Opt in.** A student turns auto-apply on and can raise the minimum score (never below the college threshold) and exclude companies. Off by default.
+2. **Run.** An officer clicks *Run auto-apply* on a job. For each opted-in student, code checks, in order: already applied to this job (a withdrawal is final; it is never re-sent), excluded company, the policy's `max_applications_per_student`, then the same eligibility and evidence-based score as `/ranked`. Qualifiers get a **pending** application and a notification; everyone else is listed with the reason.
+3. **Pin.** Each application stores the resume version as scored (content-addressed file path + SHA-256 of the text) and the score breakdown with its verified quotes. A later resume upload doesn't change what was sent.
+4. **Withdraw window.** The student can withdraw until `release_at = min(created + 24 h, JD deadline − 6 h)`. A run is refused if that leaves under an hour (or the deadline has passed). Deadlines are parsed by code ("November 20, 2026", "20/11/2026", ISO); a date means 23:59 IST.
+5. **Release.** One conditional `UPDATE … WHERE status = 'pending' AND release_at <= now` marks applications *submitted* and notifies the student. It runs every 60 s and before every read of applications, so a status is never stale. Because release and withdraw are both single conditional updates, they can't both win.
+6. **Recruiters** see an application, and its pinned resume, only once it's submitted, and only for jobs they posted (enforced in the API and by RLS).
+
+```
+pending ──(student withdraws before release_at)──▶ withdrawn   (final)
+   └─────(release_at passes)─────────────────────▶ submitted   (final)
+```
+
+Schema: `supabase/migrations/20261117000000_auto_apply.sql` (`auto_apply_preferences`, `applications`, `notifications`, RLS). Apply with `npx supabase@latest db push --linked`. Limits: notifications are in-app only (no email yet), and "submitted" means visible to the recruiter in this system; there is no integration with external job portals.
+
+| Endpoint | Who | Purpose |
+|---|---|---|
+| `GET` / `PUT /me/auto-apply` | student | Read / set preferences |
+| `GET /me/applications`, `POST /applications/{id}/withdraw` | student | Own applications; withdraw while pending |
+| `GET /me/notifications`, `POST /me/notifications/read` | student | Notification feed |
+| `POST /jds/{id}/auto-apply?policy_id=` | officer, admin | Run for a job; returns created + skipped with reasons |
+| `GET /applications?jd_id=&status=` | officer, admin; recruiter (sent, own jobs) | Track applications |
+| `GET /applications/{id}/resume` | staff, owner, recruiter once sent | Signed link to the pinned resume |
+
 ## Web app (Next.js)
 
 `web/` is a Next.js + Tailwind front end over the same API. The browser uses Supabase only to sign in; every data call goes to FastAPI with the user's token, so roles are enforced in one place (`require_role`). Pages hide what a role can't use, but that's convenience: the API refuses it anyway.
@@ -121,6 +153,7 @@ This makes real OpenAI calls (about 20 per run). Re-running is safe: ids are con
 | `/students` | officer, admin | Student list, parsed skills, 60-second signed link to the resume file |
 | `/upload` | officer, admin (recruiter: JD only) | Policy, JD and student forms; shows grounding warnings |
 | `/me` | student | Own record, and an eligibility + score check per JD |
+| `/applications` | officer, admin, recruiter | Track applications: pending with countdown, sent, withdrawn |
 | `/admin` | admin | Invite users with a role, change roles |
 
 ```bash
@@ -144,4 +177,4 @@ uv run pytest
 
 ## Roadmap
 
-Done: hosted Supabase (Postgres, Auth with roles, private Storage for resumes, RLS), Next.js front end. Next: staged auto-apply with a 24h withdraw window → student-side agent (drive watcher, resume-gap nudges).
+Done: hosted Supabase (Postgres, Auth with roles, private Storage for resumes, RLS), Next.js front end, staged auto-apply with a withdraw window. Next: email notifications → student-side agent (drive watcher, resume-gap nudges).

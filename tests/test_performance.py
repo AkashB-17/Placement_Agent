@@ -55,6 +55,34 @@ def test_sqlite_profiles_are_not_cached(client) -> None:
     assert db.get_profile_cached("u2")["role"] == "recruiter"
 
 
+def test_vector_client_created_once_under_concurrency(client, monkeypatch) -> None:
+    """Parallel ranking threads must not race to build the Chroma client."""
+    import threading
+    import time
+    from concurrent.futures import ThreadPoolExecutor
+
+    created = []
+    barrier = threading.Barrier(8)
+
+    def slow_client(path):
+        created.append(path)
+        time.sleep(0.05)  # widen the race window, like a real client opening its files
+        return object()
+
+    vectorstore.reset_clients()
+    monkeypatch.setattr(vectorstore.chromadb, "PersistentClient", lambda path: slow_client(path))
+
+    def grab(_):
+        barrier.wait()  # release all threads at once
+        return vectorstore._client()
+
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        clients = list(pool.map(grab, range(8)))
+    assert len(created) == 1
+    assert all(c is clients[0] for c in clients)
+    vectorstore.reset_clients()
+
+
 def test_citation_query_embedded_once(client, monkeypatch) -> None:
     calls = []
 

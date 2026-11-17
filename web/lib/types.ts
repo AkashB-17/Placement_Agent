@@ -131,6 +131,8 @@ export interface MatchResult {
   score_breakdown: ScoreBreakdown | null;
   auto_apply_recommended: boolean;
   citations: Citation[];
+  /** "cache" = stored verified score, "fresh" = new AI call, "none" = JD has no required skills. */
+  score_source?: "cache" | "fresh" | "none" | null;
 }
 
 export interface RankedResponse {
@@ -139,4 +141,65 @@ export interface RankedResponse {
   auto_apply_threshold: number;
   eligible: MatchResult[];
   ineligible: MatchResult[];
+  ai_calls: number;
+  cached_scores: number;
+}
+
+// ── Staged auto-apply ────────────────────────────────────────────────────────
+
+export type ApplicationStatus = "pending" | "withdrawn" | "submitted";
+
+export interface AutoApplyPreferences {
+  enabled: boolean;
+  min_score: number;
+  excluded_companies: string[];
+}
+
+export interface PreferencesOut extends AutoApplyPreferences {
+  threshold: number;
+  withdraw_hours: number;
+}
+
+export interface Application {
+  id: string;
+  student_id: string;
+  student_name: string;
+  jd_id: string;
+  company: string | null;
+  role: string | null;
+  policy_id: string;
+  status: ApplicationStatus;
+  score: number;
+  score_breakdown: ScoreBreakdown;
+  created_at: string;
+  release_at: string;
+  decided_at: string | null;
+  can_withdraw: boolean;
+  has_resume_file: boolean;
+}
+
+export interface SkippedStudent {
+  student_id: string;
+  student_name: string;
+  reason: string;
+}
+
+export interface AutoApplyRun {
+  jd_id: string;
+  policy_id: string;
+  deadline: string | null;
+  release_cutoff: string | null;
+  release_at: string;
+  created: Application[];
+  skipped: SkippedStudent[];
+  not_opted_in: number;
+}
+
+export interface Notification {
+  id: string;
+  application_id: string | null;
+  kind: "application_pending" | "application_submitted" | "application_withdrawn";
+  message: string;
+  created_at: string;
+  read: boolean;
 }

@@ -30,6 +30,7 @@ def make_test_settings(tmp_path, **overrides) -> Settings:
         supabase_publishable_key="",
         supabase_secret_key="",
         dev_auth_bypass=False,
+        release_sweep_seconds=0,  # tests drive releases explicitly with a fake clock
     )
     values.update(overrides)
     return Settings(_env_file=None, **values)

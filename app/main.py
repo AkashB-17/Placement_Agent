@@ -1,13 +1,16 @@
+import asyncio
 import logging
-from contextlib import asynccontextmanager
+from contextlib import asynccontextmanager, suppress
 
 from fastapi import FastAPI
+from fastapi.concurrency import run_in_threadpool
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app.config import get_settings
 from app.db import close_pool, init_db, open_pool
-from app.routers import admin, jds, match, policies, students
+from app.routers import admin, applications, jds, match, policies, students
+from app.services import auto_apply
 
 logger = logging.getLogger("uvicorn.error")
 
@@ -18,12 +21,26 @@ def check_startup_settings() -> None:
         raise RuntimeError("DEV_AUTH_BYPASS is only allowed with the local SQLite database.")
 
 
+async def _release_sweep(interval: float) -> None:
+    """Release auto-apply applications whose withdraw window closed. Reads also release
+    lazily, so this only keeps statuses and notifications moving while nobody is looking."""
+    while True:
+        await asyncio.sleep(interval)
+        await run_in_threadpool(auto_apply.release_due_quietly)
+
+
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
     check_startup_settings()
     open_pool()
     init_db()
+    interval = get_settings().release_sweep_seconds
+    sweep = asyncio.create_task(_release_sweep(interval)) if interval > 0 else None
     yield
+    if sweep is not None:
+        sweep.cancel()
+        with suppress(asyncio.CancelledError):
+            await sweep
     close_pool()
 
 
@@ -93,3 +110,4 @@ app.include_router(policies.router)
 app.include_router(jds.router)
 app.include_router(students.router)
 app.include_router(match.router)
+app.include_router(applications.router)

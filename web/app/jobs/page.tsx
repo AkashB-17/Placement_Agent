@@ -1,12 +1,14 @@
 "use client";
 
-import { Briefcase, CircleCheck, CircleX, RefreshCw, Rocket, Trophy, Users } from "lucide-react";
+import { Briefcase, CircleCheck, CircleX, Database, RefreshCw, Rocket, Sparkles, Trophy, Users } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
+import { AutoApplyPanel } from "@/components/AutoApplyPanel";
 import { MatchResultCard } from "@/components/MatchResultCard";
 import { PolicyPicker } from "@/components/PolicyPicker";
-import { CardSkeletons, Chip, EmptyState, ErrorBox, PageHeader, Spinner, StatCard } from "@/components/ui";
+import { CardSkeletons, Chip, EmptyState, ErrorBox, PageHeader, Spinner, StatCard, errorText } from "@/components/ui";
+import { api } from "@/lib/api";
 import { RequireRole } from "@/lib/auth";
 import type { JDSummary, PolicySummary, RankedResponse } from "@/lib/types";
 import { useApi } from "@/lib/useApi";
@@ -43,10 +45,27 @@ function JobCard({ jd, selected, onSelect }: { jd: JDSummary; selected: boolean;
 
 function Results({ jd, policyId }: { jd: JDSummary; policyId: string }) {
   const [filter, setFilter] = useState<Filter>("all");
-  const { data, error, loading, refresh } = useApi<RankedResponse>(
-    `/jds/${jd.id}/ranked?policy_id=${encodeURIComponent(policyId)}`,
-    { revalidate: false },
-  );
+  const path = `/jds/${jd.id}/ranked?policy_id=${encodeURIComponent(policyId)}`;
+  const { data, error, loading, refresh } = useApi<RankedResponse>(path, { revalidate: false });
+  const [rescoring, setRescoring] = useState(false);
+  const [rescoreError, setRescoreError] = useState<string | null>(null);
+  const [lastRun, setLastRun] = useState<{ ai: number; cached: number } | null>(null);
+
+  // Re-score bypasses the server's score cache (one AI call per eligible student), then the
+  // normal ranking is reloaded, which now reads the fresh scores from the cache.
+  async function rescore() {
+    setRescoring(true);
+    setRescoreError(null);
+    try {
+      const fresh = await api<RankedResponse>(`${path}&refresh=true`);
+      setLastRun({ ai: fresh.ai_calls, cached: fresh.cached_scores });
+      await refresh();
+    } catch (e) {
+      setRescoreError(errorText(e));
+    } finally {
+      setRescoring(false);
+    }
+  }
 
   const stats = useMemo(() => {
     if (!data) return null;
@@ -63,7 +82,7 @@ function Results({ jd, policyId }: { jd: JDSummary; policyId: string }) {
     return (
       <div className="space-y-4">
         <p className="flex items-center gap-2 text-sm text-slate-500">
-          <Spinner /> Checking eligibility and scoring resumes. Each eligible student needs one AI call, run in parallel.
+          <Spinner /> Checking eligibility and scoring resumes. Stored scores are reused; only new resume/JD pairs need an AI call.
         </p>
         <CardSkeletons count={3} />
       </div>
@@ -78,18 +97,49 @@ function Results({ jd, policyId }: { jd: JDSummary; policyId: string }) {
         <h2 className="text-lg font-semibold">
           {jd.company} <span className="font-normal text-slate-500">· {jd.role}</span>
         </h2>
-        <button className="btn-secondary" onClick={refresh} disabled={loading}>
-          {loading ? <Spinner /> : <RefreshCw className="size-4" aria-hidden />} Re-run
-        </button>
+        <div className="flex flex-wrap gap-2">
+          <button
+            className="btn-secondary"
+            onClick={() => {
+              setLastRun(null);
+              void refresh();
+            }}
+            disabled={loading || rescoring}
+            title="Re-check eligibility; scores come from the cache, so no AI calls"
+          >
+            {loading && !rescoring ? <Spinner /> : <RefreshCw className="size-4" aria-hidden />} Re-run
+          </button>
+          <button
+            className="btn-secondary"
+            onClick={rescore}
+            disabled={loading || rescoring}
+            title="Ignore stored scores and ask the AI again for every eligible student"
+          >
+            {rescoring ? <Spinner /> : <Sparkles className="size-4" aria-hidden />} Re-score with AI
+          </button>
+        </div>
       </div>
+      <p className="-mt-3 flex items-center gap-1.5 text-xs text-slate-500">
+        <Database className="size-3.5" aria-hidden />
+        {(() => {
+          const ai = lastRun?.ai ?? data.ai_calls;
+          const cached = lastRun ? 0 : data.cached_scores;
+          if (ai === 0 && cached === 0) return "No eligible student needed scoring.";
+          if (ai === 0) return `All ${cached} scores from the score cache · no AI calls`;
+          if (cached === 0) return `${ai} score${ai === 1 ? "" : "s"} computed by AI and cached for next time`;
+          return `${cached} scores from cache · ${ai} new AI call${ai === 1 ? "" : "s"}`;
+        })()}
+      </p>
+      <ErrorBox message={rescoreError} />
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard label="Eligible" value={stats.eligible} icon={CircleCheck} tone="green" />
         <StatCard label="Not eligible" value={stats.ineligible} icon={CircleX} tone="red" />
-        <StatCard label={`Auto-apply (≥ ${data.auto_apply_threshold})`} value={stats.autoApply} icon={Rocket} tone="brand" />
+        <StatCard label={`Qualify for auto-apply (≥ ${data.auto_apply_threshold})`} value={stats.autoApply} icon={Rocket} tone="brand" />
         <StatCard label="Top score" value={stats.top !== null ? stats.top.toFixed(1) : "—"} icon={Trophy} tone="amber" />
       </div>
       <ErrorBox message={error?.message} />
+      <AutoApplyPanel jd={jd} policyId={policyId} threshold={data.auto_apply_threshold} />
 
       <div className="inline-flex rounded-lg border border-slate-200 bg-white p-1 text-sm shadow-sm" role="tablist">
         {(

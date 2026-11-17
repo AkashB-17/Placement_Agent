@@ -1,3 +1,4 @@
+import threading
 from typing import Any
 
 import chromadb
@@ -13,17 +14,27 @@ COLLECTION_JDS = "jds"
 COLLECTION_RESUMES = "resumes"
 
 _clients: dict[str, ClientAPI] = {}
+# Ranking evaluates students in parallel threads. Chroma's client registry is not safe to
+# initialise from several threads at once (KeyError on the first concurrent call), so
+# creation is serialised. After that, lookups are lock-free.
+_clients_lock = threading.Lock()
 
 
 def _client() -> ClientAPI:
     path = str(get_settings().chroma_path)
-    if path not in _clients:
-        _clients[path] = chromadb.PersistentClient(path=path)
-    return _clients[path]
+    client = _clients.get(path)
+    if client is None:
+        with _clients_lock:
+            client = _clients.get(path)
+            if client is None:
+                client = chromadb.PersistentClient(path=path)
+                _clients[path] = client
+    return client
 
 
 def reset_clients() -> None:
-    _clients.clear()
+    with _clients_lock:
+        _clients.clear()
     _query_embeddings.clear()
 
 

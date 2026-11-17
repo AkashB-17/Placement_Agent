@@ -55,7 +55,7 @@ def retrieval_log(monkeypatch):
         calls.append({"collection": collection, "query": query, "k": k, "where": where})
         return [{"text": f"[{collection}] clause about {query}", "metadata": {}, "distance": 0.1}]
 
-    monkeypatch.setattr("app.routers.match.retrieve", _fake_retrieve)
+    monkeypatch.setattr("app.services.matching.retrieve", _fake_retrieve)
     monkeypatch.setattr(scoring, "extract_structured", _evidence_from_resume)
     return calls
 

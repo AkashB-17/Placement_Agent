@@ -22,7 +22,7 @@ def seeded(client: TestClient, monkeypatch):
     monkeypatch.setattr("app.routers.jds.extract_structured", lambda *a: JDRequirements(required_skills=["Python"]))
     monkeypatch.setattr("app.routers.students.extract_structured", lambda *a: ParsedResume(skills=["Python"]))
     monkeypatch.setattr(scoring, "extract_structured", lambda *a: EvidenceReport())
-    monkeypatch.setattr("app.routers.match.retrieve", lambda *a, **k: [])
+    monkeypatch.setattr("app.services.matching.retrieve", lambda *a, **k: [])
 
     def _student(name, email):
         form = {"name": name, "branch": "CSE", "batch": "2027", "cgpa": "8", "active_backlogs": "0", "email": email}

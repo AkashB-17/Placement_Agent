@@ -1,101 +1,19 @@
 """
-POST /match and GET /jds/{jd_id}/ranked.
-
-Both endpoints share evaluate_student: eligibility first (deterministic), then scoring
-only for eligible students, or citations of the clause behind each failed rule.
+POST /match and GET /jds/{jd_id}/ranked. The evaluation itself lives in
+app/services/matching.py, shared with auto-apply.
 """
 from __future__ import annotations
-
-from concurrent.futures import ThreadPoolExecutor
-from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 
 from app.auth import CurrentUser, require_role, staff_only
 from app.config import get_settings
-from app.db import get_all_students, get_jd, get_policy, get_student
-from app.schemas import (
-    Citation,
-    CitationChunk,
-    FailedRule,
-    JDRequirements,
-    MatchRequest,
-    MatchResult,
-    PolicyRules,
-    RankedResponse,
-)
+from app.db import get_all_students
 from app.routers.students import owns_student_record
-from app.services.eligibility import check_eligibility
-from app.services.scoring import score_student
-from app.services.vectorstore import COLLECTION_JDS, COLLECTION_POLICIES, retrieve
+from app.schemas import MatchRequest, MatchResult, RankedResponse
+from app.services.matching import evaluate_many, evaluate_student, load_jd, load_policy, load_student
 
 router = APIRouter(tags=["match"])
-
-CITATION_K = 2
-RANK_WORKERS = 8  # parallel OpenAI calls per /ranked request
-
-
-def _load_policy(policy_id: str) -> PolicyRules:
-    row = get_policy(policy_id)
-    if row is None:
-        raise HTTPException(status_code=404, detail=f"Policy '{policy_id}' not found.")
-    return PolicyRules(**row["rules"])
-
-
-def _load_jd(jd_id: str) -> JDRequirements:
-    row = get_jd(jd_id)
-    if row is None:
-        raise HTTPException(status_code=404, detail=f"JD '{jd_id}' not found.")
-    return JDRequirements(**row["requirements"])
-
-
-def _load_student(student_id: str) -> dict[str, Any]:
-    row = get_student(student_id)
-    if row is None:
-        raise HTTPException(status_code=404, detail=f"Student '{student_id}' not found.")
-    return row
-
-
-def _cite(rule: FailedRule, policy_id: str, jd_id: str) -> Citation:
-    """Retrieve the clause behind a failed rule from the document the rule came from."""
-    if rule.source == "jd":
-        collection, source_id = COLLECTION_JDS, jd_id
-    else:
-        collection, source_id = COLLECTION_POLICIES, policy_id
-    hits = retrieve(collection, query=rule.description, k=CITATION_K, where={"doc_id": source_id})
-    return Citation(
-        rule=rule.rule,
-        source=rule.source,
-        source_id=source_id,
-        chunks=[CitationChunk(text=hit["text"], distance=hit["distance"]) for hit in hits],
-    )
-
-
-def evaluate_student(
-    student: dict[str, Any],
-    policy: PolicyRules,
-    jd: JDRequirements,
-    policy_id: str,
-    jd_id: str,
-) -> MatchResult:
-    eligibility = check_eligibility(student, policy, jd)
-    result = MatchResult(
-        student_id=student["id"],
-        student_name=student.get("name", ""),
-        eligibility=eligibility,
-        score_breakdown=None,
-        auto_apply_recommended=False,
-    )
-    if not eligibility.eligible:
-        result.citations = [_cite(rule, policy_id, jd_id) for rule in eligibility.failed_rules]
-        return result
-
-    breakdown = score_student(student, jd)
-    result.score_breakdown = breakdown
-    result.auto_apply_recommended = (
-        breakdown.score is not None and breakdown.score >= get_settings().auto_apply_threshold
-    )
-    return result
 
 
 @router.post("/match", response_model=MatchResult)
@@ -103,12 +21,12 @@ def match(
     body: MatchRequest,
     user: CurrentUser = Depends(require_role("officer", "admin", "student")),
 ) -> MatchResult:
-    student = _load_student(body.student_id)
+    student = load_student(body.student_id)
     if user.role == "student" and not owns_student_record(user, student):
         # A student may check their own fit only; same 404 as an unknown id.
         raise HTTPException(status_code=404, detail=f"Student '{body.student_id}' not found.")
-    policy = _load_policy(body.policy_id)
-    jd = _load_jd(body.jd_id)
+    policy = load_policy(body.policy_id)
+    jd = load_jd(body.jd_id)
     return evaluate_student(student, policy, jd, body.policy_id, body.jd_id)
 
 
@@ -116,16 +34,13 @@ def match(
 def ranked(
     jd_id: str,
     policy_id: str = Query(..., description="Policy ID to evaluate against"),
+    refresh: bool = Query(False, description="Ignore cached scores and re-score every eligible student"),
     _: CurrentUser = Depends(staff_only),
 ) -> RankedResponse:
-    policy = _load_policy(policy_id)
-    jd = _load_jd(jd_id)
+    policy = load_policy(policy_id)
+    jd = load_jd(jd_id)
 
-    # Each eligible student costs one OpenAI call (~2-4 s), and the calls are independent,
-    # so run them side by side. Results are sorted below, so completion order doesn't matter.
-    students = get_all_students()
-    with ThreadPoolExecutor(max_workers=RANK_WORKERS) as pool:
-        results = list(pool.map(lambda s: evaluate_student(s, policy, jd, policy_id, jd_id), students))
+    results = evaluate_many(get_all_students(), policy, jd, policy_id, jd_id, refresh=refresh)
     eligible = [r for r in results if r.eligibility.eligible]
     ineligible = [r for r in results if not r.eligibility.eligible]
 
@@ -144,4 +59,6 @@ def ranked(
         auto_apply_threshold=get_settings().auto_apply_threshold,
         eligible=eligible,
         ineligible=ineligible,
+        ai_calls=sum(r.score_source == "fresh" for r in results),
+        cached_scores=sum(r.score_source == "cache" for r in results),
     )

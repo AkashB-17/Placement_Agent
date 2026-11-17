@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Any, Literal
 
 from pydantic import BaseModel, Field
@@ -195,6 +196,9 @@ class MatchResult(BaseModel):
     score_breakdown: ScoreBreakdown | None
     auto_apply_recommended: bool
     citations: list[Citation] = Field(default_factory=list)
+    # Where the score came from: "cache" (stored verified result), "fresh" (new AI call),
+    # "none" (JD has no required skills, nothing to call). None when not scored (ineligible).
+    score_source: Literal["cache", "fresh", "none"] | None = None
 
 
 class RankedResponse(BaseModel):
@@ -203,3 +207,65 @@ class RankedResponse(BaseModel):
     auto_apply_threshold: float
     eligible: list[MatchResult]
     ineligible: list[MatchResult]
+    ai_calls: int = Field(0, description="Scores computed by a new AI call in this request")
+    cached_scores: int = Field(0, description="Scores served from the score cache")
+
+
+# ── Staged auto-apply ───────────────────────────────────────────────────────
+
+ApplicationStatus = Literal["pending", "withdrawn", "submitted"]
+
+
+class AutoApplyPreferences(BaseModel):
+    enabled: bool = False
+    min_score: float = Field(ge=0, le=100, description="Only apply when the score is at least this")
+    excluded_companies: list[str] = Field(default_factory=list, max_length=50)
+
+
+class PreferencesOut(AutoApplyPreferences):
+    threshold: float = Field(description="College-wide minimum; min_score can't be lower")
+    withdraw_hours: float
+
+
+class ApplicationOut(BaseModel):
+    id: str
+    student_id: str
+    student_name: str
+    jd_id: str
+    company: str | None
+    role: str | None
+    policy_id: str
+    status: ApplicationStatus
+    score: float
+    score_breakdown: ScoreBreakdown
+    created_at: datetime
+    release_at: datetime
+    decided_at: datetime | None
+    can_withdraw: bool
+    has_resume_file: bool
+
+
+class SkippedStudent(BaseModel):
+    student_id: str
+    student_name: str
+    reason: str
+
+
+class AutoApplyRun(BaseModel):
+    jd_id: str
+    policy_id: str
+    deadline: datetime | None
+    release_cutoff: datetime | None = Field(description="Deadline minus buffer; releases never happen later")
+    release_at: datetime
+    created: list[ApplicationOut]
+    skipped: list[SkippedStudent]
+    not_opted_in: int
+
+
+class NotificationOut(BaseModel):
+    id: str
+    application_id: str | None
+    kind: str
+    message: str
+    created_at: datetime
+    read: bool

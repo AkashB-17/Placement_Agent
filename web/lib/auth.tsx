@@ -83,7 +83,7 @@ export function homeFor(role: Role): string {
     case "student":
       return "/me";
     case "recruiter":
-      return "/upload";
+      return "/applications";
     default:
       return "/jobs";
   }

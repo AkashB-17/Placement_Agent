@@ -21,6 +21,14 @@ class Settings(BaseSettings):
     chroma_path: Path = Path("./.chroma")
     auto_apply_threshold: float = 80.0
 
+    # Staged auto-apply: a pending application is sent at the earlier of
+    # (created + withdraw window) and (JD deadline - buffer).
+    auto_apply_withdraw_hours: float = 24.0
+    auto_apply_deadline_buffer_hours: float = 6.0
+    auto_apply_min_window_minutes: float = 60.0  # refuse a run that would leave less time to withdraw
+    deadline_utc_offset_minutes: int = 330  # a date-only JD deadline means 23:59:59 here (IST)
+    release_sweep_seconds: float = 60.0  # background release interval; 0 disables (tests)
+
     # Supabase. When database_url is set, Postgres replaces SQLite.
     supabase_url: str = ""  # https://<project-ref>.supabase.co
     supabase_publishable_key: str = ""  # sb_publishable_... (safe for clients; used to log in)
