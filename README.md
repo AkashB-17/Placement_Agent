@@ -167,6 +167,30 @@ The API allows browser calls only from `CORS_ORIGINS` (default `http://localhost
 
 Tradeoff: the session lives in the browser's localStorage (supabase-js default), which page scripts can read. That's acceptable for a client-rendered app with no third-party scripts. Moving to httpOnly cookies (`@supabase/ssr`) is the upgrade if the app ever renders data on the server.
 
+## Deploy (Render + Vercel + Supabase)
+
+```
+browser ──▶ Vercel (Next.js, web/) ──▶ Render (FastAPI, render.yaml) ──▶ Supabase (Postgres, Auth, Storage)
+                     └── signs in directly with Supabase Auth ──────────────▲
+```
+
+- **API on Render** from `render.yaml` (free plan, Singapore). Build: `uv sync --frozen --no-dev`; health check `/health`.
+- **Web on Vercel**, project root `web/`.
+- **Vector index:** Render's disk is wiped on every deploy. At startup the API re-embeds any policy/JD that is missing from the index, from the text stored in Postgres (`app/services/index_sync.py`). This runs in the background, so health checks pass at once and citations fill in within seconds.
+- **Free plan sleeps** after 15 min idle; the first request then takes ~1 min. Pending auto-apply applications are still released on time: releases also happen on every read. Open the site a minute before a demo, or switch `plan: free` to `starter` in `render.yaml`.
+- Measured locally: ~160 MB resident at idle (free plan has 512 MB).
+
+**Steps (one-time)**
+
+1. Commit and push everything to `main`. Check `.env`, `web/.env.local` and `data/real_jds/` are not in the commit (all are git-ignored).
+2. **Render** → New → Blueprint → select this repo. Render reads `render.yaml`. Fill the secrets from your `.env`: `OPENAI_API_KEY`, `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY`, `DATABASE_URL`, and for now `CORS_ORIGINS` = `["http://localhost:3000"]`. Deploy, then open `https://<your-api>.onrender.com/health` → `{"status":"ok"}`.
+3. **Vercel** → Add New → Project → import this repo → **Root Directory: `web`**. Environment variables: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (same as `web/.env.local`), and `NEXT_PUBLIC_API_URL` = `https://<your-api>.onrender.com`. Deploy. (`NEXT_PUBLIC_` values are baked in at build time: changing one needs a redeploy.)
+4. **Render** → Environment → set `CORS_ORIGINS` to `["https://<your-app>.vercel.app"]` (add `"http://localhost:3000"` too if you still develop locally). Saving redeploys.
+5. **Supabase** → Authentication → URL Configuration: Site URL = `https://<your-app>.vercel.app`; Redirect URLs: add `https://<your-app>.vercel.app/**`.
+6. Open the Vercel URL and sign in. If the page says "No response from the API", the API is waking up; wait a minute and retry.
+
+After this, every push to `main` redeploys both. Schema changes are not automatic: apply new files in `supabase/migrations/` with `npx supabase@latest db push --linked` **before** pushing code that needs them (the API refuses to start if a table is missing).
+
 ## Tests
 
 LLM, embedding and Supabase calls are mocked; tests never read `.env`, so they never touch OpenAI or your Supabase project. Auth tests sign real ES256 tokens with a throwaway key.

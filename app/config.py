@@ -29,6 +29,10 @@ class Settings(BaseSettings):
     deadline_utc_offset_minutes: int = 330  # a date-only JD deadline means 23:59:59 here (IST)
     release_sweep_seconds: float = 60.0  # background release interval; 0 disables (tests)
 
+    # Re-embed policies/JDs missing from the vector index at startup (hosted disks are
+    # often wiped on deploy; Postgres holds the source text).
+    index_sync_on_startup: bool = True
+
     # Supabase. When database_url is set, Postgres replaces SQLite.
     supabase_url: str = ""  # https://<project-ref>.supabase.co
     supabase_publishable_key: str = ""  # sb_publishable_... (safe for clients; used to log in)

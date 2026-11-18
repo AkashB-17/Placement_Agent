@@ -15,3 +15,6 @@ wheels/
 data/*.db
 *.db
 claude.md
+
+# Real company JDs from the placement portal: kept local, not published
+data/real_jds/

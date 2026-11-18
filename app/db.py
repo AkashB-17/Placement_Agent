@@ -855,3 +855,13 @@ def put_cached_score(
 def count_cached_scores() -> int:
     row = _fetchone("SELECT COUNT(*) AS n FROM score_cache")
     return int(row["n"]) if row else 0
+
+
+# ── Source documents (for rebuilding the vector index) ─────────────────────
+
+def list_policy_sources() -> list[tuple[str, str]]:
+    return [(row["id"], row["source_text"]) for row in _fetchall("SELECT id, source_text FROM policies")]
+
+
+def list_jd_sources() -> list[tuple[str, str]]:
+    return [(row["id"], row["source_text"]) for row in _fetchall("SELECT id, source_text FROM jds")]

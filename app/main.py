@@ -10,7 +10,7 @@ from fastapi.responses import JSONResponse
 from app.config import get_settings
 from app.db import close_pool, init_db, open_pool
 from app.routers import admin, applications, jds, match, policies, students
-from app.services import auto_apply
+from app.services import auto_apply, index_sync
 
 logger = logging.getLogger("uvicorn.error")
 
@@ -34,9 +34,19 @@ async def lifespan(_app: FastAPI):
     check_startup_settings()
     open_pool()
     init_db()
-    interval = get_settings().release_sweep_seconds
+    settings = get_settings()
+    interval = settings.release_sweep_seconds
     sweep = asyncio.create_task(_release_sweep(interval)) if interval > 0 else None
+    # In the background so the server answers health checks at once; citations fill in
+    # within seconds. Kept in a variable so the task isn't garbage-collected mid-run.
+    index_task = (
+        asyncio.create_task(run_in_threadpool(index_sync.sync_index_quietly))
+        if settings.index_sync_on_startup
+        else None
+    )
     yield
+    if index_task is not None and not index_task.done():
+        logger.info("Shutting down while the vector index sync is still running")
     if sweep is not None:
         sweep.cancel()
         with suppress(asyncio.CancelledError):
