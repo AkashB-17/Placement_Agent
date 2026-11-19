@@ -16,7 +16,7 @@ const POINTS = [
 ];
 
 export default function LoginPage() {
-  const { signIn, profile, error: profileError } = useAuth();
+  const { signIn, profile, error: profileError, notice } = useAuth();
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -35,7 +35,7 @@ export default function LoginPage() {
     setBusy(true);
     const message = await signIn(email.trim(), password);
     setError(message ? friendlyAuthError(message) : null);
-    if (message) setBusy(false); // on success the redirect above takes over
+    setBusy(false); // on success the profile is loaded and the redirect above takes over
   }
 
   return (
@@ -103,7 +103,7 @@ export default function LoginPage() {
               </div>
               <input id="password" type="password" className="input" autoComplete="current-password" required value={password} onChange={(e) => setPassword(e.target.value)} />
             </div>
-            <ErrorBox message={error ?? profileError} />
+            <ErrorBox message={error ?? profileError ?? notice} />
             <button className="btn w-full py-2.5" disabled={!ready || busy}>
               {(!ready || busy) && <Spinner />}
               {!ready ? "Loading…" : busy ? "Signing in…" : "Sign in"}

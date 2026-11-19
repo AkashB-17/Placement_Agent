@@ -15,6 +15,8 @@ interface AuthState {
   session: Session | null;
   profile: Profile | null;
   error: string | null;
+  /** Why the user was signed out automatically (shown on the sign-in page). */
+  notice: string | null;
   signIn: (email: string, password: string) => Promise<string | null>;
   signOut: () => Promise<void>;
 }
@@ -26,6 +28,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
+  const userIdRef = useRef<string | null | undefined>(undefined);
 
   // The role comes from the backend (public.profiles), never from the token's user_metadata.
   const loadProfile = useCallback(async (next: Session | null) => {
@@ -38,9 +42,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     try {
       setProfile(await api<Profile>("/admin/me"));
+      setNotice(null);
     } catch (e) {
       setProfile(null);
-      setError(e instanceof ApiError ? e.message : "Could not load your profile.");
+      if (e instanceof ApiError && (e.status === 401 || e.status === 403)) {
+        // The API rejects this session (expired, revoked, or no profile). Keeping it would
+        // leave the user stuck on an error page, so sign out locally and explain on /login.
+        setNotice(
+          e.status === 401
+            ? "Your session has expired or is no longer valid. Please sign in again."
+            : "This account has no profile on the server yet. If you were just invited, open the link in your email; otherwise contact the placement office.",
+        );
+        userIdRef.current = null;
+        setSession(null);
+        await supabase.auth.signOut({ scope: "local" });
+      } else {
+        // API unreachable or misconfigured: keep the session so signing in again retries.
+        setError(e instanceof ApiError ? e.message : "Could not load your profile.");
+      }
     } finally {
       setLoading(false);
     }
@@ -49,7 +68,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Re-read the profile whenever the signed-in *user* changes, whatever the event: a normal
   // sign-in, an email-confirmation link, an invite link or a password-reset link
   // (PASSWORD_RECOVERY). Token refreshes keep the same user and only update the session.
-  const userIdRef = useRef<string | null | undefined>(undefined);
   useEffect(() => {
     const handle = (next: Session | null) => {
       const nextId = next?.user.id ?? null;
@@ -65,17 +83,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => listener.subscription.unsubscribe();
   }, [loadProfile]);
 
-  const signIn = useCallback(async (email: string, password: string) => {
-    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
-    return signInError ? signInError.message : null;
-  }, []);
+  const signIn = useCallback(
+    async (email: string, password: string) => {
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+      if (signInError) return signInError.message;
+      // Always (re)load the profile: signing in again as the same user after a failed load
+      // would otherwise be treated as "same user" and never retry.
+      setNotice(null);
+      userIdRef.current = data.session?.user.id ?? null;
+      await loadProfile(data.session);
+      return null;
+    },
+    [loadProfile],
+  );
 
   const signOut = useCallback(async () => {
+    setNotice(null);
     await supabase.auth.signOut();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ loading, session, profile, error, signIn, signOut }}>
+    <AuthContext.Provider value={{ loading, session, profile, error, notice, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   );
@@ -103,30 +131,17 @@ export function homeFor(role: Role): string {
  * same rules (require_role) and would refuse the requests anyway.
  */
 export function RequireRole({ roles, children }: { roles: Role[]; children: ReactNode }) {
-  const { loading, session, profile, error, signOut } = useAuth();
+  const { loading, session, profile } = useAuth();
   const router = useRouter();
+  // Anything short of a loaded profile (signed out, rejected session, API unreachable) goes
+  // to /login, which shows why. Never leave the user on a dead-end error page.
+  const ready = !loading && Boolean(session) && Boolean(profile);
 
   useEffect(() => {
-    if (!loading && !session) router.replace("/login");
-  }, [loading, session, router]);
+    if (!loading && !ready) router.replace("/login");
+  }, [loading, ready, router]);
 
-  if (loading || !session) return <FullPageSpinner />;
-  if (error || !profile) {
-    return (
-      <Notice title="We couldn't load your account" tone="error">
-        <p>{error ?? "No profile exists for this account."}</p>
-        <button
-          className="btn-secondary mt-4"
-          onClick={async () => {
-            await signOut();
-            router.replace("/login");
-          }}
-        >
-          Sign out
-        </button>
-      </Notice>
-    );
-  }
+  if (!ready || !profile) return <FullPageSpinner />;
   if (!roles.includes(profile.role)) {
     return (
       <Notice title="This page isn't available for your role" tone="warning">
