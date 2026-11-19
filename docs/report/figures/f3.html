@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Report figures</title>
+<style>
+  :root { --ink:#1f2937; --muted:#4b5563; --line:#374151; --b1:#eef2ff; --b2:#ecfdf5; --b3:#fff7ed; --b4:#f1f5f9; --red:#fee2e2; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:#fff; color:var(--ink); font-family: "Segoe UI", Arial, sans-serif; }
+  .fig { display:block !important; width:1100px; height:var(--h,620px); padding:26px 34px; display:none; position:relative; }
+  .fig.on { display:block; }
+  h1 { font-size:22px; margin:0 0 16px; text-align:center; font-weight:600; }
+  .box { border:2px solid var(--line); border-radius:10px; padding:10px 14px; background:#fff; }
+  .small { font-size:14px; color:var(--muted); line-height:1.35; }
+  .t { font-weight:700; font-size:17px; margin-bottom:4px; }
+  /* Fig 1: layers */
+  .layer { display:grid; grid-template-columns:190px 1fr; align-items:stretch; margin-bottom:12px; }
+  .layer .name { display:flex; align-items:center; justify-content:center; font-weight:700; font-size:18px; border:2px solid var(--line); border-right:none; border-radius:10px 0 0 10px; }
+  .layer .body { border:2px solid var(--line); border-radius:0 10px 10px 0; padding:10px 14px; display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+  .chip { border:1.5px solid #6b7280; border-radius:8px; padding:6px 10px; font-size:15px; background:#fff; }
+  .arrow-v { text-align:center; font-size:15px; color:var(--muted); margin:-6px 0 6px; }
+  /* Fig 2: pipeline */
+  .row { display:flex; align-items:center; gap:10px; }
+  .stage { width:170px; min-height:96px; text-align:center; }
+  .arr { font-size:26px; color:var(--line); }
+  .tag { display:inline-block; font-size:12px; font-weight:700; padding:2px 8px; border-radius:999px; margin-bottom:6px; }
+  .code { background:#e0e7ff; } .llm { background:#fef3c7; } .rag { background:#dcfce7; }
+  /* Fig 3: states */
+  .state { position:absolute; width:230px; text-align:center; padding:16px; border-radius:14px; border:2.5px solid var(--line); font-size:16px; }
+  svg { position:absolute; inset:0; pointer-events:none; }
+  /* Fig 4: ER */
+  .tbl { position:absolute; width:236px; border:2px solid var(--line); border-radius:8px; background:#fff; font-size:13.5px; }
+  .tbl .hd { background:#e5e7eb; font-weight:700; padding:5px 10px; border-bottom:2px solid var(--line); border-radius:6px 6px 0 0; font-size:15px; }
+  .tbl .c { padding:2px 10px; } .pk { font-weight:700; } .fk { color:#1d4ed8; }
+  .legend { position:absolute; bottom:18px; left:34px; font-size:13px; color:var(--muted); }
+  h1 { visibility:hidden; } .fig { margin-top:-64px; }
+</style>
+</head>
+<body>
+<section class="fig" id="f3">
+  <h1>Staged auto-apply: application states</h1>
+  <svg viewBox="0 0 1100 620" width="1100" height="620">
+    <defs><marker id="a" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#374151"/></marker></defs>
+    <line x1="270" y1="300" x2="420" y2="300" stroke="#374151" stroke-width="2.5" marker-end="url(#a)"/>
+    <line x1="650" y1="270" x2="820" y2="170" stroke="#374151" stroke-width="2.5" marker-end="url(#a)"/>
+    <line x1="650" y1="330" x2="820" y2="430" stroke="#374151" stroke-width="2.5" marker-end="url(#a)"/>
+  </svg>
+  <div class="state" style="left:40px; top:250px; background:var(--b4)"><b>Officer runs auto-apply</b><div class="small">opted-in, eligible, score ≥ bar</div></div>
+  <div class="state" style="left:425px; top:236px; background:var(--b3)"><b style="font-size:20px">PENDING</b><div class="small">student notified immediately<br>resume version + score pinned</div></div>
+  <div class="state" style="left:830px; top:96px; background:var(--red)"><b style="font-size:20px">WITHDRAWN</b><div class="small">final: never re-sent</div></div>
+  <div class="state" style="left:830px; top:400px; background:var(--b2)"><b style="font-size:20px">SUBMITTED</b><div class="small">visible to the JD's recruiter;<br>student notified</div></div>
+  <div style="position:absolute; left:610px; top:150px; width:200px; font-size:14px; color:#4b5563; text-align:center">student withdraws<br>before release_at</div>
+  <div style="position:absolute; left:610px; top:410px; width:200px; font-size:14px; color:#4b5563; text-align:center">release_at reached<br>(60 s sweep or any read)</div>
+  <div class="box" style="position:absolute; left:250px; bottom:30px; width:600px; text-align:center; font-size:16px">
+    <b>release_at = min( created_at + 24 h , JD deadline − 6 h )</b><div class="small">Run refused if the deadline has passed or less than 60 minutes would remain to withdraw.</div></div>
+</section>
+</body></html>

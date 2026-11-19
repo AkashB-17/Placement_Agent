@@ -1,0 +1,347 @@
+[
+  {
+    "id": "S001",
+    "name": "Karan Sharma",
+    "file": "S001_karan_sharma.txt",
+    "true_skills": [
+      "Java",
+      "Spring Boot",
+      "SQL",
+      "REST APIs",
+      "Git"
+    ],
+    "traps": [
+      "JavaScript explicitly negated"
+    ],
+    "decoy_mentions": [],
+    "true_skills_not_verbatim": []
+  },
+  {
+    "id": "S002",
+    "name": "Anjali Verma",
+    "file": "S002_anjali_verma.txt",
+    "true_skills": [
+      "AWS",
+      "Docker",
+      "Linux",
+      "CI/CD pipelines",
+      "Python"
+    ],
+    "traps": [
+      "Kubernetes only in hobbies"
+    ],
+    "decoy_mentions": [
+      "Bash scripting",
+      "Kubernetes"
+    ],
+    "true_skills_not_verbatim": []
+  },
+  {
+    "id": "S003",
+    "name": "Rahul Iyer",
+    "file": "S003_rahul_iyer.txt",
+    "true_skills": [
+      "Python",
+      "SQL",
+      "Statistics"
+    ],
+    "traps": [
+      "Familiar with basics of Machine Learning"
+    ],
+    "decoy_mentions": [
+      "Machine Learning"
+    ],
+    "true_skills_not_verbatim": []
+  },
+  {
+    "id": "S004",
+    "name": "Priya Patel",
+    "file": "S004_priya_patel.txt",
+    "true_skills": [
+      "Embedded C",
+      "Microcontrollers",
+      "RTOS"
+    ],
+    "traps": [
+      "C++ explicitly negated",
+      "Short resume (<120 words)"
+    ],
+    "decoy_mentions": [
+      "C++"
+    ],
+    "true_skills_not_verbatim": []
+  },
+  {
+    "id": "S005",
+    "name": "Vikram Singh",
+    "file": "S005_vikram_singh.txt",
+    "true_skills": [
+      "Client communication",
+      "Negotiation",
+      "Lead generation"
+    ],
+    "traps": [
+      "CRM only in hobbies"
+    ],
+    "decoy_mentions": [
+      "CRM",
+      "Communication"
+    ],
+    "true_skills_not_verbatim": []
+  },
+  {
+    "id": "S006",
+    "name": "Neha Gupta",
+    "file": "S006_neha_gupta.txt",
+    "true_skills": [
+      "Network Security",
+      "Penetration Testing",
+      "Linux"
+    ],
+    "traps": [
+      "Currently learning Wireshark"
+    ],
+    "decoy_mentions": [
+      "SQL",
+      "Wireshark"
+    ],
+    "true_skills_not_verbatim": []
+  },
+  {
+    "id": "S007",
+    "name": "Siddharth Rao",
+    "file": "S007_siddharth_rao.txt",
+    "true_skills": [
+      "Python",
+      "PyTorch",
+      "Large Language Models"
+    ],
+    "traps": [
+      "Prompt Engineering paraphrased",
+      "Long resume (>600 words)"
+    ],
+    "decoy_mentions": [],
+    "true_skills_not_verbatim": []
+  },
+  {
+    "id": "S008",
+    "name": "Ishaan Desai",
+    "file": "S008_ishaan_desai.txt",
+    "true_skills": [
+      "Interpersonal skills",
+      "MS Office",
+      "Communication"
+    ],
+    "traps": [
+      "Recruitment basics negated"
+    ],
+    "decoy_mentions": [
+      "Excel",
+      "Recruitment basics"
+    ],
+    "true_skills_not_verbatim": []
+  },
+  {
+    "id": "S009",
+    "name": "Kavya Nair",
+    "file": "S009_kavya_nair.txt",
+    "true_skills": [
+      "SQL",
+      "REST APIs",
+      "Git",
+      "Java"
+    ],
+    "traps": [
+      "JavaScript negated"
+    ],
+    "decoy_mentions": [],
+    "true_skills_not_verbatim": []
+  },
+  {
+    "id": "S010",
+    "name": "Aditya Menon",
+    "file": "S010_aditya_menon.txt",
+    "true_skills": [
+      "Python",
+      "SQL",
+      "Machine Learning"
+    ],
+    "traps": [
+      "Statistics in hobbies"
+    ],
+    "decoy_mentions": [
+      "Statistics"
+    ],
+    "true_skills_not_verbatim": []
+  },
+  {
+    "id": "S011",
+    "name": "Riya Kapoor",
+    "file": "S011_riya_kapoor.txt",
+    "true_skills": [
+      "Docker",
+      "Linux",
+      "Python"
+    ],
+    "traps": [
+      "AWS paraphrased"
+    ],
+    "decoy_mentions": [],
+    "true_skills_not_verbatim": []
+  },
+  {
+    "id": "S012",
+    "name": "Arjun Das",
+    "file": "S012_arjun_das.txt",
+    "true_skills": [
+      "Microcontrollers",
+      "C++"
+    ],
+    "traps": [
+      "Currently learning RTOS"
+    ],
+    "decoy_mentions": [
+      "RTOS"
+    ],
+    "true_skills_not_verbatim": []
+  },
+  {
+    "id": "S013",
+    "name": "Meera Joshi",
+    "file": "S013_meera_joshi.txt",
+    "true_skills": [
+      "Negotiation",
+      "Lead generation"
+    ],
+    "traps": [
+      "Client communication negated"
+    ],
+    "decoy_mentions": [
+      "Client communication",
+      "Communication"
+    ],
+    "true_skills_not_verbatim": []
+  },
+  {
+    "id": "S014",
+    "name": "Rohan Bhatia",
+    "file": "S014_rohan_bhatia.txt",
+    "true_skills": [
+      "Linux",
+      "Wireshark",
+      "SIEM tools"
+    ],
+    "traps": [
+      "Penetration Testing in hobbies"
+    ],
+    "decoy_mentions": [
+      "Penetration Testing"
+    ],
+    "true_skills_not_verbatim": []
+  },
+  {
+    "id": "S015",
+    "name": "Ayesha Khan",
+    "file": "S015_ayesha_khan.txt",
+    "true_skills": [
+      "PyTorch",
+      "Large Language Models",
+      "Prompt Engineering"
+    ],
+    "traps": [
+      "Python explicitly negated",
+      "Long resume (>600 words)"
+    ],
+    "decoy_mentions": [
+      "Excel",
+      "Machine Learning",
+      "Python"
+    ],
+    "true_skills_not_verbatim": []
+  },
+  {
+    "id": "S016",
+    "name": "Devansh Agarwal",
+    "file": "S016_devansh_agarwal.txt",
+    "true_skills": [
+      "JavaScript",
+      "Node.js",
+      "SQL",
+      "REST APIs"
+    ],
+    "traps": [
+      "Java explicitly negated"
+    ],
+    "decoy_mentions": [
+      "Java"
+    ],
+    "true_skills_not_verbatim": []
+  },
+  {
+    "id": "S017",
+    "name": "Shruti Thakur",
+    "file": "S017_shruti_thakur.txt",
+    "true_skills": [
+      "Recruitment basics",
+      "Communication",
+      "Event Planning"
+    ],
+    "traps": [
+      "Familiar with basics of MS Office"
+    ],
+    "decoy_mentions": [
+      "MS Office"
+    ],
+    "true_skills_not_verbatim": []
+  },
+  {
+    "id": "S018",
+    "name": "Karthik Reddy",
+    "file": "S018_karthik_reddy.txt",
+    "true_skills": [
+      "Python",
+      "Machine Learning",
+      "Statistics"
+    ],
+    "traps": [
+      "SQL paraphrased",
+      "Short resume (<120 words)"
+    ],
+    "decoy_mentions": [],
+    "true_skills_not_verbatim": []
+  },
+  {
+    "id": "S019",
+    "name": "Sanya Malhotra",
+    "file": "S019_sanya_malhotra.txt",
+    "true_skills": [
+      "AWS",
+      "Linux",
+      "CI/CD pipelines"
+    ],
+    "traps": [
+      "Docker in hobbies"
+    ],
+    "decoy_mentions": [
+      "Docker"
+    ],
+    "true_skills_not_verbatim": []
+  },
+  {
+    "id": "S020",
+    "name": "Arnav Chatterjee",
+    "file": "S020_arnav_chatterjee.txt",
+    "true_skills": [
+      "Embedded C",
+      "RTOS",
+      "C++"
+    ],
+    "traps": [
+      "Familiar with basics of Microcontrollers"
+    ],
+    "decoy_mentions": [
+      "Microcontrollers"
+    ],
+    "true_skills_not_verbatim": []
+  }
+]

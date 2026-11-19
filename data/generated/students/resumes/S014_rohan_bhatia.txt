@@ -1,0 +1,11 @@
+Rohan Bhatia
+B.Tech IT, 2022-2026
+
+SKILLS
+Linux, Wireshark, SIEM tools
+
+PROJECTS
+SOC Simulation Lab: Set up a secure environment using a Linux server. Monitored network traffic and analyzed packet captures extensively using Wireshark to identify suspicious payloads. Aggregated logs and configured alerts using open-source SIEM tools to automate threat detection.
+
+HOBBIES
+Reading security blogs, Penetration Testing in a controlled lab environment, watching documentaries.

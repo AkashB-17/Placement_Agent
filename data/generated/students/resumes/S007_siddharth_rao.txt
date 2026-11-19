@@ -1,0 +1,23 @@
+Siddharth Rao
+B.Tech Computer Science and Engineering, 2023-2027
+
+PROFESSIONAL OBJECTIVE
+I am a highly driven, profoundly passionate, and detail-oriented technology student actively seeking to establish a rigorous career in the rapidly evolving domain of artificial intelligence. Throughout the entirety of my undergraduate academic journey, I have cultivated an obsession with how machines process natural language and generate human-like text. My ultimate goal is to integrate myself into a forward-thinking research or product organization where I can leverage my exhaustive theoretical background to solve highly complex, real-world problems. I thrive in environments that challenge conventional thinking, demand rigorous mathematical proofs, and prioritize scalable, performant software architecture. I look forward to contributing my utmost dedication and analytical prowess to advance the frontiers of machine intelligence.
+
+EDUCATION
+Bachelor of Technology in Computer Science and Engineering, Example University. Batch of 2027.
+Current CGPA: 8.5 on a 10.0 scale.
+My comprehensive coursework includes Advanced Linear Algebra, Multivariable Calculus, Probability Theory, Discrete Mathematics, Data Structures and Algorithms, Operating Systems, Database Management Systems, Theory of Computation, and specialized electives in Artificial Neural Networks. I have consistently ranked in the top percentile of my class, regularly participating in extra-credit assignments and publishing minor review papers in internal collegiate journals.
+
+TECHNICAL PROFICIENCY
+My primary language for all algorithmic logic and data manipulation is Python. I have spent thousands of hours mastering its ecosystem, particularly focusing on memory management and execution speed. For deep learning architectures, I extensively use PyTorch. I have utilized PyTorch to build custom neural network layers, implement complex loss functions, and manage distributed training loops over multiple GPU clusters. My core specialization lies in training and fine-tuning Large Language Models. I have worked with open-source foundation models, adapting their weights to domain-specific datasets for specialized downstream tasks. Note that instead of using standard terminology, my primary method of extracting accurate responses is that I crafted optimal inputs for AI models by iteratively testing semantic structures, which significantly improved inference accuracy without altering the weights.
+
+ACADEMIC PROJECTS
+1. Autonomous Conversational Agent Architecture: Over a period of eight months, I spearheaded a dedicated team of five students to develop a highly robust conversational agent. We started by aggregating a massive dataset of customer service interactions, cleaning the text using advanced Python scripts. The core engine was built from scratch utilizing PyTorch, featuring a custom transformer block implementation. We integrated several open-source Large Language Models, fine-tuning them to strictly adhere to a persona. I meticulously crafted optimal inputs for AI to ensure the agent did not hallucinate facts. The final product reduced response latency by 200 milliseconds compared to the baseline.
+2. Multimodal Sentiment Analysis Pipeline: I independently developed a system that analyzes both textual reviews and accompanying images to determine user sentiment. The text processing branch utilized a custom tokenizer written in Python, feeding into a recurrent neural network implemented in PyTorch. I spent weeks optimizing the backpropagation algorithm to prevent vanishing gradients. The results were published in our annual college tech symposium.
+
+EXTRACURRICULAR ACTIVITIES
+President of the university Artificial Intelligence Society. Organized three major hackathons, securing sponsorships from leading tech firms. I frequently host weekend workshops teaching juniors the fundamentals of tensor operations and gradient descent.
+
+HOBBIES
+In my leisure time, I am an avid reader of science fiction literature, particularly works dealing with cybernetics and future societies. I also engage in long-distance running, which helps me build the mental endurance necessary for long debugging sessions, and I enjoy playing the classical guitar to maintain a balanced, creative mindset.

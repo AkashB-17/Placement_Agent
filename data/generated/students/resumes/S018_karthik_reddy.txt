@@ -1,0 +1,11 @@
+Karthik Reddy
+B.Tech AI-ML, 2027
+
+SKILLS
+Python, Machine Learning, Statistics
+
+PROJECTS
+Fraud Detection: Wrote Python scripts to analyze transaction anomalies. Trained a Machine Learning classifier using advanced Statistics to minimize false positives. I extracted all my training data using complex relational database queries.
+
+HOBBIES
+Gaming.

@@ -1,6 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 
 from app.auth import CurrentUser, require_role
+from app.config import get_settings
 from app.db import get_profile, list_profiles, set_profile_role
 from app.schemas import InviteRequest, ProfileOut, RoleUpdate
 from app.services.supabase_admin import invite_user
@@ -9,17 +10,27 @@ router = APIRouter(prefix="/admin", tags=["admin"])
 admin_only = require_role("admin")
 
 
+def _set_password_url(request: Request) -> str | None:
+    """Invite links should land on the web app's set-password page, on the site the admin
+    is using. The Origin header is only trusted if it is an allowed CORS origin, so a forged
+    header can't point invitation emails at another site."""
+    origin = (request.headers.get("origin") or "").rstrip("/")
+    if origin and origin in {o.rstrip("/") for o in get_settings().cors_origins}:
+        return f"{origin}/auth/callback?next=set-password"
+    return None
+
+
 @router.get("/users", response_model=list[ProfileOut])
 def list_users(_: CurrentUser = Depends(admin_only)) -> list[ProfileOut]:
     return [ProfileOut(**row) for row in list_profiles()]
 
 
 @router.post("/invite", response_model=ProfileOut)
-def invite(body: InviteRequest, _: CurrentUser = Depends(admin_only)) -> ProfileOut:
+def invite(body: InviteRequest, request: Request, _: CurrentUser = Depends(admin_only)) -> ProfileOut:
     email = body.email.strip().lower()
     if "@" not in email:
         raise HTTPException(status_code=422, detail="Email is not valid.")
-    user_id = invite_user(email)
+    user_id = invite_user(email, redirect_to=_set_password_url(request))
     set_profile_role(user_id, body.role)
     return ProfileOut(id=user_id, email=email, role=body.role)
 

@@ -1,0 +1,48 @@
+Company Name: NexusData Analytics
+Website: www.nexusdata.example.com
+Job Title: Data Scientist
+Job Type: Full-time
+Experience: Freshers
+
+About the Company:
+NexusData Analytics operates at the bleeding edge of artificial intelligence and big data processing. We build proprietary analytical engines for the global financial sector, focusing on fraud detection, credit risk scoring, and algorithmic trading models. Our infrastructure processes petabytes of streaming data, requiring models that are not only accurate but highly performant.
+
+Role Overview & Responsibilities:
+As a Data Scientist, you will dive deep into massive datasets to uncover hidden patterns and build predictive models. You will be responsible for the entire model lifecycle, from data extraction and cleaning to algorithmic design and validation. You will work alongside data engineers to ensure your models scale efficiently in a production environment.
+
+* Write robust scripts to clean, transform, and normalize unstructured data.
+* Develop statistical models and machine learning algorithms for risk assessment.
+* Perform rigorous back-testing of algorithmic models using historical financial data.
+* Create data visualizations to present complex mathematical findings to business leaders.
+* Monitor model drift in production and retrain algorithms as necessary.
+* Collaborate with the legal team to ensure all data processing complies with privacy regulations.
+
+Required Skills:
+
+* Python
+* SQL
+* Machine Learning
+* Apache Spark
+* AWS
+
+Preferred Skills:
+
+* Tableau
+* Snowflake
+
+Eligibility Criteria:
+
+* Minimum CGPA: 8.0 strictly.
+* Allowed Branches: Computer Science & Engineering.
+* We require candidates to have no active backlogs.
+* Strong background in probability, statistics, and linear algebra.
+
+Compensation and Perks:
+
+* CTC: 14.5 LPA.
+* Location: Mumbai, Maharashtra.
+* Performance-based annual bonuses, top-tier health insurance, and hybrid work flexibility.
+
+Application Details:
+Please apply through the common placement portal. The interview process comprises an advanced online coding and SQL test, a take-home data modeling assignment, a technical presentation round, and a final discussion with the Head of Data Science.
+Deadline: 10/12/2026.

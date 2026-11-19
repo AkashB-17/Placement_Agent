@@ -4,6 +4,8 @@ Backend for a campus placement system. A placement officer uploads a placement p
 
 **Honest framing:** the pipeline (parse JD → filter → score → threshold → staged apply) is a deterministic workflow with LLM steps, not an autonomous agent. The LLM extracts rules and finds resume evidence; every decision (eligible, score, apply, release) is made by code.
 
+**Guides:** [Product guide](docs/PRODUCT_GUIDE.md) (what it does and why to trust it) · [Contributor guide](docs/CONTRIBUTOR_GUIDE.md) (every module, file and function).
+
 ## How it decides
 
 | Step | Who decides | Notes |
@@ -148,7 +150,8 @@ Schema: `supabase/migrations/20261117000000_auto_apply.sql` (`auto_apply_prefere
 
 | Page | Role | What it does |
 |---|---|---|
-| `/login` | everyone | Email + password sign-in (Supabase Auth) |
+| `/login` | everyone | Email + password sign-in (Supabase Auth), links to sign-up and password reset |
+| `/signup`, `/forgot-password`, `/set-password`, `/auth/callback` | everyone | Student sign-up with email confirmation, password reset, invited staff choosing a password, and the landing page for all email links |
 | `/jobs` | officer, admin | Pick a policy and a JD, rank students: score, matched/missing skills, verified resume quotes, failed rules with the policy/JD clause |
 | `/students` | officer, admin | Student list, parsed skills, 60-second signed link to the resume file |
 | `/upload` | officer, admin (recruiter: JD only) | Policy, JD and student forms; shows grounding warnings |

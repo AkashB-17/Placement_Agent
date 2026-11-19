@@ -1,0 +1,49 @@
+Company Name: CodePeak Solutions
+Website: www.codepeak.example.com
+Job Title: Backend Engineer
+Job Type: Full-time
+Experience: Freshers
+
+About the Company:
+CodePeak Solutions builds sophisticated inventory and warehouse management software for large-scale e-commerce retailers. Our platforms handle thousands of concurrent inventory updates every second, ensuring that stock levels are perfectly synchronized across multiple storefronts. We pride ourselves on engineering excellence, relying on clean architecture and test-driven development to maintain our large codebases.
+
+Role Overview & Responsibilities:
+The Backend Engineer will focus on building high-performance server-side applications. You will be responsible for creating robust APIs, designing efficient database schemas, and writing business logic that drives our core inventory engine. You will be heavily involved in code reviews and architecture discussions.
+
+* Design, develop, and maintain RESTful web services and microservices.
+* Optimize database queries to ensure millisecond response times under heavy load.
+* Implement secure authentication protocols for third-party API integrations.
+* Write comprehensive unit tests and participate in peer code reviews.
+* Troubleshoot production issues and resolve memory leaks or performance bottlenecks.
+* Document system architecture and API endpoints for frontend consumers.
+
+Required Skills:
+
+* Node.js
+* Express
+* MongoDB
+* REST APIs
+* JavaScript
+
+Preferred Skills:
+
+* Redis
+* Docker
+* TypeScript
+
+Eligibility Criteria:
+
+* Minimum CGPA: 7.5 minimum requirement.
+* Allowed Branches: CSE/IT.
+* Batch: graduating in 2027.
+* Must have no active backlogs.
+
+Compensation and Perks:
+
+* CTC: 9.5 LPA.
+* Location: Noida, Uttar Pradesh.
+* Annual wellness allowance, fully stocked pantry, and medical insurance.
+
+Application Details:
+Applications are to be submitted via the campus recruitment drive link. Candidates will face an online coding assessment emphasizing data structures, a pair-programming interview round, a technical architecture discussion, and a final managerial interview.
+Deadline: 30-11-2026.

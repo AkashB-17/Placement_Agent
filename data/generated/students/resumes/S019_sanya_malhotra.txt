@@ -1,0 +1,14 @@
+Sanya Malhotra
+B.Tech IT, 2023-2027
+
+SKILLS
+AWS, Linux, CI/CD pipelines
+
+PROJECTS
+Cloud Migration: Hosted web assets on AWS S3 and configured EC2 instances. Managed the server backend using Linux terminal commands. Built automated CI/CD pipelines to ensure code changes were instantly deployed to the staging environment without manual intervention.
+
+INTERNSHIPS
+Sysadmin Intern at NetSecure.
+
+HOBBIES
+Gardening, experimenting with Docker containers in my home lab.

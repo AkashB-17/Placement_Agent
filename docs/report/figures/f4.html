@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Figure 3.4</title>
+<style>
+  * { box-sizing:border-box; } body { margin:0; background:#fff; color:#1f2937; font-family:"Segoe UI", Arial, sans-serif; }
+  .fig { width:1100px; height:620px; position:relative; }
+  h1 { font-size:22px; margin:0; padding-top:26px; text-align:center; font-weight:600; }
+  .tbl { position:absolute; width:236px; border:2px solid #374151; border-radius:8px; background:#fff; font-size:13.5px; }
+  .hd { background:#e5e7eb; font-weight:700; padding:5px 10px; border-bottom:2px solid #374151; border-radius:6px 6px 0 0; font-size:15px; }
+  .c { padding:2px 10px; } .pk { font-weight:700; } .fk { color:#1d4ed8; }
+  svg { position:absolute; inset:0; }
+  .lbl { font-size:12px; fill:#4b5563; font-family:"Segoe UI", Arial, sans-serif; }
+  .legend { position:absolute; bottom:18px; left:40px; font-size:13px; color:#4b5563; }
+  h1 { visibility:hidden; } .fig { margin-top:-64px; }
+</style></head><body>
+<section class="fig">
+  <h1>Core database tables and relationships (PostgreSQL)</h1>
+  <svg viewBox="0 0 1100 620" width="1100" height="620">
+    <g stroke="#374151" stroke-width="2" fill="none">
+      <path d="M158 205 V 330"/>                       <!-- students -> preferences -->
+      <path d="M276 175 H 350 V 365 H 430"/>          <!-- students -> applications -->
+      <path d="M548 205 V 330"/>                       <!-- jds -> applications -->
+      <path d="M666 120 H 820"/>                       <!-- jds -> profiles (created_by) -->
+      <path d="M666 175 H 760 V 365 H 820"/>          <!-- jds -> score_cache -->
+      <path d="M430 505 H 276"/>                       <!-- applications -> notifications -->
+    </g>
+    <text class="lbl" x="166" y="275">student_id</text>
+    <text class="lbl" x="356" y="270">student_id</text>
+    <text class="lbl" x="556" y="275">jd_id</text>
+    <text class="lbl" x="700" y="112">created_by</text>
+    <text class="lbl" x="766" y="270">jd_id</text>
+    <text class="lbl" x="300" y="498">application_id</text>
+  </svg>
+  <div class="tbl" style="left:40px; top:80px"><div class="hd">students</div><div class="c pk">id (content hash, PK)</div><div class="c">name, email, branch, batch</div><div class="c">cgpa, active_backlogs, is_placed</div><div class="c">resume_text, parsed_json, resume_path</div></div>
+  <div class="tbl" style="left:430px; top:80px"><div class="hd">jds / policies</div><div class="c pk">id (content hash, PK)</div><div class="c">source_text</div><div class="c">requirements_json / rules_json</div><div class="c fk">created_by → profiles</div></div>
+  <div class="tbl" style="left:820px; top:80px"><div class="hd">profiles</div><div class="c pk">id (= Supabase auth user, PK)</div><div class="c">email</div><div class="c">role: student | officer | recruiter | admin</div></div>
+  <div class="tbl" style="left:40px; top:330px"><div class="hd">auto_apply_preferences</div><div class="c pk fk">student_id (PK, FK)</div><div class="c">enabled, min_score</div><div class="c">excluded_companies</div></div>
+  <div class="tbl" style="left:430px; top:330px"><div class="hd">applications</div><div class="c pk">id (PK)</div><div class="c fk">student_id → students</div><div class="c fk">jd_id → jds, policy_id → policies</div><div class="c">status, score, match_json</div><div class="c">resume_path, resume_sha (pin)</div><div class="c">release_at, decided_at</div><div class="c">UNIQUE (student_id, jd_id)</div></div>
+  <div class="tbl" style="left:820px; top:330px"><div class="hd">score_cache</div><div class="c pk">cache_key (PK)</div><div class="c fk">jd_id → jds, student_id → students</div><div class="c">model, breakdown_json</div></div>
+  <div class="tbl" style="left:40px; top:470px"><div class="hd">notifications</div><div class="c pk">id (PK)</div><div class="c fk">student_id, application_id</div><div class="c">kind, message, read_at</div></div>
+  <div class="legend">PK = primary key · blue = foreign key · Row-Level Security is enabled on every table; students are linked to their login by email.</div>
+</section>
+</body></html>

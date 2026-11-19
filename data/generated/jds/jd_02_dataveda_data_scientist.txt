@@ -1,0 +1,48 @@
+Company Name: DataVeda Analytics
+Website: analytics.dataveda.example.com
+Job Title: Data Scientist
+Job Type: Full-time
+Experience: Freshers
+
+About the Company:
+DataVeda Analytics is a premier data science consultancy firm helping Fortune 500 companies unlock the power of their data. We build cutting-edge predictive models, recommendation engines, and business intelligence dashboards. Our team is composed of top-tier mathematicians, statisticians, and software engineers working together to solve complex data challenges across the retail, finance, and healthcare sectors.
+
+Role Overview & Responsibilities:
+The Data Scientist role is tailored for analytical minds who love deriving insights from unstructured data. You will work on real-world datasets to build machine learning models that drive business decisions. You will be mentored by lead data scientists and given the opportunity to present your findings to clients.
+
+* Clean, process, and analyze large volumes of structured and unstructured data.
+* Build and train machine learning models for predictive analytics.
+* Create interactive data visualizations to explain model outputs to non-technical stakeholders.
+* Collaborate with data engineers to deploy models into production environments.
+* Keep up-to-date with the latest research in statistical modeling and machine learning.
+* Conduct A/B testing to measure the impact of algorithm changes.
+
+Required Skills:
+
+* Python
+* SQL
+* Machine Learning
+* Statistics
+
+Preferred Skills:
+
+* Power BI
+* NLP
+* Tableau
+
+Eligibility Criteria:
+
+* Minimum CGPA: 7.5 or equivalent.
+* Allowed Branches: CSE, ECE, AI-ML.
+* Batch: 2023-27 batch.
+* The candidate must have no active backlogs at the time of application.
+
+Compensation and Perks:
+
+* CTC: 12.0 LPA.
+* Location: Hyderabad, Telangana.
+* Relocation assistance and flexible working hours.
+
+Application Details:
+Students must submit their updated resume and a link to their GitHub profile showcasing data projects. The selection process includes an online coding and SQL assessment, a machine learning case study round, and a final cultural fit interview.
+Deadline: 15th Nov 2026.

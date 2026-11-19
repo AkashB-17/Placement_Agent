@@ -1,12 +1,13 @@
 "use client";
 
 import { CheckCircle2, FileSearch, Scale, Sparkles } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, type FormEvent } from "react";
 
 import { ErrorBox, Spinner } from "@/components/ui";
 import { homeFor, useAuth } from "@/lib/auth";
-import { supabaseConfigured } from "@/lib/supabase";
+import { friendlyAuthError, supabaseConfigured } from "@/lib/supabase";
 
 const POINTS = [
   { icon: Scale, title: "Rule-based eligibility", text: "CGPA, backlogs, branch and batch are checked by fixed rules, never guessed." },
@@ -33,7 +34,7 @@ export default function LoginPage() {
     e.preventDefault();
     setBusy(true);
     const message = await signIn(email.trim(), password);
-    setError(message);
+    setError(message ? friendlyAuthError(message) : null);
     if (message) setBusy(false); // on success the redirect above takes over
   }
 
@@ -79,7 +80,9 @@ export default function LoginPage() {
             <span className="text-lg font-semibold">Placement Portal</span>
           </div>
           <h2 className="text-2xl font-semibold tracking-tight">Sign in</h2>
-          <p className="mt-1 mb-8 text-sm text-slate-500">Officers, recruiters and admins are added by invitation.</p>
+          <p className="mt-1 mb-8 text-sm text-slate-500">
+            Students can <Link href="/signup" className="font-medium text-brand-700 hover:underline">create an account</Link>. Officers, recruiters and admins are added by invitation.
+          </p>
 
           {!supabaseConfigured && (
             <div className="mb-4">
@@ -94,7 +97,10 @@ export default function LoginPage() {
               <input id="email" type="email" className="input" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
             </div>
             <div>
-              <label className="label" htmlFor="password">Password</label>
+              <div className="flex items-baseline justify-between">
+                <label className="label" htmlFor="password">Password</label>
+                <Link href="/forgot-password" className="text-xs font-medium text-brand-700 hover:underline">Forgot password?</Link>
+              </div>
               <input id="password" type="password" className="input" autoComplete="current-password" required value={password} onChange={(e) => setPassword(e.target.value)} />
             </div>
             <ErrorBox message={error ?? profileError} />
@@ -103,6 +109,9 @@ export default function LoginPage() {
               {!ready ? "Loading…" : busy ? "Signing in…" : "Sign in"}
             </button>
           </form>
+          <p className="mt-8 text-center text-sm text-slate-500">
+            New student? <Link href="/signup" className="font-medium text-brand-700 hover:underline">Create an account</Link>
+          </p>
         </div>
       </section>
     </div>

@@ -1,0 +1,14 @@
+Arjun Das
+B.Tech Electronics & Comm., 2023-2027
+
+SKILLS
+Microcontrollers, C++
+
+PROJECTS
+Automated Rover: Interfaced ultrasonic sensors with 32-bit Microcontrollers to navigate obstacle courses. Wrote the entire control logic using object-oriented C++ to ensure modular and reusable code. 
+
+INTERNSHIPS
+Hardware Trainee at RoboCorp. I am currently learning RTOS concepts to handle multitasking in future projects.
+
+HOBBIES
+Drone flying, 3D printing.

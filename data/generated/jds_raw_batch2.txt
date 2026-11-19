@@ -1,0 +1,308 @@
+=== JD 09 | file: jd_09_qualitycraft_qa === Company Name: QualityCraft Systems Website: [www.qualitycraft.example.com](https://www.qualitycraft.example.com) Job Title: QA/Test Automation Engineer Job Type: Full-time Experience: Freshers
+About the Company: QualityCraft Systems is a globally recognized software testing and quality assurance firm. We specialize in providing end-to-end automation solutions for enterprise web and mobile applications. Our clients range from disruptive fintech startups to established healthcare providers, all of whom rely on our rigorous testing frameworks to ensure zero-defect releases. Our engineering teams operate in a highly dynamic, agile environment where quality is not just an afterthought but built into the core development lifecycle.
+Role Overview & Responsibilities: As a QA/Test Automation Engineer, you will be responsible for designing and implementing automated test scripts to validate software functionality, performance, and security. You will collaborate extensively with software developers and product managers to understand system requirements and translate them into robust test cases. Your goal is to minimize manual testing efforts while maximizing test coverage.
+
+* Develop, execute, and maintain automated test scripts for web applications.
+* Perform API testing to ensure reliable backend integrations and data consistency.
+* Identify, document, and track software defects using issue tracking systems.
+* Participate in sprint planning sessions to define acceptance criteria for new features.
+* Set up and maintain continuous testing pipelines in deployment environments.
+* Conduct regression testing before major product releases to ensure stability.
+
+Required Skills:
+
+* Selenium
+* Java
+* TestNG
+* API Testing
+* Git
+
+Preferred Skills:
+
+* Jenkins
+* Postman
+
+Eligibility Criteria:
+
+* Minimum CGPA: 7.0 and above.
+* Allowed Branches: CSE/IT.
+* Batch: graduating in 2027.
+* Candidates must have no active backlogs at the time of the online assessment.
+
+Compensation and Perks:
+
+* CTC: 7.5 LPA.
+* Location: Pune, Maharashtra.
+* Relocation bonus, flexible work hours, and comprehensive family health insurance.
+
+Application Details: Students must apply via the college placement office. The evaluation process includes an initial online aptitude test, a coding round focused on Java and basic algorithms, and a technical interview on automation frameworks. A final HR round will assess cultural fit. Deadline: 10 Nov 2026. === END JD 09 ===
+=== JD 10 | file: jd_10_queryresolve_techsupport === Company Name: QueryResolve Networks Website: support.queryresolve.example.com Job Title: Technical Support Engineer (SQL) Job Type: Full-time Experience: Freshers
+About the Company: QueryResolve Networks provides enterprise-grade technical support and infrastructure monitoring solutions for global telecom operators and cloud service providers. We act as the critical bridge between complex backend systems and end-user satisfaction. Our 24/7 operations command center in Hyderabad is equipped with state-of-the-art diagnostic tools, enabling our engineers to resolve critical database and network issues in real time.
+Role Overview & Responsibilities: The Technical Support Engineer will be the first line of defense for investigating and resolving complex data anomalies reported by our clients. You will write and execute database queries to extract logs, trace transaction failures, and correct data integrity issues. This role requires an analytical mindset, the ability to work under pressure, and exceptional communication abilities when dealing with frustrated clients.
+
+* Monitor incoming support tickets and categorize them based on severity and impact.
+* Write complex queries to extract and analyze data from relational databases.
+* Troubleshoot transaction failures and system bottlenecks using log analysis.
+* Communicate technical solutions to non-technical client stakeholders clearly and calmly.
+* Collaborate with backend development teams to escalate deep-rooted software bugs.
+* Update internal knowledge base articles with common troubleshooting steps and resolutions.
+
+Required Skills:
+
+* SQL
+* Customer communication
+* Troubleshooting
+* Ticketing systems
+
+Preferred Skills:
+
+* Linux
+* Bash
+* ITIL framework
+
+Eligibility Criteria:
+
+* Minimum CGPA: No cut-off; we value problem-solving skills over grades.
+* Allowed Branches: Any circuit branch.
+* Batch: 2023-27 batch.
+* Willingness to work in rotating shifts, including night shifts.
+
+Compensation and Perks:
+
+* CTC: 5.5 LPA (plus attractive shift allowances).
+* Location: Hyderabad, Telangana.
+* Free transportation for night shifts, on-site gym, and meal cards.
+
+Application Details: Interested candidates should register directly on the company career portal. The recruitment drive will feature a group discussion to evaluate communication skills, a hands-on database querying test, and a personal interview focusing on situational judgment and technical troubleshooting. Deadline: 2026-11-15. === END JD 10 ===
+=== JD 11 | file: jd_11_apexstrategy_ba === Company Name: Apex Strategy Partners Website: [www.apexstrategy.example.com](https://www.apexstrategy.example.com) Job Title: Business Analyst Job Type: Full-time Experience: Freshers
+About the Company: Apex Strategy Partners is a premier management and technology consulting firm. We help traditional enterprises digitize their operations, optimize supply chains, and improve customer retention through data-driven strategies. Our consultants work closely with C-level executives to map out business transformations. We foster a culture of intellectual curiosity, rigorous analysis, and collaborative problem-solving.
+Role Overview & Responsibilities: As a Business Analyst, you will act as the liaison between our technical execution teams and our corporate clients. You will gather business requirements, analyze large datasets to identify market trends, and create detailed project roadmaps. You will be expected to balance technical feasibility with business viability, ensuring that the software solutions we deliver drive actual business value.
+
+* Conduct stakeholder meetings to gather and document business requirements.
+* Analyze operational data using spreadsheets and basic querying languages to find inefficiencies.
+* Create process flow diagrams and business requirement documents (BRDs).
+* Manage conflicting priorities and negotiate project scopes with client representatives.
+* Track project progress and report on key performance indicators to senior management.
+* Assist in organizing user acceptance testing (UAT) for newly developed software modules.
+
+Required Skills:
+
+* SQL
+* Excel
+* Stakeholder management
+* Analytical thinking
+* Presentation skills
+
+Preferred Skills:
+
+* Power BI
+* JIRA
+
+Eligibility Criteria:
+
+* Minimum CGPA: 6.5 minimum.
+* Allowed Branches: all branches.
+* Batch: Class of 2027.
+* Excellent command of both written and spoken English is mandatory.
+
+Compensation and Perks:
+
+* CTC: 8.0 LPA.
+* Location: Gurugram, Haryana.
+* Fast-track promotion cycles, corporate travel benefits, and continuous learning budgets.
+
+Application Details: Apply via the university training and placement cell. The selection pipeline consists of a resume shortlisting phase, an online cognitive and analytical reasoning test, a case-study presentation round, and a final partner interview. Deadline: 20 Nov 2026. === END JD 11 ===
+=== JD 12 | file: jd_12_visionforge_pm === Company Name: VisionForge Innovations Website: products.visionforge.example.com Job Title: Product Management Trainee Job Type: Full-time Experience: Freshers
+About the Company: VisionForge Innovations is a consumer tech startup building the next generation of hyper-local delivery applications. We focus on seamless user experiences and lightning-fast logistics algorithms. Since our inception, we have expanded to over forty cities, driven by our relentless focus on user feedback and iterative product development. We are looking for product enthusiasts who want to build applications that millions of users touch every day.
+Role Overview & Responsibilities: The Product Management Trainee will work under the guidance of Senior Product Managers to shape the roadmap of our consumer-facing applications. You will learn how to balance user needs, business goals, and engineering constraints. This is a highly cross-functional role where you will interact with design, marketing, engineering, and customer support teams on a daily basis.
+
+* Assist in writing product requirement documents and user stories.
+* Analyze user behavior data to identify friction points in the app onboarding journey.
+* Conduct competitor research and map out feature gaps in the market.
+* Coordinate with UI/UX designers to create intuitive application wireframes.
+* Communicate feature requirements clearly to the engineering team during sprint planning.
+* Monitor app store reviews and social media feedback to inform future updates.
+
+Required Skills:
+
+* Google Analytics
+* Excel
+* Wireframing
+* Stakeholder communication
+
+Preferred Skills:
+
+* Figma
+* JIRA
+* SQL
+
+Eligibility Criteria:
+
+* Minimum CGPA: None. We care about your product sense and portfolio.
+* Allowed Branches: B.Tech all streams.
+* Batch: 2026 batch.
+* Candidates with a portfolio of side projects or product teardowns will be highly preferred.
+
+Compensation and Perks:
+
+* CTC: 11.0 LPA.
+* Location: Bengaluru, Karnataka.
+* Equity grants, free daily lunches, and a casual, pet-friendly workspace.
+
+Application Details: Candidates must submit their application form along with a 2-page product teardown of any popular consumer application. Shortlisted candidates will be invited for a product design interview, a guesstimate and analytics round, and a behavioral interview with the founders. Deadline: 21st November 2026. === END JD 12 ===
+=== JD 13 | file: jd_13_nexusdata_ds === Company Name: NexusData Analytics Website: [www.nexusdata.example.com](https://www.nexusdata.example.com) Job Title: Data Scientist Job Type: Full-time Experience: Freshers
+About the Company: NexusData Analytics operates at the bleeding edge of artificial intelligence and big data processing. We build proprietary analytical engines for the global financial sector, focusing on fraud detection, credit risk scoring, and algorithmic trading models. Our infrastructure processes petabytes of streaming data, requiring models that are not only accurate but highly performant.
+Role Overview & Responsibilities: As a Data Scientist, you will dive deep into massive datasets to uncover hidden patterns and build predictive models. You will be responsible for the entire model lifecycle, from data extraction and cleaning to algorithmic design and validation. You will work alongside data engineers to ensure your models scale efficiently in a production environment.
+
+* Write robust scripts to clean, transform, and normalize unstructured data.
+* Develop statistical models and machine learning algorithms for risk assessment.
+* Perform rigorous back-testing of algorithmic models using historical financial data.
+* Create data visualizations to present complex mathematical findings to business leaders.
+* Monitor model drift in production and retrain algorithms as necessary.
+* Collaborate with the legal team to ensure all data processing complies with privacy regulations.
+
+Required Skills:
+
+* Python
+* SQL
+* Machine Learning
+* Apache Spark
+* AWS
+
+Preferred Skills:
+
+* Tableau
+* Snowflake
+
+Eligibility Criteria:
+
+* Minimum CGPA: 8.0 strictly.
+* Allowed Branches: Computer Science & Engineering.
+* We require candidates to have no active backlogs.
+* Strong background in probability, statistics, and linear algebra.
+
+Compensation and Perks:
+
+* CTC: 14.5 LPA.
+* Location: Mumbai, Maharashtra.
+* Performance-based annual bonuses, top-tier health insurance, and hybrid work flexibility.
+
+Application Details: Please apply through the common placement portal. The interview process comprises an advanced online coding and SQL test, a take-home data modeling assignment, a technical presentation round, and a final discussion with the Head of Data Science. Deadline: 10/12/2026. === END JD 13 ===
+=== JD 14 | file: jd_14_skyops_cloud === Company Name: SkyOps Technologies Website: cloud.skyops.example.com Job Title: Cloud/DevOps Engineer Job Type: Full-time Experience: Freshers
+About the Company: SkyOps Technologies provides managed cloud hosting and automated deployment solutions for the gaming industry. Multiplayer game servers require immense scalability, ultra-low latency, and absolute reliability. We build the hidden infrastructure that keeps millions of gamers connected seamlessly. We are a team of Linux enthusiasts and automation advocates who hate doing the same manual task twice.
+Role Overview & Responsibilities: We are hiring a Cloud/DevOps Engineer to help manage and scale our massive global server fleets. You will spend your days configuring virtual machines, writing shell scripts, and ensuring our continuous integration systems are running flawlessly. You will learn how to design architectures that can survive massive traffic spikes during major game launches.
+
+* Provision and manage cloud resources using infrastructure-as-code principles.
+* Write shell scripts to automate repetitive system administration tasks.
+* Manage source code repositories and configure automated build and test pipelines.
+* Implement robust monitoring and alerting systems to detect server degradation.
+* Perform regular security patching and system updates across server clusters.
+* Respond to critical infrastructure alerts and document root cause analyses.
+
+Required Skills:
+
+* Linux
+* Bash
+* Git
+* AWS
+* Python
+
+Preferred Skills:
+
+* Terraform
+* Docker
+* Ansible
+
+Eligibility Criteria:
+
+* Minimum CGPA: 6.0 overall.
+* Allowed Branches: CSE, ECE, EEE.
+* Batch: 2027.
+* Foundational knowledge of computer networking (TCP/IP, DNS, Load Balancing) is expected.
+
+Compensation and Perks:
+
+* CTC: 7.0 LPA.
+* Location: Chennai, Tamil Nadu.
+* Free gaming console on joining, internet reimbursement, and comprehensive technical training.
+
+Application Details: Register on the university portal to apply. The hiring process will involve an online objective test on OS and Networking, a live Linux debugging interview, a system design round, and an HR interaction. Deadline: December 5, 2026. === END JD 14 ===
+=== JD 15 | file: jd_15_codepeak_backend === Company Name: CodePeak Solutions Website: [www.codepeak.example.com](https://www.codepeak.example.com) Job Title: Backend Engineer Job Type: Full-time Experience: Freshers
+About the Company: CodePeak Solutions builds sophisticated inventory and warehouse management software for large-scale e-commerce retailers. Our platforms handle thousands of concurrent inventory updates every second, ensuring that stock levels are perfectly synchronized across multiple storefronts. We pride ourselves on engineering excellence, relying on clean architecture and test-driven development to maintain our large codebases.
+Role Overview & Responsibilities: The Backend Engineer will focus on building high-performance server-side applications. You will be responsible for creating robust APIs, designing efficient database schemas, and writing business logic that drives our core inventory engine. You will be heavily involved in code reviews and architecture discussions.
+
+* Design, develop, and maintain RESTful web services and microservices.
+* Optimize database queries to ensure millisecond response times under heavy load.
+* Implement secure authentication protocols for third-party API integrations.
+* Write comprehensive unit tests and participate in peer code reviews.
+* Troubleshoot production issues and resolve memory leaks or performance bottlenecks.
+* Document system architecture and API endpoints for frontend consumers.
+
+Required Skills:
+
+* Node.js
+* Express
+* MongoDB
+* REST APIs
+* JavaScript
+
+Preferred Skills:
+
+* Redis
+* Docker
+* TypeScript
+
+Eligibility Criteria:
+
+* Minimum CGPA: 7.5 minimum requirement.
+* Allowed Branches: CSE/IT.
+* Batch: graduating in 2027.
+* Must have no active backlogs.
+
+Compensation and Perks:
+
+* CTC: 9.5 LPA.
+* Location: Noida, Uttar Pradesh.
+* Annual wellness allowance, fully stocked pantry, and medical insurance.
+
+Application Details: Applications are to be submitted via the campus recruitment drive link. Candidates will face an online coding assessment emphasizing data structures, a pair-programming interview round, a technical architecture discussion, and a final managerial interview. Deadline: 30-11-2026. === END JD 15 ===
+=== JD 16 | file: jd_16_siliconedge_embedded === Company Name: SiliconEdge Micro Website: careers.siliconedge.example.com Job Title: Embedded/Firmware Engineer Job Type: Full-time Experience: Freshers
+About the Company: SiliconEdge Micro is a pioneer in the design and development of application-specific integrated circuits (ASICs) and embedded systems for the medical device industry. Our firmware controls life-saving equipment, meaning our engineering standards are incredibly strict. We operate in a highly regulated environment where precision, safety, and reliability are paramount.
+Role Overview & Responsibilities: As an Embedded/Firmware Engineer, you will develop the low-level code that interfaces directly with custom hardware. You will write code for microcontrollers, manage memory constraints, and ensure real-time responsiveness. This role demands a meticulous approach to programming and a deep understanding of hardware schematics.
+
+* Write fail-safe C code for resource-constrained microcontrollers.
+* Develop bootloaders and over-the-air (OTA) update mechanisms for medical devices.
+* Interface microcontrollers with various analog and digital sensors via SPI/I2C/UART.
+* Conduct rigorous static analysis and modular testing to ensure code safety compliance.
+* Work closely with hardware engineers to bring up new prototype boards.
+* Optimize firmware for minimal power consumption in portable devices.
+
+Required Skills:
+
+* Embedded C
+* Microcontrollers
+* RTOS
+* UART/SPI/I2C
+* Hardware debugging
+
+Preferred Skills:
+
+* C++
+* Python
+* MISRA C standards
+
+Eligibility Criteria:
+
+* Minimum CGPA: 8.5 threshold.
+* Allowed Branches: Electronics and Communication.
+* Batch: 2027.
+* Familiarity with reading electronic schematics and using oscilloscopes.
+
+Compensation and Perks:
+
+* CTC: 10.0 LPA.
+* Location: Ahmedabad, Gujarat.
+* Relocation assistance, ongoing technical certifications, and subsidized cafeteria.
+
+Application Details: Students should apply on the placement portal. The evaluation involves a written test covering digital electronics and C programming, a practical hardware debugging session, a technical interview on microcontroller architecture, and a final HR round. Deadline: rolling basis. === END JD 16 ===
+=== ANSWER KEY === [ { "file": "jd_09_qualitycraft_qa", "company": "QualityCraft Systems", "role": "QA/Test Automation Engineer", "required_skills": [ "Selenium", "Java", "TestNG", "API Testing", "Git" ], "preferred_skills": [ "Jenkins", "Postman" ], "min_cgpa": 7.0, "allowed_branches": [ "CSE/IT" ], "allowed_batches": [ "2027" ], "no_active_backlogs": true, "deadline_iso": "2026-11-10", "deadline_as_written": "10 Nov 2026", "notes": "deadline already passed, has no active backlogs condition" }, { "file": "jd_10_queryresolve_techsupport", "company": "QueryResolve Networks", "role": "Technical Support Engineer (SQL)", "required_skills": [ "SQL", "Customer communication", "Troubleshooting", "Ticketing systems" ], "preferred_skills": [ "Linux", "Bash", "ITIL framework" ], "min_cgpa": null, "allowed_branches": [ "Any circuit branch" ], "allowed_batches": [ "2027" ], "no_active_backlogs": false, "deadline_iso": "2026-11-15", "deadline_as_written": "2026-11-15", "notes": "no cgpa stated, soft skills included, deadline passed" }, { "file": "jd_11_apexstrategy_ba", "company": "Apex Strategy Partners", "role": "Business Analyst", "required_skills": [ "SQL", "Excel", "Stakeholder management", "Analytical thinking", "Presentation skills" ], "preferred_skills": [ "Power BI", "JIRA" ], "min_cgpa": 6.5, "allowed_branches": [ "all branches" ], "allowed_batches": [ "2027" ], "no_active_backlogs": false, "deadline_iso": "2026-11-20", "deadline_as_written": "20 Nov 2026", "notes": "deadline within next 3 days, soft skills heavily featured" }, { "file": "jd_12_visionforge_pm", "company": "VisionForge Innovations", "role": "Product Management Trainee", "required_skills": [ "Google Analytics", "Excel", "Wireframing", "Stakeholder communication" ], "preferred_skills": [ "Figma", "JIRA", "SQL" ], "min_cgpa": null, "allowed_branches": [ "B.Tech all streams" ], "allowed_batches": [ "2026" ], "no_active_backlogs": false, "deadline_iso": "2026-11-21", "deadline_as_written": "21st November 2026", "notes": "no cgpa stated, 2026 batch edge case, deadline within next 3 days" }, { "file": "jd_13_nexusdata_ds", "company": "NexusData Analytics", "role": "Data Scientist", "required_skills": [ "Python", "SQL", "Machine Learning", "Apache Spark", "AWS" ], "preferred_skills": [ "Tableau", "Snowflake" ], "min_cgpa": 8.0, "allowed_branches": [ "Computer Science & Engineering" ], "allowed_batches": [], "no_active_backlogs": true, "deadline_iso": "2026-12-10", "deadline_as_written": "10/12/2026", "notes": "no batch stated, deadline 1-4 weeks out" }, { "file": "jd_14_skyops_cloud", "company": "SkyOps Technologies", "role": "Cloud/DevOps Engineer", "required_skills": [ "Linux", "Bash", "Git", "AWS", "Python" ], "preferred_skills": [ "Terraform", "Docker", "Ansible" ], "min_cgpa": 6.0, "allowed_branches": [ "CSE", "ECE", "EEE" ], "allowed_batches": [ "2027" ], "no_active_backlogs": false, "deadline_iso": "2026-12-05", "deadline_as_written": "December 5, 2026", "notes": "deadline 1-4 weeks out" }, { "file": "jd_15_codepeak_backend", "company": "CodePeak Solutions", "role": "Backend Engineer", "required_skills": [ "Node.js", "Express", "MongoDB", "REST APIs", "JavaScript" ], "preferred_skills": [ "Redis", "Docker", "TypeScript" ], "min_cgpa": 7.5, "allowed_branches": [ "CSE/IT" ], "allowed_batches": [ "2027" ], "no_active_backlogs": true, "deadline_iso": "2026-11-30", "deadline_as_written": "30-11-2026", "notes": "deadline 1-4 weeks out" }, { "file": "jd_16_siliconedge_embedded", "company": "SiliconEdge Micro", "role": "Embedded/Firmware Engineer", "required_skills": [ "Embedded C", "Microcontrollers", "RTOS", "UART/SPI/I2C", "Hardware debugging" ], "preferred_skills": [ "C++", "Python", "MISRA C standards" ], "min_cgpa": 8.5, "allowed_branches": [ "Electronics and Communication" ], "allowed_batches": [ "2027" ], "no_active_backlogs": false, "deadline_iso": null, "deadline_as_written": "rolling basis", "notes": "rolling deadline, no specific date" } ] === END ANSWER KEY ===

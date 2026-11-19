@@ -1,0 +1,14 @@
+Aditya Menon
+B.Tech CSE, 2023-2027
+
+SKILLS
+Python, SQL, Machine Learning
+
+PROJECTS
+Predictive Maintenance Model: Used Python to clean industrial sensor data and performed feature engineering. Aggregated historical logs from the data warehouse using SQL. Trained a Random Forest Machine Learning model to predict equipment failure with 89% accuracy.
+
+INTERNSHIPS
+Data Intern: Assisted in dashboard creation and data cleaning.
+
+HOBBIES
+Reading about historical events, learning about theoretical Statistics, playing football.

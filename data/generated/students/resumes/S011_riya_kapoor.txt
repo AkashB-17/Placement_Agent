@@ -1,0 +1,14 @@
+Riya Kapoor
+B.Tech Information Technology, 2024-2028
+
+SKILLS
+Docker, Linux, Python
+
+PROJECTS
+Microservice Deployment: Containerized an e-commerce application using Docker for isolated testing. Deployed the instances onto a remote Linux server, managing permissions and firewall settings. Wrote automation scripts in Python to handle server backups. The entire infrastructure was hosted on Amazon's cloud platform to ensure high availability.
+
+ACHIEVEMENTS
+Won 1st place in the intra-college coding contest.
+
+HOBBIES
+Blogging, swimming.

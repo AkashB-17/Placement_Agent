@@ -1,0 +1,14 @@
+Neha Gupta
+B.Tech Information Technology, 2022-2026
+
+SKILLS
+Network Security, Penetration Testing, Linux
+
+PROJECTS
+Vulnerability Scanner: Implemented Network Security protocols on a simulated local network to detect intrusions. Conducted thorough Penetration Testing on a mock e-commerce web application, identifying SQL injection and XSS vulnerabilities. Administered the entire environment using a robust Linux distro (Kali).
+
+CERTIFICATIONS
+Cybersecurity Foundations. I am currently learning Wireshark to improve my packet analysis skills.
+
+HOBBIES
+Badminton, participating in online CTF competitions.

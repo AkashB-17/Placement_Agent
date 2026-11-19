@@ -1,0 +1,47 @@
+Company Name: CoreTech Systems
+Website: www.coretechsystems.example.com
+Job Title: Embedded/Firmware Engineer
+Job Type: Full-time
+Experience: Freshers
+
+About the Company:
+CoreTech Systems is an industry leader in manufacturing smart hardware solutions and IoT devices. We design custom microcontrollers and embedded systems for automotive, consumer electronics, and industrial automation. Our R&D center in Pune is known for its state-of-the-art labs and a culture of hardware innovation. We build the brains behind the machines of tomorrow.
+
+Role Overview & Responsibilities:
+We are hiring an Embedded/Firmware Engineer to design and develop low-level software for our next-generation microcontrollers. You will be working at the intersection of hardware and software, bringing silicon to life. This role requires deep knowledge of computer architecture and real-time processing.
+
+* Write efficient and reliable firmware for 32-bit and 64-bit microcontrollers.
+* Debug hardware-software integration issues using oscilloscopes and logic analyzers.
+* Develop device drivers for various sensors and communication modules.
+* Optimize power consumption for battery-operated IoT devices.
+* Participate in schematic reviews and provide software-side hardware requirements.
+* Maintain version control for all firmware builds and releases.
+
+Required Skills:
+
+* Embedded C
+* Microcontrollers
+* RTOS
+* C++
+
+Preferred Skills:
+
+* IoT protocols (MQTT, CoAP)
+* Hardware debugging
+
+Eligibility Criteria:
+
+* Minimum CGPA: No strict cut-off; we prioritize practical hardware knowledge.
+* Allowed Branches: Electronics and Communication.
+* Batch: graduating in 2027.
+* Excellent understanding of digital electronics is required.
+
+Compensation and Perks:
+
+* CTC: 7.0 LPA.
+* Location: Pune, Maharashtra.
+* Access to advanced hardware prototyping labs and annual tech conference sponsorships.
+
+Application Details:
+To apply, please fill out the placement application form. Candidates will be tested on their knowledge of C programming, microcontroller architecture, and digital logic design. The interview process includes a written technical test, a hands-on hardware debugging interview, and an HR round.
+Deadline: 2026-11-20.

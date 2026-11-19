@@ -4,7 +4,7 @@ import type { Session } from "@supabase/supabase-js";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 
 import { api, ApiError } from "./api";
 import { supabase } from "./supabase";
@@ -46,13 +46,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  // Re-read the profile whenever the signed-in *user* changes, whatever the event: a normal
+  // sign-in, an email-confirmation link, an invite link or a password-reset link
+  // (PASSWORD_RECOVERY). Token refreshes keep the same user and only update the session.
+  const userIdRef = useRef<string | null | undefined>(undefined);
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => loadProfile(data.session));
-    const { data: listener } = supabase.auth.onAuthStateChange((event, next) => {
-      // Token refreshes don't change who the user is; only re-read the profile on sign-in/out.
-      if (event === "SIGNED_IN" || event === "SIGNED_OUT") loadProfile(next);
-      else setSession(next);
-    });
+    const handle = (next: Session | null) => {
+      const nextId = next?.user.id ?? null;
+      if (nextId !== userIdRef.current) {
+        userIdRef.current = nextId;
+        void loadProfile(next);
+      } else {
+        setSession(next);
+      }
+    };
+    supabase.auth.getSession().then(({ data }) => handle(data.session));
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, next) => handle(next));
     return () => listener.subscription.unsubscribe();
   }, [loadProfile]);
 

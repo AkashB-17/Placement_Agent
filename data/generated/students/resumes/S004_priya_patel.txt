@@ -1,0 +1,11 @@
+Priya Patel
+B.Tech Electronics & Comm., 2027
+
+SKILLS
+Embedded C, Microcontrollers, RTOS
+
+PROJECTS
+Smart IoT Sensor: Programmed Embedded C on ARM-based Microcontrollers for temperature sensing. Integrated an RTOS to manage multithreaded task scheduling effectively. I have no prior experience with C++ as I focus entirely on low-level C programming.
+
+HOBBIES
+Reading.

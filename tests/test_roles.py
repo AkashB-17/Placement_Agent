@@ -132,6 +132,32 @@ def test_admin_invite_creates_user_and_sets_role(client, tmp_path, monkeypatch) 
     assert get_profile("22222222-2222-2222-2222-222222222222")["role"] == "officer"
 
 
+@pytest.mark.parametrize(
+    ("origin", "expected_redirect"),
+    [
+        ("http://localhost:3000", "http://localhost:3000/auth/callback?next=set-password"),
+        ("https://evil.example", None),  # not an allowed origin: never put it in an email
+        (None, None),
+    ],
+)
+def test_invite_link_lands_on_set_password_only_for_allowed_origins(
+    client, tmp_path, monkeypatch, origin, expected_redirect
+) -> None:
+    set_settings(make_test_settings(tmp_path, supabase_url="https://p.supabase.co", supabase_secret_key="sb_secret_test"))
+    seen = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen["redirect_to"] = request.url.params.get("redirect_to")
+        upsert_profile("55555555-5555-5555-5555-555555555555", "rec@example.com")
+        return httpx.Response(200, json={"id": "55555555-5555-5555-5555-555555555555"})
+
+    monkeypatch.setattr(supabase_admin, "_http_client", lambda: httpx.Client(transport=httpx.MockTransport(handler)))
+    headers = {"Origin": origin} if origin else {}
+    response = client.post("/admin/invite", json={"email": "rec@example.com", "role": "recruiter"}, headers=headers)
+    assert response.status_code == 200
+    assert seen["redirect_to"] == expected_redirect
+
+
 def test_invite_rejects_unknown_role(client) -> None:
     assert client.post("/admin/invite", json={"email": "a@b.c", "role": "superuser"}).status_code == 422
 

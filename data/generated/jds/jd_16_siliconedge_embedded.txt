@@ -1,0 +1,49 @@
+Company Name: SiliconEdge Micro
+Website: careers.siliconedge.example.com
+Job Title: Embedded/Firmware Engineer
+Job Type: Full-time
+Experience: Freshers
+
+About the Company:
+SiliconEdge Micro is a pioneer in the design and development of application-specific integrated circuits (ASICs) and embedded systems for the medical device industry. Our firmware controls life-saving equipment, meaning our engineering standards are incredibly strict. We operate in a highly regulated environment where precision, safety, and reliability are paramount.
+
+Role Overview & Responsibilities:
+As an Embedded/Firmware Engineer, you will develop the low-level code that interfaces directly with custom hardware. You will write code for microcontrollers, manage memory constraints, and ensure real-time responsiveness. This role demands a meticulous approach to programming and a deep understanding of hardware schematics.
+
+* Write fail-safe C code for resource-constrained microcontrollers.
+* Develop bootloaders and over-the-air (OTA) update mechanisms for medical devices.
+* Interface microcontrollers with various analog and digital sensors via SPI/I2C/UART.
+* Conduct rigorous static analysis and modular testing to ensure code safety compliance.
+* Work closely with hardware engineers to bring up new prototype boards.
+* Optimize firmware for minimal power consumption in portable devices.
+
+Required Skills:
+
+* Embedded C
+* Microcontrollers
+* RTOS
+* UART/SPI/I2C
+* Hardware debugging
+
+Preferred Skills:
+
+* C++
+* Python
+* MISRA C standards
+
+Eligibility Criteria:
+
+* Minimum CGPA: 8.5 threshold.
+* Allowed Branches: Electronics and Communication.
+* Batch: 2027.
+* Familiarity with reading electronic schematics and using oscilloscopes.
+
+Compensation and Perks:
+
+* CTC: 10.0 LPA.
+* Location: Ahmedabad, Gujarat.
+* Relocation assistance, ongoing technical certifications, and subsidized cafeteria.
+
+Application Details:
+Students should apply on the placement portal. The evaluation involves a written test covering digital electronics and C programming, a practical hardware debugging session, a technical interview on microcontroller architecture, and a final HR round.
+Deadline: rolling basis.

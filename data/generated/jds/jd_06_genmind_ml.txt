@@ -1,0 +1,48 @@
+Company Name: GenMind AI
+Website: www.genmind.example.com
+Job Title: ML/GenAI Engineer
+Job Type: Full-time
+Experience: Freshers
+
+About the Company:
+GenMind AI is an AI research and product company focused on building generative models for content creation and workflow automation. Our flagship product is an AI-powered writing assistant used by millions worldwide. We are pushing the boundaries of what is possible with large language models, computer vision, and multimodal AI architectures in a highly collaborative and experimental environment.
+
+Role Overview & Responsibilities:
+As an ML/GenAI Engineer, you will work on fine-tuning and deploying state-of-the-art language models. You will be responsible for evaluating model performance, optimizing inference latency, and building prompt pipelines. You will collaborate closely with software engineers to integrate AI capabilities into our consumer-facing applications.
+
+* Fine-tune open-source large language models on proprietary datasets.
+* Design and test complex prompt engineering strategies for reliable AI outputs.
+* Build evaluation frameworks to measure model accuracy and detect hallucinations.
+* Optimize ML models for faster inference and lower compute costs.
+* Develop API endpoints for internal AI services.
+* Read and implement ideas from the latest AI research papers.
+
+Required Skills:
+
+* Python
+* PyTorch
+* Large Language Models
+* Prompt Engineering
+
+Preferred Skills:
+
+* LangChain
+* Docker
+* HuggingFace
+
+Eligibility Criteria:
+
+* Minimum CGPA: 8.5 strictly.
+* Allowed Branches: Computer Science & Engineering.
+* We require candidates with no active backlogs.
+* Strong foundation in linear algebra, calculus, and probability.
+
+Compensation and Perks:
+
+* CTC: 16.0 LPA.
+* Location: Remote / Bengaluru, Karnataka.
+* Stock options, home office setup allowance, and unlimited paid time off.
+
+Application Details:
+Please submit your resume along with links to any AI research projects or relevant GitHub repositories. Candidates will go through a take-home ML coding assignment, followed by a technical deep-dive interview with our lead researchers and an engineering management round.
+Deadline: 21/11/2026.

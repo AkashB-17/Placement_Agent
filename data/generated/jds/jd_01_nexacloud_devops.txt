@@ -1,0 +1,48 @@
+Company Name: NexaCloud Solutions
+Website: www.nexacloud.example.com
+Job Title: Cloud/DevOps Engineer
+Job Type: Full-time
+Experience: Freshers
+
+About the Company:
+NexaCloud Solutions is a rapidly growing technology startup specializing in scalable cloud infrastructure and enterprise deployment strategies. We partner with global clients to transition their legacy systems into robust, cloud-native environments. Our engineering culture promotes continuous learning, agile methodologies, and automation at every layer. We are looking for passionate individuals who want to build the future of cloud computing.
+
+Role Overview & Responsibilities:
+As a Cloud/DevOps Engineer, you will be an integral part of our infrastructure team. You will work closely with senior engineers to automate deployment pipelines, monitor system health, and troubleshoot production issues. Your daily tasks will include writing automation scripts, configuring cloud services, and participating in architecture discussions.
+
+* Assist in the design and maintenance of CI/CD pipelines.
+* Monitor cloud infrastructure usage and optimize for cost and performance.
+* Write infrastructure-as-code scripts for automated provisioning.
+* Collaborate with development teams to ensure smooth code deployments.
+* Participate in on-call rotations and resolve infrastructure alerts.
+* Document system configurations and operational procedures.
+
+Required Skills:
+
+* AWS
+* Docker
+* Linux
+* CI/CD pipelines
+* Python
+
+Preferred Skills:
+
+* Kubernetes
+* Terraform
+
+Eligibility Criteria:
+
+* Minimum CGPA: 7.0 and above in the current degree.
+* Allowed Branches: B.Tech CSE/IT.
+* Batch: Class of 2027.
+* Applicants must be willing to relocate and work from the office.
+
+Compensation and Perks:
+
+* CTC: 8.5 LPA (including base salary, performance bonus, and joining bonus).
+* Location: Bengaluru, Karnataka.
+* Comprehensive health insurance and free cafeteria access.
+
+Application Details:
+Interested students must apply through the university placement portal. Shortlisted candidates will be invited for an online aptitude test, followed by two rounds of technical interviews and an HR discussion.
+Deadline: November 25, 2026.

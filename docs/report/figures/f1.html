@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Report figures</title>
+<style>
+  :root { --ink:#1f2937; --muted:#4b5563; --line:#374151; --b1:#eef2ff; --b2:#ecfdf5; --b3:#fff7ed; --b4:#f1f5f9; --red:#fee2e2; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:#fff; color:var(--ink); font-family: "Segoe UI", Arial, sans-serif; }
+  .fig { display:block !important; width:1100px; height:var(--h,620px); padding:26px 34px; display:none; position:relative; }
+  .fig.on { display:block; }
+  h1 { font-size:22px; margin:0 0 16px; text-align:center; font-weight:600; }
+  .box { border:2px solid var(--line); border-radius:10px; padding:10px 14px; background:#fff; }
+  .small { font-size:14px; color:var(--muted); line-height:1.35; }
+  .t { font-weight:700; font-size:17px; margin-bottom:4px; }
+  /* Fig 1: layers */
+  .layer { display:grid; grid-template-columns:190px 1fr; align-items:stretch; margin-bottom:12px; }
+  .layer .name { display:flex; align-items:center; justify-content:center; font-weight:700; font-size:18px; border:2px solid var(--line); border-right:none; border-radius:10px 0 0 10px; }
+  .layer .body { border:2px solid var(--line); border-radius:0 10px 10px 0; padding:10px 14px; display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+  .chip { border:1.5px solid #6b7280; border-radius:8px; padding:6px 10px; font-size:15px; background:#fff; }
+  .arrow-v { text-align:center; font-size:15px; color:var(--muted); margin:-6px 0 6px; }
+  /* Fig 2: pipeline */
+  .row { display:flex; align-items:center; gap:10px; }
+  .stage { width:170px; min-height:96px; text-align:center; }
+  .arr { font-size:26px; color:var(--line); }
+  .tag { display:inline-block; font-size:12px; font-weight:700; padding:2px 8px; border-radius:999px; margin-bottom:6px; }
+  .code { background:#e0e7ff; } .llm { background:#fef3c7; } .rag { background:#dcfce7; }
+  /* Fig 3: states */
+  .state { position:absolute; width:230px; text-align:center; padding:16px; border-radius:14px; border:2.5px solid var(--line); font-size:16px; }
+  svg { position:absolute; inset:0; pointer-events:none; }
+  /* Fig 4: ER */
+  .tbl { position:absolute; width:236px; border:2px solid var(--line); border-radius:8px; background:#fff; font-size:13.5px; }
+  .tbl .hd { background:#e5e7eb; font-weight:700; padding:5px 10px; border-bottom:2px solid var(--line); border-radius:6px 6px 0 0; font-size:15px; }
+  .tbl .c { padding:2px 10px; } .pk { font-weight:700; } .fk { color:#1d4ed8; }
+  .legend { position:absolute; bottom:18px; left:34px; font-size:13px; color:var(--muted); }
+  h1 { display:none !important; }
+</style>
+</head>
+<body>
+<section class="fig" id="f1" style="--h:700px">
+  <h1>Four-layer architecture of the Placement Agent</h1>
+  <div class="layer"><div class="name" style="background:var(--b1)">Frontend</div>
+    <div class="body"><span class="chip">Next.js 16 + React</span><span class="chip">Role-based pages: Student · Officer · Recruiter · Admin</span><span class="chip">Supabase Auth sign-in</span><span class="chip">Hosted on Vercel</span></div></div>
+  <div class="arrow-v">▼ HTTPS + signed JWT (bearer token) ▼</div>
+  <div class="layer"><div class="name" style="background:var(--b2)">Backend</div>
+    <div class="body"><span class="chip">FastAPI (Python 3.12)</span><span class="chip">JWT verification (JWKS, ES256)</span><span class="chip">require_role on every endpoint</span><span class="chip">Auto-apply release sweep</span><span class="chip">Hosted on Render</span></div></div>
+  <div class="arrow-v">▼ function calls ▼</div>
+  <div class="layer"><div class="name" style="background:var(--b3)">Intelligence</div>
+    <div class="body"><span class="chip"><b>Deterministic:</b> eligibility rules, normalisation, grounding, score formula</span><span class="chip"><b>LLM:</b> gpt-4o-mini structured extraction &amp; skill evidence</span><span class="chip"><b>RAG:</b> text-embedding-3-small + ChromaDB (citations only)</span></div></div>
+  <div class="arrow-v">▼ SQL (connection pool) · REST ▼</div>
+  <div class="layer"><div class="name" style="background:var(--b4)">Data</div>
+    <div class="body"><span class="chip">Supabase PostgreSQL + Row-Level Security</span><span class="chip">Supabase Auth (users, roles in profiles)</span><span class="chip">Private Storage bucket for resumes</span><span class="chip">Score cache</span></div></div>
+</section>
+</body></html>

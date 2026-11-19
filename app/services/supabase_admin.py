@@ -20,8 +20,11 @@ def _http_client() -> httpx.Client:
     return httpx.Client(timeout=_TIMEOUT)
 
 
-def invite_user(email: str) -> str:
-    """Invite `email` and return the new auth user's id."""
+def invite_user(email: str, redirect_to: str | None = None) -> str:
+    """Invite `email` and return the new auth user's id.
+
+    `redirect_to` is where the invite link lands (the web app's set-password page); without
+    it Supabase uses the project's Site URL. It must also be in Supabase's Redirect URLs."""
     settings = get_settings()
     if not (settings.supabase_url and settings.supabase_secret_key):
         raise HTTPException(status_code=500, detail="Supabase is not configured.")
@@ -31,6 +34,7 @@ def invite_user(email: str) -> str:
             response = client.post(
                 f"{settings.supabase_url.rstrip('/')}/auth/v1/invite",
                 headers={"apikey": key, "Authorization": f"Bearer {key}"},
+                params={"redirect_to": redirect_to} if redirect_to else None,
                 json={"email": email},
             )
     except httpx.HTTPError as exc:

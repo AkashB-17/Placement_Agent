@@ -156,3 +156,28 @@ def test_nothing_stated_means_everyone_eligible():
     )
     assert result.eligible
     assert result.failed_rules == []
+
+
+def test_compound_branch_rule_admits_each_listed_branch():
+    """A rule stored as one compound string (older rows, or the LLM not splitting) still works."""
+    jd = JDRequirements(allowed_branches=["B.TECH CSE/IT"])
+    assert check_eligibility(_student(branch="CSE"), PolicyRules(), jd).eligible
+    assert check_eligibility(_student(branch="Information Technology"), PolicyRules(), jd).eligible
+    assert not check_eligibility(_student(branch="ECE"), PolicyRules(), jd).eligible
+
+
+def test_abbreviated_student_branch_matches():
+    jd = JDRequirements(allowed_branches=["Electronics and Communication"])
+    assert check_eligibility(_student(branch="Electronics & Comm."), PolicyRules(), jd).eligible
+
+
+def test_stored_all_branches_rule_is_not_enforced():
+    """Rows saved before the fix held "ALL BRANCHES" as if it were a branch name."""
+    jd = JDRequirements(allowed_branches=["ALL BRANCHES"])
+    assert check_eligibility(_student(branch="ME"), PolicyRules(), jd).eligible
+
+
+def test_circuit_branch_rule():
+    jd = JDRequirements(allowed_branches=["ANY CIRCUIT BRANCH"])
+    assert check_eligibility(_student(branch="EEE"), PolicyRules(), jd).eligible
+    assert not check_eligibility(_student(branch="Civil"), PolicyRules(), jd).eligible

@@ -1,0 +1,97 @@
+%PDF-1.4
+%ту╧╙
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [6 0 R 8 0 R] /Count 2 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+5 0 obj
+<< /Length 3041 >>
+stream
+BT /F2 16.0 Tf 56.00 762.80 Td (SwiftByte Technologies Ц Backend Engineer) Tj ET
+BT /F2 12.5 Tf 56.00 729.92 Td (Company Name: SwiftByte Technologies) Tj ET
+BT /F2 12.5 Tf 56.00 703.05 Td (Website: dev.swiftbyte.example.com) Tj ET
+BT /F2 12.5 Tf 56.00 676.17 Td (Job Title: Backend Engineer) Tj ET
+BT /F2 12.5 Tf 56.00 649.30 Td (Job Type: Full-time) Tj ET
+BT /F2 12.5 Tf 56.00 622.42 Td (Experience: Freshers) Tj ET
+BT /F2 12.5 Tf 56.00 595.55 Td (About the Company:) Tj ET
+BT /F1 10.5 Tf 56.00 580.32 Td (SwiftByte Technologies powers the payment processing engines for e-commerce platforms) Tj ET
+BT /F1 10.5 Tf 56.00 565.10 Td (across India. We process millions of transactions daily, demanding systems that are) Tj ET
+BT /F1 10.5 Tf 56.00 549.87 Td (highly available, scalable, and secure. Our engineering teams thrive on solving complex) Tj ET
+BT /F1 10.5 Tf 56.00 534.65 Td (concurrency and distributed systems problems. We value clean code, thorough testing, and) Tj ET
+BT /F1 10.5 Tf 56.00 519.42 Td (robust software architecture.) Tj ET
+BT /F2 12.5 Tf 56.00 492.55 Td (Role Overview & Responsibilities:) Tj ET
+BT /F1 10.5 Tf 56.00 477.32 Td (We are seeking a Backend Engineer to build and maintain scalable microservices for our) Tj ET
+BT /F1 10.5 Tf 56.00 462.10 Td (core transaction engine. You will write server-side code, design database schemas, and) Tj ET
+BT /F1 10.5 Tf 56.00 446.87 Td (ensure our APIs are fast and reliable. You will work in an agile environment,) Tj ET
+BT /F1 10.5 Tf 56.00 431.65 Td (participating in sprint planning, code reviews, and daily stand-ups.) Tj ET
+BT /F1 10.5 Tf 56.00 410.12 Td (Х  Develop robust REST APIs for web and mobile applications.) Tj ET
+BT /F1 10.5 Tf 56.00 394.90 Td (Х  Write complex SQL queries and optimize database performance.) Tj ET
+BT /F1 10.5 Tf 56.00 379.67 Td (Х  Implement authentication and authorization mechanisms for secure data access.) Tj ET
+BT /F1 10.5 Tf 56.00 364.45 Td (Х  Refactor legacy code to improve maintainability and performance.) Tj ET
+BT /F1 10.5 Tf 56.00 349.22 Td (Х  Write comprehensive unit and integration tests for all new features.) Tj ET
+BT /F1 10.5 Tf 56.00 334.00 Td (Х  Collaborate with frontend developers to define API contracts and integrate services.) Tj ET
+BT /F2 12.5 Tf 56.00 307.12 Td (Required Skills:) Tj ET
+BT /F1 10.5 Tf 56.00 285.60 Td (Х  Java) Tj ET
+BT /F1 10.5 Tf 56.00 270.37 Td (Х  Spring Boot) Tj ET
+BT /F1 10.5 Tf 56.00 255.15 Td (Х  SQL) Tj ET
+BT /F1 10.5 Tf 56.00 239.92 Td (Х  REST APIs) Tj ET
+BT /F1 10.5 Tf 56.00 224.70 Td (Х  Git) Tj ET
+BT /F2 12.5 Tf 56.00 197.82 Td (Preferred Skills:) Tj ET
+BT /F1 10.5 Tf 56.00 176.30 Td (Х  Redis) Tj ET
+BT /F1 10.5 Tf 56.00 161.07 Td (Х  AWS) Tj ET
+BT /F1 10.5 Tf 56.00 145.85 Td (Х  Apache Kafka) Tj ET
+BT /F2 12.5 Tf 56.00 118.97 Td (Eligibility Criteria:) Tj ET
+BT /F1 10.5 Tf 56.00 97.45 Td (Х  Minimum CGPA: 8.0 overall.) Tj ET
+BT /F1 10.5 Tf 56.00 82.22 Td (Х  Allowed Branches: B.Tech CSE/IT/ECE.) Tj ET
+BT /F1 10.5 Tf 56.00 67.00 Td (Х  Batch: Class of 2027.) Tj ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 5 0 R /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> >>
+endobj
+7 0 obj
+<< /Length 910 >>
+stream
+BT /F1 10.5 Tf 56.00 770.77 Td (Х  Must have no active backlogs at the time of the hiring process.) Tj ET
+BT /F2 12.5 Tf 56.00 743.90 Td (Compensation and Perks:) Tj ET
+BT /F1 10.5 Tf 56.00 722.38 Td (Х  CTC: 10.0 LPA.) Tj ET
+BT /F1 10.5 Tf 56.00 707.15 Td (Х  Location: Noida, Uttar Pradesh.) Tj ET
+BT /F1 10.5 Tf 56.00 691.92 Td (Х  Annual bonus, comprehensive health coverage, and regular team offsites.) Tj ET
+BT /F2 12.5 Tf 56.00 665.05 Td (Application Details:) Tj ET
+BT /F1 10.5 Tf 56.00 649.82 Td (Eligible candidates can apply via the university placement cell. The selection process) Tj ET
+BT /F1 10.5 Tf 56.00 634.60 Td (will include an online coding assessment focusing on data structures and algorithms, a) Tj ET
+BT /F1 10.5 Tf 56.00 619.37 Td (system design discussion round, and a final technical and HR interview.) Tj ET
+BT /F1 10.5 Tf 56.00 604.15 Td (Deadline: Friday, 4 December 2026.) Tj ET
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 7 0 R /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> >>
+endobj
+9 0 obj
+<< /Title <FEFF00530077006900660074004200790074006500200054006500630068006E006F006C006F0067006900650073002020130020004200610063006B0065006E006400200045006E00670069006E006500650072> /Producer (placement-agent text_to_pdf) >>
+endobj
+xref
+0 10
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000127 00000 n 
+0000000224 00000 n 
+0000000326 00000 n 
+0000003419 00000 n 
+0000003555 00000 n 
+0000004516 00000 n 
+0000004652 00000 n 
+trailer
+<< /Size 10 /Root 1 0 R /Info 9 0 R >>
+startxref
+4891
+%%EOF

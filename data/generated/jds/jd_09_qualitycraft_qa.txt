@@ -1,0 +1,48 @@
+Company Name: QualityCraft Systems
+Website: www.qualitycraft.example.com
+Job Title: QA/Test Automation Engineer
+Job Type: Full-time
+Experience: Freshers
+
+About the Company:
+QualityCraft Systems is a globally recognized software testing and quality assurance firm. We specialize in providing end-to-end automation solutions for enterprise web and mobile applications. Our clients range from disruptive fintech startups to established healthcare providers, all of whom rely on our rigorous testing frameworks to ensure zero-defect releases. Our engineering teams operate in a highly dynamic, agile environment where quality is not just an afterthought but built into the core development lifecycle.
+
+Role Overview & Responsibilities:
+As a QA/Test Automation Engineer, you will be responsible for designing and implementing automated test scripts to validate software functionality, performance, and security. You will collaborate extensively with software developers and product managers to understand system requirements and translate them into robust test cases. Your goal is to minimize manual testing efforts while maximizing test coverage.
+
+* Develop, execute, and maintain automated test scripts for web applications.
+* Perform API testing to ensure reliable backend integrations and data consistency.
+* Identify, document, and track software defects using issue tracking systems.
+* Participate in sprint planning sessions to define acceptance criteria for new features.
+* Set up and maintain continuous testing pipelines in deployment environments.
+* Conduct regression testing before major product releases to ensure stability.
+
+Required Skills:
+
+* Selenium
+* Java
+* TestNG
+* API Testing
+* Git
+
+Preferred Skills:
+
+* Jenkins
+* Postman
+
+Eligibility Criteria:
+
+* Minimum CGPA: 7.0 and above.
+* Allowed Branches: CSE/IT.
+* Batch: graduating in 2027.
+* Candidates must have no active backlogs at the time of the online assessment.
+
+Compensation and Perks:
+
+* CTC: 7.5 LPA.
+* Location: Pune, Maharashtra.
+* Relocation bonus, flexible work hours, and comprehensive family health insurance.
+
+Application Details:
+Students must apply via the college placement office. The evaluation process includes an initial online aptitude test, a coding round focused on Java and basic algorithms, and a technical interview on automation frameworks. A final HR round will assess cultural fit.
+Deadline: 10 Nov 2026.

@@ -7,7 +7,7 @@ from app.schemas import JDDetail, JDIngestResponse, JDRequirements, JDSummary
 from app.services.chunking import CLAUSE_CHUNK_OVERLAP, CLAUSE_CHUNK_SIZE
 from app.services.grounding import ground_jd
 from app.services.llm import extract_structured
-from app.services.normalize import normalize_batch, normalize_branch, normalize_list
+from app.services.normalize import normalize_batch, normalize_branches, normalize_list
 from app.services.pdf import resolve_source_text
 from app.services.vectorstore import COLLECTION_JDS, ingest_document
 
@@ -16,7 +16,7 @@ router = APIRouter(prefix="/jds", tags=["jds"])
 JD_INSTRUCTIONS = (
     "Extract job description requirements. "
     "Capture company, role, required skills, preferred skills, any CGPA override, "
-    "allowed branches (normalize to short uppercase codes: CSE, ECE, EEE, ME, CE, IT, AI-ML, DS, etc.), "
+    "allowed branches (normalize to short uppercase codes: CSE, ECE, EEE, ME, CE, IT, AI-ML, DS, etc.; use [] when all branches are eligible), "
     "allowed batches only if the document explicitly names eligible graduating batches or years of "
     "graduation (normalize to 4-digit year strings like '2027'); an application deadline or posting "
     "date is not a batch, so otherwise use [], "
@@ -32,7 +32,7 @@ async def create_jd(
 ) -> JDIngestResponse:
     source_text = await resolve_source_text(text, file)
     requirements = extract_structured(source_text, JDRequirements, JD_INSTRUCTIONS)
-    requirements.allowed_branches = normalize_list(requirements.allowed_branches, normalize_branch)
+    requirements.allowed_branches = normalize_branches(requirements.allowed_branches)
     requirements.allowed_batches = normalize_list(requirements.allowed_batches, normalize_batch)
     warnings = ground_jd(requirements, source_text)
     jd_id = make_document_id(source_text)

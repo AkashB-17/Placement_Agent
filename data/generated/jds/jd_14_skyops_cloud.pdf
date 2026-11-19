@@ -1,0 +1,100 @@
+%PDF-1.4
+%ту╧╙
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [6 0 R 8 0 R] /Count 2 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+5 0 obj
+<< /Length 3117 >>
+stream
+BT /F2 16.0 Tf 56.00 762.80 Td (SkyOps Technologies Ц Cloud/DevOps Engineer) Tj ET
+BT /F2 12.5 Tf 56.00 729.92 Td (Company Name: SkyOps Technologies) Tj ET
+BT /F2 12.5 Tf 56.00 703.05 Td (Website: cloud.skyops.example.com) Tj ET
+BT /F2 12.5 Tf 56.00 676.17 Td (Job Title: Cloud/DevOps Engineer) Tj ET
+BT /F2 12.5 Tf 56.00 649.30 Td (Job Type: Full-time) Tj ET
+BT /F2 12.5 Tf 56.00 622.42 Td (Experience: Freshers) Tj ET
+BT /F2 12.5 Tf 56.00 595.55 Td (About the Company:) Tj ET
+BT /F1 10.5 Tf 56.00 580.32 Td (SkyOps Technologies provides managed cloud hosting and automated deployment solutions) Tj ET
+BT /F1 10.5 Tf 56.00 565.10 Td (for the gaming industry. Multiplayer game servers require immense scalability, ultra-low) Tj ET
+BT /F1 10.5 Tf 56.00 549.87 Td (latency, and absolute reliability. We build the hidden infrastructure that keeps) Tj ET
+BT /F1 10.5 Tf 56.00 534.65 Td (millions of gamers connected seamlessly. We are a team of Linux enthusiasts and) Tj ET
+BT /F1 10.5 Tf 56.00 519.42 Td (automation advocates who hate doing the same manual task twice.) Tj ET
+BT /F2 12.5 Tf 56.00 492.55 Td (Role Overview & Responsibilities:) Tj ET
+BT /F1 10.5 Tf 56.00 477.32 Td (We are hiring a Cloud/DevOps Engineer to help manage and scale our massive global server) Tj ET
+BT /F1 10.5 Tf 56.00 462.10 Td (fleets. You will spend your days configuring virtual machines, writing shell scripts,) Tj ET
+BT /F1 10.5 Tf 56.00 446.87 Td (and ensuring our continuous integration systems are running flawlessly. You will learn) Tj ET
+BT /F1 10.5 Tf 56.00 431.65 Td (how to design architectures that can survive massive traffic spikes during major game) Tj ET
+BT /F1 10.5 Tf 56.00 416.42 Td (launches.) Tj ET
+BT /F1 10.5 Tf 56.00 394.90 Td (Х  Provision and manage cloud resources using infrastructure-as-code principles.) Tj ET
+BT /F1 10.5 Tf 56.00 379.67 Td (Х  Write shell scripts to automate repetitive system administration tasks.) Tj ET
+BT /F1 10.5 Tf 56.00 364.45 Td (Х  Manage source code repositories and configure automated build and test pipelines.) Tj ET
+BT /F1 10.5 Tf 56.00 349.22 Td (Х  Implement robust monitoring and alerting systems to detect server degradation.) Tj ET
+BT /F1 10.5 Tf 56.00 334.00 Td (Х  Perform regular security patching and system updates across server clusters.) Tj ET
+BT /F1 10.5 Tf 56.00 318.77 Td (Х  Respond to critical infrastructure alerts and document root cause analyses.) Tj ET
+BT /F2 12.5 Tf 56.00 291.90 Td (Required Skills:) Tj ET
+BT /F1 10.5 Tf 56.00 270.37 Td (Х  Linux) Tj ET
+BT /F1 10.5 Tf 56.00 255.15 Td (Х  Bash) Tj ET
+BT /F1 10.5 Tf 56.00 239.92 Td (Х  Git) Tj ET
+BT /F1 10.5 Tf 56.00 224.70 Td (Х  AWS) Tj ET
+BT /F1 10.5 Tf 56.00 209.47 Td (Х  Python) Tj ET
+BT /F2 12.5 Tf 56.00 182.60 Td (Preferred Skills:) Tj ET
+BT /F1 10.5 Tf 56.00 161.07 Td (Х  Terraform) Tj ET
+BT /F1 10.5 Tf 56.00 145.85 Td (Х  Docker) Tj ET
+BT /F1 10.5 Tf 56.00 130.62 Td (Х  Ansible) Tj ET
+BT /F2 12.5 Tf 56.00 103.75 Td (Eligibility Criteria:) Tj ET
+BT /F1 10.5 Tf 56.00 82.22 Td (Х  Minimum CGPA: 6.0 overall.) Tj ET
+BT /F1 10.5 Tf 56.00 67.00 Td (Х  Allowed Branches: CSE, ECE, EEE.) Tj ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 5 0 R /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> >>
+endobj
+7 0 obj
+<< /Length 1040 >>
+stream
+BT /F1 10.5 Tf 56.00 770.77 Td (Х  Batch: 2027.) Tj ET
+BT /F1 10.5 Tf 56.00 755.55 Td (Х  Foundational knowledge of computer networking \(TCP/IP, DNS, Load Balancing\) is) Tj ET
+BT /F1 10.5 Tf 70.00 740.32 Td (expected.) Tj ET
+BT /F2 12.5 Tf 56.00 713.45 Td (Compensation and Perks:) Tj ET
+BT /F1 10.5 Tf 56.00 691.92 Td (Х  CTC: 7.0 LPA.) Tj ET
+BT /F1 10.5 Tf 56.00 676.70 Td (Х  Location: Chennai, Tamil Nadu.) Tj ET
+BT /F1 10.5 Tf 56.00 661.47 Td (Х  Free gaming console on joining, internet reimbursement, and comprehensive technical) Tj ET
+BT /F1 10.5 Tf 70.00 646.25 Td (training.) Tj ET
+BT /F2 12.5 Tf 56.00 619.37 Td (Application Details:) Tj ET
+BT /F1 10.5 Tf 56.00 604.15 Td (Register on the university portal to apply. The hiring process will involve an online) Tj ET
+BT /F1 10.5 Tf 56.00 588.92 Td (objective test on OS and Networking, a live Linux debugging interview, a system design) Tj ET
+BT /F1 10.5 Tf 56.00 573.70 Td (round, and an HR interaction.) Tj ET
+BT /F1 10.5 Tf 56.00 558.47 Td (Deadline: December 5, 2026.) Tj ET
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 7 0 R /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> >>
+endobj
+9 0 obj
+<< /Title <FEFF0053006B0079004F0070007300200054006500630068006E006F006C006F00670069006500730020201300200043006C006F00750064002F004400650076004F0070007300200045006E00670069006E006500650072> /Producer (placement-agent text_to_pdf) >>
+endobj
+xref
+0 10
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000127 00000 n 
+0000000224 00000 n 
+0000000326 00000 n 
+0000003495 00000 n 
+0000003631 00000 n 
+0000004723 00000 n 
+0000004859 00000 n 
+trailer
+<< /Size 10 /Root 1 0 R /Info 9 0 R >>
+startxref
+5106
+%%EOF

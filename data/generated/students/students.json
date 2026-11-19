@@ -1,0 +1,222 @@
+[
+  {
+    "id": "S001",
+    "file": "S001_karan_sharma.txt",
+    "name": "Karan Sharma",
+    "email": "karan.sharma@example.edu",
+    "branch": "Computer Science and Engineering",
+    "batch": "2027",
+    "cgpa": 8.0,
+    "active_backlogs": 0,
+    "is_placed": true
+  },
+  {
+    "id": "S002",
+    "file": "S002_anjali_verma.txt",
+    "name": "Anjali Verma",
+    "email": "anjali.verma@example.edu",
+    "branch": "CSE",
+    "batch": "2027",
+    "cgpa": 7.0,
+    "active_backlogs": 0,
+    "is_placed": false
+  },
+  {
+    "id": "S003",
+    "file": "S003_rahul_iyer.txt",
+    "name": "Rahul Iyer",
+    "email": "rahul.iyer@example.edu",
+    "branch": "AI-ML",
+    "batch": "2027",
+    "cgpa": 7.49,
+    "active_backlogs": 0,
+    "is_placed": false
+  },
+  {
+    "id": "S004",
+    "file": "S004_priya_patel.txt",
+    "name": "Priya Patel",
+    "email": "priya.patel@example.edu",
+    "branch": "Electronics & Comm.",
+    "batch": "2027",
+    "cgpa": 6.99,
+    "active_backlogs": 0,
+    "is_placed": false
+  },
+  {
+    "id": "S005",
+    "file": "S005_vikram_singh.txt",
+    "name": "Vikram Singh",
+    "email": "vikram.singh@example.edu",
+    "branch": "ME",
+    "batch": "2027",
+    "cgpa": 6.0,
+    "active_backlogs": 0,
+    "is_placed": false
+  },
+  {
+    "id": "S006",
+    "file": "S006_neha_gupta.txt",
+    "name": "Neha Gupta",
+    "email": "neha.gupta@example.edu",
+    "branch": "IT",
+    "batch": "2026",
+    "cgpa": 6.5,
+    "active_backlogs": 0,
+    "is_placed": true
+  },
+  {
+    "id": "S007",
+    "file": "S007_siddharth_rao.txt",
+    "name": "Siddharth Rao",
+    "email": "siddharth.rao@example.edu",
+    "branch": "Computer Science and Engineering",
+    "batch": "2027",
+    "cgpa": 8.5,
+    "active_backlogs": 0,
+    "is_placed": false
+  },
+  {
+    "id": "S008",
+    "file": "S008_ishaan_desai.txt",
+    "name": "Ishaan Desai",
+    "email": "ishaan.desai@example.edu",
+    "branch": "Civil",
+    "batch": "2027",
+    "cgpa": 5.8,
+    "active_backlogs": 0,
+    "is_placed": false
+  },
+  {
+    "id": "S009",
+    "file": "S009_kavya_nair.txt",
+    "name": "Kavya Nair",
+    "email": "kavya.nair@example.edu",
+    "branch": "ECE",
+    "batch": "2027",
+    "cgpa": 8.49,
+    "active_backlogs": 0,
+    "is_placed": false
+  },
+  {
+    "id": "S010",
+    "file": "S010_aditya_menon.txt",
+    "name": "Aditya Menon",
+    "email": "aditya.menon@example.edu",
+    "branch": "CSE",
+    "batch": "2027",
+    "cgpa": 7.5,
+    "active_backlogs": 0,
+    "is_placed": false
+  },
+  {
+    "id": "S011",
+    "file": "S011_riya_kapoor.txt",
+    "name": "Riya Kapoor",
+    "email": "riya.kapoor@example.edu",
+    "branch": "IT",
+    "batch": "2028",
+    "cgpa": 9.6,
+    "active_backlogs": 1,
+    "is_placed": false
+  },
+  {
+    "id": "S012",
+    "file": "S012_arjun_das.txt",
+    "name": "Arjun Das",
+    "email": "arjun.das@example.edu",
+    "branch": "Electronics & Comm.",
+    "batch": "2027",
+    "cgpa": 8.1,
+    "active_backlogs": 0,
+    "is_placed": true
+  },
+  {
+    "id": "S013",
+    "file": "S013_meera_joshi.txt",
+    "name": "Meera Joshi",
+    "email": "meera.joshi@example.edu",
+    "branch": "EEE",
+    "batch": "2027",
+    "cgpa": 7.2,
+    "active_backlogs": 0,
+    "is_placed": false
+  },
+  {
+    "id": "S014",
+    "file": "S014_rohan_bhatia.txt",
+    "name": "Rohan Bhatia",
+    "email": "rohan.bhatia@example.edu",
+    "branch": "IT",
+    "batch": "2026",
+    "cgpa": 6.8,
+    "active_backlogs": 0,
+    "is_placed": false
+  },
+  {
+    "id": "S015",
+    "file": "S015_ayesha_khan.txt",
+    "name": "Ayesha Khan",
+    "email": "ayesha.khan@example.edu",
+    "branch": "AI-ML",
+    "batch": "2027",
+    "cgpa": 9.2,
+    "active_backlogs": 0,
+    "is_placed": false
+  },
+  {
+    "id": "S016",
+    "file": "S016_devansh_agarwal.txt",
+    "name": "Devansh Agarwal",
+    "email": "devansh.agarwal@example.edu",
+    "branch": "CSE",
+    "batch": "2027",
+    "cgpa": 8.2,
+    "active_backlogs": 0,
+    "is_placed": false
+  },
+  {
+    "id": "S017",
+    "file": "S017_shruti_thakur.txt",
+    "name": "Shruti Thakur",
+    "email": "shruti.thakur@example.edu",
+    "branch": "Civil",
+    "batch": "2027",
+    "cgpa": 6.3,
+    "active_backlogs": 3,
+    "is_placed": false
+  },
+  {
+    "id": "S018",
+    "file": "S018_karthik_reddy.txt",
+    "name": "Karthik Reddy",
+    "email": "karthik.reddy@example.edu",
+    "branch": "AI-ML",
+    "batch": "2027",
+    "cgpa": 8.8,
+    "active_backlogs": 0,
+    "is_placed": false
+  },
+  {
+    "id": "S019",
+    "file": "S019_sanya_malhotra.txt",
+    "name": "Sanya Malhotra",
+    "email": "sanya.malhotra@example.edu",
+    "branch": "IT",
+    "batch": "2027",
+    "cgpa": 7.8,
+    "active_backlogs": 1,
+    "is_placed": false
+  },
+  {
+    "id": "S020",
+    "file": "S020_arnav_chatterjee.txt",
+    "name": "Arnav Chatterjee",
+    "email": "arnav.chatterjee@example.edu",
+    "branch": "ECE",
+    "batch": "2027",
+    "cgpa": 7.1,
+    "active_backlogs": 0,
+    "is_placed": false
+  }
+]

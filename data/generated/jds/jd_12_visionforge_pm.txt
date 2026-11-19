@@ -1,0 +1,48 @@
+Company Name: VisionForge Innovations
+Website: products.visionforge.example.com
+Job Title: Product Management Trainee
+Job Type: Full-time
+Experience: Freshers
+
+About the Company:
+VisionForge Innovations is a consumer tech startup building the next generation of hyper-local delivery applications. We focus on seamless user experiences and lightning-fast logistics algorithms. Since our inception, we have expanded to over forty cities, driven by our relentless focus on user feedback and iterative product development. We are looking for product enthusiasts who want to build applications that millions of users touch every day.
+
+Role Overview & Responsibilities:
+The Product Management Trainee will work under the guidance of Senior Product Managers to shape the roadmap of our consumer-facing applications. You will learn how to balance user needs, business goals, and engineering constraints. This is a highly cross-functional role where you will interact with design, marketing, engineering, and customer support teams on a daily basis.
+
+* Assist in writing product requirement documents and user stories.
+* Analyze user behavior data to identify friction points in the app onboarding journey.
+* Conduct competitor research and map out feature gaps in the market.
+* Coordinate with UI/UX designers to create intuitive application wireframes.
+* Communicate feature requirements clearly to the engineering team during sprint planning.
+* Monitor app store reviews and social media feedback to inform future updates.
+
+Required Skills:
+
+* Google Analytics
+* Excel
+* Wireframing
+* Stakeholder communication
+
+Preferred Skills:
+
+* Figma
+* JIRA
+* SQL
+
+Eligibility Criteria:
+
+* Minimum CGPA: None. We care about your product sense and portfolio.
+* Allowed Branches: B.Tech all streams.
+* Batch: 2026 batch.
+* Candidates with a portfolio of side projects or product teardowns will be highly preferred.
+
+Compensation and Perks:
+
+* CTC: 11.0 LPA.
+* Location: Bengaluru, Karnataka.
+* Equity grants, free daily lunches, and a casual, pet-friendly workspace.
+
+Application Details:
+Candidates must submit their application form along with a 2-page product teardown of any popular consumer application. Shortlisted candidates will be invited for a product design interview, a guesstimate and analytics round, and a behavioral interview with the founders.
+Deadline: 21st November 2026.

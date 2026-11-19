@@ -1,0 +1,49 @@
+Company Name: SwiftByte Technologies
+Website: dev.swiftbyte.example.com
+Job Title: Backend Engineer
+Job Type: Full-time
+Experience: Freshers
+
+About the Company:
+SwiftByte Technologies powers the payment processing engines for e-commerce platforms across India. We process millions of transactions daily, demanding systems that are highly available, scalable, and secure. Our engineering teams thrive on solving complex concurrency and distributed systems problems. We value clean code, thorough testing, and robust software architecture.
+
+Role Overview & Responsibilities:
+We are seeking a Backend Engineer to build and maintain scalable microservices for our core transaction engine. You will write server-side code, design database schemas, and ensure our APIs are fast and reliable. You will work in an agile environment, participating in sprint planning, code reviews, and daily stand-ups.
+
+* Develop robust REST APIs for web and mobile applications.
+* Write complex SQL queries and optimize database performance.
+* Implement authentication and authorization mechanisms for secure data access.
+* Refactor legacy code to improve maintainability and performance.
+* Write comprehensive unit and integration tests for all new features.
+* Collaborate with frontend developers to define API contracts and integrate services.
+
+Required Skills:
+
+* Java
+* Spring Boot
+* SQL
+* REST APIs
+* Git
+
+Preferred Skills:
+
+* Redis
+* AWS
+* Apache Kafka
+
+Eligibility Criteria:
+
+* Minimum CGPA: 8.0 overall.
+* Allowed Branches: B.Tech CSE/IT/ECE.
+* Batch: Class of 2027.
+* Must have no active backlogs at the time of the hiring process.
+
+Compensation and Perks:
+
+* CTC: 10.0 LPA.
+* Location: Noida, Uttar Pradesh.
+* Annual bonus, comprehensive health coverage, and regular team offsites.
+
+Application Details:
+Eligible candidates can apply via the university placement cell. The selection process will include an online coding assessment focusing on data structures and algorithms, a system design discussion round, and a final technical and HR interview.
+Deadline: Friday, 4 December 2026.

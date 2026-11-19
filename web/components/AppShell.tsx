@@ -19,6 +19,9 @@ const LINKS: { href: string; label: string; icon: LucideIcon; roles: Role[] }[] 
   { href: "/admin", label: "Users & roles", icon: Users, roles: ["admin"] },
 ];
 
+// Full-screen sign-in / account pages: never wrapped in the sidebar layout.
+const AUTH_PAGES = new Set(["/login", "/signup", "/forgot-password", "/set-password", "/auth/callback"]);
+
 const ROLE_LABEL: Record<Role, string> = {
   admin: "Administrator",
   officer: "Placement officer",
@@ -101,7 +104,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
 
-  if (!profile || pathname === "/login") {
+  if (!profile || AUTH_PAGES.has(pathname)) {
     return <main className="min-h-screen">{children}</main>;
   }
 

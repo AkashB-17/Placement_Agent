@@ -1,0 +1,305 @@
+=== JD 01 | file: jd_01_nexacloud_devops === Company Name: NexaCloud Solutions Website: [www.nexacloud.example.com](https://www.nexacloud.example.com) Job Title: Cloud/DevOps Engineer Job Type: Full-time Experience: Freshers
+About the Company: NexaCloud Solutions is a rapidly growing technology startup specializing in scalable cloud infrastructure and enterprise deployment strategies. We partner with global clients to transition their legacy systems into robust, cloud-native environments. Our engineering culture promotes continuous learning, agile methodologies, and automation at every layer. We are looking for passionate individuals who want to build the future of cloud computing.
+Role Overview & Responsibilities: As a Cloud/DevOps Engineer, you will be an integral part of our infrastructure team. You will work closely with senior engineers to automate deployment pipelines, monitor system health, and troubleshoot production issues. Your daily tasks will include writing automation scripts, configuring cloud services, and participating in architecture discussions.
+
+* Assist in the design and maintenance of CI/CD pipelines.
+* Monitor cloud infrastructure usage and optimize for cost and performance.
+* Write infrastructure-as-code scripts for automated provisioning.
+* Collaborate with development teams to ensure smooth code deployments.
+* Participate in on-call rotations and resolve infrastructure alerts.
+* Document system configurations and operational procedures.
+
+Required Skills:
+
+* AWS
+* Docker
+* Linux
+* CI/CD pipelines
+* Python
+
+Preferred Skills:
+
+* Kubernetes
+* Terraform
+
+Eligibility Criteria:
+
+* Minimum CGPA: 7.0 and above in the current degree.
+* Allowed Branches: B.Tech CSE/IT.
+* Batch: Class of 2027.
+* Applicants must be willing to relocate and work from the office.
+
+Compensation and Perks:
+
+* CTC: 8.5 LPA (including base salary, performance bonus, and joining bonus).
+* Location: Bengaluru, Karnataka.
+* Comprehensive health insurance and free cafeteria access.
+
+Application Details: Interested students must apply through the university placement portal. Shortlisted candidates will be invited for an online aptitude test, followed by two rounds of technical interviews and an HR discussion. Deadline: November 25, 2026. === END JD 01 ===
+=== JD 02 | file: jd_02_dataveda_data_scientist === Company Name: DataVeda Analytics Website: analytics.dataveda.example.com Job Title: Data Scientist Job Type: Full-time Experience: Freshers
+About the Company: DataVeda Analytics is a premier data science consultancy firm helping Fortune 500 companies unlock the power of their data. We build cutting-edge predictive models, recommendation engines, and business intelligence dashboards. Our team is composed of top-tier mathematicians, statisticians, and software engineers working together to solve complex data challenges across the retail, finance, and healthcare sectors.
+Role Overview & Responsibilities: The Data Scientist role is tailored for analytical minds who love deriving insights from unstructured data. You will work on real-world datasets to build machine learning models that drive business decisions. You will be mentored by lead data scientists and given the opportunity to present your findings to clients.
+
+* Clean, process, and analyze large volumes of structured and unstructured data.
+* Build and train machine learning models for predictive analytics.
+* Create interactive data visualizations to explain model outputs to non-technical stakeholders.
+* Collaborate with data engineers to deploy models into production environments.
+* Keep up-to-date with the latest research in statistical modeling and machine learning.
+* Conduct A/B testing to measure the impact of algorithm changes.
+
+Required Skills:
+
+* Python
+* SQL
+* Machine Learning
+* Statistics
+
+Preferred Skills:
+
+* Power BI
+* NLP
+* Tableau
+
+Eligibility Criteria:
+
+* Minimum CGPA: 7.5 or equivalent.
+* Allowed Branches: CSE, ECE, AI-ML.
+* Batch: 2023-27 batch.
+* The candidate must have no active backlogs at the time of application.
+
+Compensation and Perks:
+
+* CTC: 12.0 LPA.
+* Location: Hyderabad, Telangana.
+* Relocation assistance and flexible working hours.
+
+Application Details: Students must submit their updated resume and a link to their GitHub profile showcasing data projects. The selection process includes an online coding and SQL assessment, a machine learning case study round, and a final cultural fit interview. Deadline: 15th Nov 2026. === END JD 02 ===
+=== JD 03 | file: jd_03_coretech_embedded === Company Name: CoreTech Systems Website: [www.coretechsystems.example.com](https://www.coretechsystems.example.com) Job Title: Embedded/Firmware Engineer Job Type: Full-time Experience: Freshers
+About the Company: CoreTech Systems is an industry leader in manufacturing smart hardware solutions and IoT devices. We design custom microcontrollers and embedded systems for automotive, consumer electronics, and industrial automation. Our R&D center in Pune is known for its state-of-the-art labs and a culture of hardware innovation. We build the brains behind the machines of tomorrow.
+Role Overview & Responsibilities: We are hiring an Embedded/Firmware Engineer to design and develop low-level software for our next-generation microcontrollers. You will be working at the intersection of hardware and software, bringing silicon to life. This role requires deep knowledge of computer architecture and real-time processing.
+
+* Write efficient and reliable firmware for 32-bit and 64-bit microcontrollers.
+* Debug hardware-software integration issues using oscilloscopes and logic analyzers.
+* Develop device drivers for various sensors and communication modules.
+* Optimize power consumption for battery-operated IoT devices.
+* Participate in schematic reviews and provide software-side hardware requirements.
+* Maintain version control for all firmware builds and releases.
+
+Required Skills:
+
+* Embedded C
+* Microcontrollers
+* RTOS
+* C++
+
+Preferred Skills:
+
+* IoT protocols (MQTT, CoAP)
+* Hardware debugging
+
+Eligibility Criteria:
+
+* Minimum CGPA: No strict cut-off; we prioritize practical hardware knowledge.
+* Allowed Branches: Electronics and Communication.
+* Batch: graduating in 2027.
+* Excellent understanding of digital electronics is required.
+
+Compensation and Perks:
+
+* CTC: 7.0 LPA.
+* Location: Pune, Maharashtra.
+* Access to advanced hardware prototyping labs and annual tech conference sponsorships.
+
+Application Details: To apply, please fill out the placement application form. Candidates will be tested on their knowledge of C programming, microcontroller architecture, and digital logic design. The interview process includes a written technical test, a hands-on hardware debugging interview, and an HR round. Deadline: 2026-11-20. === END JD 03 ===
+=== JD 04 | file: jd_04_marketfrontier_bd === Company Name: MarketFrontier Global Website: [www.marketfrontier.example.com](https://www.marketfrontier.example.com) Job Title: Business Development Executive Job Type: Full-time Experience: Freshers
+About the Company: MarketFrontier Global is a fast-growing B2B SaaS platform that helps enterprises streamline their procurement and supply chain operations. With offices across Asia and Europe, we are expanding our market reach and looking for high-energy individuals to drive our sales initiatives. We believe in nurturing talent and providing accelerated career paths for top performers in our business development teams.
+Role Overview & Responsibilities: As a Business Development Executive, you will be the face of MarketFrontier Global for our prospective clients. You will be responsible for identifying new business opportunities, understanding client needs, and pitching our SaaS solutions. This role requires high emotional intelligence, resilience, and excellent communication abilities.
+
+* Conduct market research to identify potential enterprise clients.
+* Reach out to leads via cold calling, emails, and professional networks.
+* Qualify leads and schedule product demonstration meetings for senior sales managers.
+* Maintain and update the sales pipeline in the CRM system.
+* Build and nurture long-term relationships with key client stakeholders.
+* Gather market intelligence and competitor analysis to assist the product team.
+
+Required Skills:
+
+* Client communication
+* Negotiation
+* Lead generation
+* CRM
+
+Preferred Skills:
+
+* Salesforce
+* Excel
+* Presentation skills
+
+Eligibility Criteria:
+
+* Minimum CGPA: 6.0 and above.
+* Allowed Branches: all branches are eligible to apply.
+* Batch: graduating in 2027.
+* Passion for sales and marketing is a must.
+
+Compensation and Perks:
+
+* CTC: 5.5 LPA Fixed + Uncapped performance incentives (Target OTE: 8.0 LPA).
+* Location: Gurugram, Haryana.
+* Travel allowances, mobile phone reimbursement, and intensive sales training program.
+
+Application Details: Interested candidates should register on the placement portal. The evaluation will consist of a group discussion round to test communication skills, a mock sales pitch presentation, and a final personal interview with the Director of Sales. Deadline: rolling basis. === END JD 04 ===
+=== JD 05 | file: jd_05_securesphere_cyber === Company Name: SecureSphere Cyber Website: cyber.securesphere.example.com Job Title: Cybersecurity Analyst Job Type: Full-time Experience: Freshers
+About the Company: SecureSphere Cyber provides elite security consulting and managed security services to financial institutions and government agencies. We specialize in threat intelligence, penetration testing, and incident response. Our mission is to protect our clients' most sensitive data from advanced persistent threats and zero-day vulnerabilities. We pride ourselves on having some of the sharpest security minds in the industry.
+Role Overview & Responsibilities: The Cybersecurity Analyst will join our Security Operations Center (SOC) team. You will monitor networks for malicious activity, analyze security alerts, and assist in vulnerability assessments. This is a high-responsibility role where attention to detail and rapid response times are critical.
+
+* Monitor client networks continuously for security breaches and unauthorized access.
+* Investigate security alerts generated by SIEM tools and firewalls.
+* Perform routine vulnerability scans on web applications and infrastructure.
+* Document security incidents and assist in post-incident forensic analysis.
+* Stay updated on the latest cyber threats, malware strains, and hacking techniques.
+* Educate client employees on security best practices and phishing awareness.
+
+Required Skills:
+
+* Network Security
+* Penetration Testing
+* Linux
+* Wireshark
+* SIEM tools
+
+Preferred Skills:
+
+* CEH certification
+* Bash scripting
+
+Eligibility Criteria:
+
+* Minimum CGPA: 6.5 minimum.
+* Allowed Branches: CSE/IT.
+* Batch: 2026 batch.
+* Candidates with active interest in bug bounty programs will be preferred.
+
+Compensation and Perks:
+
+* CTC: 9.0 LPA.
+* Location: Chennai, Tamil Nadu.
+* Night shift allowances (if applicable) and sponsorship for advanced security certifications.
+
+Application Details: Applicants must apply through the designated portal. The recruitment process involves a Capture The Flag (CTF) challenge to test practical hacking and defense skills, a technical interview on networking and operating systems, and a final HR interview. Deadline: 12/11/2026. === END JD 05 ===
+=== JD 06 | file: jd_06_genmind_ml === Company Name: GenMind AI Website: [www.genmind.example.com](https://www.genmind.example.com) Job Title: ML/GenAI Engineer Job Type: Full-time Experience: Freshers
+About the Company: GenMind AI is an AI research and product company focused on building generative models for content creation and workflow automation. Our flagship product is an AI-powered writing assistant used by millions worldwide. We are pushing the boundaries of what is possible with large language models, computer vision, and multimodal AI architectures in a highly collaborative and experimental environment.
+Role Overview & Responsibilities: As an ML/GenAI Engineer, you will work on fine-tuning and deploying state-of-the-art language models. You will be responsible for evaluating model performance, optimizing inference latency, and building prompt pipelines. You will collaborate closely with software engineers to integrate AI capabilities into our consumer-facing applications.
+
+* Fine-tune open-source large language models on proprietary datasets.
+* Design and test complex prompt engineering strategies for reliable AI outputs.
+* Build evaluation frameworks to measure model accuracy and detect hallucinations.
+* Optimize ML models for faster inference and lower compute costs.
+* Develop API endpoints for internal AI services.
+* Read and implement ideas from the latest AI research papers.
+
+Required Skills:
+
+* Python
+* PyTorch
+* Large Language Models
+* Prompt Engineering
+
+Preferred Skills:
+
+* LangChain
+* Docker
+* HuggingFace
+
+Eligibility Criteria:
+
+* Minimum CGPA: 8.5 strictly.
+* Allowed Branches: Computer Science & Engineering.
+* We require candidates with no active backlogs.
+* Strong foundation in linear algebra, calculus, and probability.
+
+Compensation and Perks:
+
+* CTC: 16.0 LPA.
+* Location: Remote / Bengaluru, Karnataka.
+* Stock options, home office setup allowance, and unlimited paid time off.
+
+Application Details: Please submit your resume along with links to any AI research projects or relevant GitHub repositories. Candidates will go through a take-home ML coding assignment, followed by a technical deep-dive interview with our lead researchers and an engineering management round. Deadline: 21/11/2026. === END JD 06 ===
+=== JD 07 | file: jd_07_swiftbyte_backend === Company Name: SwiftByte Technologies Website: dev.swiftbyte.example.com Job Title: Backend Engineer Job Type: Full-time Experience: Freshers
+About the Company: SwiftByte Technologies powers the payment processing engines for e-commerce platforms across India. We process millions of transactions daily, demanding systems that are highly available, scalable, and secure. Our engineering teams thrive on solving complex concurrency and distributed systems problems. We value clean code, thorough testing, and robust software architecture.
+Role Overview & Responsibilities: We are seeking a Backend Engineer to build and maintain scalable microservices for our core transaction engine. You will write server-side code, design database schemas, and ensure our APIs are fast and reliable. You will work in an agile environment, participating in sprint planning, code reviews, and daily stand-ups.
+
+* Develop robust REST APIs for web and mobile applications.
+* Write complex SQL queries and optimize database performance.
+* Implement authentication and authorization mechanisms for secure data access.
+* Refactor legacy code to improve maintainability and performance.
+* Write comprehensive unit and integration tests for all new features.
+* Collaborate with frontend developers to define API contracts and integrate services.
+
+Required Skills:
+
+* Java
+* Spring Boot
+* SQL
+* REST APIs
+* Git
+
+Preferred Skills:
+
+* Redis
+* AWS
+* Apache Kafka
+
+Eligibility Criteria:
+
+* Minimum CGPA: 8.0 overall.
+* Allowed Branches: B.Tech CSE/IT/ECE.
+* Batch: Class of 2027.
+* Must have no active backlogs at the time of the hiring process.
+
+Compensation and Perks:
+
+* CTC: 10.0 LPA.
+* Location: Noida, Uttar Pradesh.
+* Annual bonus, comprehensive health coverage, and regular team offsites.
+
+Application Details: Eligible candidates can apply via the university placement cell. The selection process will include an online coding assessment focusing on data structures and algorithms, a system design discussion round, and a final technical and HR interview. Deadline: Friday, 4 December 2026. === END JD 07 ===
+=== JD 08 | file: jd_08_peoplefirst_hr === Company Name: PeopleFirst Corp Website: [www.peoplefirstcorp.example.com](https://www.peoplefirstcorp.example.com) Job Title: HR Intern Job Type: Internship leading to Full-time Experience: Freshers
+About the Company: PeopleFirst Corp is an innovative human resources management firm that provides talent acquisition, employee engagement, and payroll solutions to mid-sized enterprises. We believe that people are the most valuable asset of any organization. Our internal culture is vibrant, inclusive, and heavily focused on employee well-being and continuous professional development.
+Role Overview & Responsibilities: We are looking for an enthusiastic HR Intern to support our talent acquisition and employee engagement teams. This role will give you hands-on experience in the entire employee lifecycle, from sourcing candidates to organizing company-wide events. You will need strong interpersonal skills and a highly organized approach to manage multiple administrative tasks efficiently.
+
+* Assist in drafting job descriptions and posting them on various job boards.
+* Screen candidate resumes and schedule initial phone interviews.
+* Coordinate with hiring managers to schedule technical interview rounds.
+* Maintain and update employee records in the HR Information System.
+* Help organize monthly employee engagement activities and team-building events.
+* Answer basic employee queries regarding leave policies and benefits.
+
+Required Skills:
+
+* Interpersonal skills
+* Recruitment basics
+* MS Office
+* Communication
+
+Preferred Skills:
+
+* Event management
+* Public speaking
+* Canva
+
+Eligibility Criteria:
+
+* Minimum CGPA: None. We value communication skills over academic grades for this role.
+* Allowed Branches: all branches.
+* Batch: 2027.
+* A proactive attitude and a willingness to learn HR operations.
+
+Compensation and Perks:
+
+* Stipend: ₹25,000 per month during the 6-month internship, transitioning to a CTC of 4.5 LPA upon full-time conversion.
+* Location: Mumbai, Maharashtra.
+* Mentorship from senior HR leaders and networking opportunities.
+
+Application Details: Apply on the placement portal with a well-formatted resume. The interview process will involve a group discussion, a situational judgment interview to test interpersonal skills, and a final interview with the HR Director. Deadline: 2026-12-10. === END JD 08 ===
+=== ANSWER KEY === [ { "file": "jd_01_nexacloud_devops", "company": "NexaCloud Solutions", "role": "Cloud/DevOps Engineer", "required_skills": [ "AWS", "Docker", "Linux", "CI/CD pipelines", "Python" ], "preferred_skills": [ "Kubernetes", "Terraform" ], "min_cgpa": 7.0, "allowed_branches": [ "B.Tech CSE/IT" ], "allowed_batches": [ "2027" ], "no_active_backlogs": false, "deadline_iso": "2026-11-25", "deadline_as_written": "November 25, 2026", "notes": "deadline is exactly 1 week out" }, { "file": "jd_02_dataveda_data_scientist", "company": "DataVeda Analytics", "role": "Data Scientist", "required_skills": [ "Python", "SQL", "Machine Learning", "Statistics" ], "preferred_skills": [ "Power BI", "NLP", "Tableau" ], "min_cgpa": 7.5, "allowed_branches": [ "CSE", "ECE", "AI-ML" ], "allowed_batches": [ "2027" ], "no_active_backlogs": true, "deadline_iso": "2026-11-15", "deadline_as_written": "15th Nov 2026", "notes": "deadline already passed" }, { "file": "jd_03_coretech_embedded", "company": "CoreTech Systems", "role": "Embedded/Firmware Engineer", "required_skills": [ "Embedded C", "Microcontrollers", "RTOS", "C++" ], "preferred_skills": [ "IoT protocols (MQTT, CoAP)", "Hardware debugging" ], "min_cgpa": null, "allowed_branches": [ "Electronics and Communication" ], "allowed_batches": [ "2027" ], "no_active_backlogs": false, "deadline_iso": "2026-11-20", "deadline_as_written": "2026-11-20", "notes": "no cgpa stated, deadline within next 3 days" }, { "file": "jd_04_marketfrontier_bd", "company": "MarketFrontier Global", "role": "Business Development Executive", "required_skills": [ "Client communication", "Negotiation", "Lead generation", "CRM" ], "preferred_skills": [ "Salesforce", "Excel", "Presentation skills" ], "min_cgpa": 6.0, "allowed_branches": [ "all branches" ], "allowed_batches": [ "2027" ], "no_active_backlogs": false, "deadline_iso": null, "deadline_as_written": "rolling basis", "notes": "soft skills included, no deadline stated" }, { "file": "jd_05_securesphere_cyber", "company": "SecureSphere Cyber", "role": "Cybersecurity Analyst", "required_skills": [ "Network Security", "Penetration Testing", "Linux", "Wireshark", "SIEM tools" ], "preferred_skills": [ "CEH certification", "Bash scripting" ], "min_cgpa": 6.5, "allowed_branches": [ "CSE/IT" ], "allowed_batches": [ "2026" ], "no_active_backlogs": false, "deadline_iso": "2026-11-12", "deadline_as_written": "12/11/2026", "notes": "batch 2026 edge case, deadline already passed" }, { "file": "jd_06_genmind_ml", "company": "GenMind AI", "role": "ML/GenAI Engineer", "required_skills": [ "Python", "PyTorch", "Large Language Models", "Prompt Engineering" ], "preferred_skills": [ "LangChain", "Docker", "HuggingFace" ], "min_cgpa": 8.5, "allowed_branches": [ "Computer Science & Engineering" ], "allowed_batches": [], "no_active_backlogs": true, "deadline_iso": "2026-11-21", "deadline_as_written": "21/11/2026", "notes": "no batch stated, deadline within next 3 days" }, { "file": "jd_07_swiftbyte_backend", "company": "SwiftByte Technologies", "role": "Backend Engineer", "required_skills": [ "Java", "Spring Boot", "SQL", "REST APIs", "Git" ], "preferred_skills": [ "Redis", "AWS", "Apache Kafka" ], "min_cgpa": 8.0, "allowed_branches": [ "B.Tech CSE/IT/ECE" ], "allowed_batches": [ "2027" ], "no_active_backlogs": true, "deadline_iso": "2026-12-04", "deadline_as_written": "Friday, 4 December 2026", "notes": "deadline 1-4 weeks out" }, { "file": "jd_08_peoplefirst_hr", "company": "PeopleFirst Corp", "role": "HR Intern", "required_skills": [ "Interpersonal skills", "Recruitment basics", "MS Office", "Communication" ], "preferred_skills": [ "Event management", "Public speaking", "Canva" ], "min_cgpa": null, "allowed_branches": [ "all branches" ], "allowed_batches": [ "2027" ], "no_active_backlogs": false, "deadline_iso": "2026-12-10", "deadline_as_written": "2026-12-10", "notes": "soft skills included, no cgpa stated, deadline 1-4 weeks out" } ] === END ANSWER KEY ===

@@ -1,0 +1,11 @@
+Devansh Agarwal
+B.Tech CSE, 2023-2027
+
+SKILLS
+JavaScript, Node.js, SQL, REST APIs
+
+PROJECTS
+Social Media Backend: Developed a high-traffic backend server using JavaScript and Node.js. Designed efficient relational schemas utilizing SQL for rapid data retrieval. Created comprehensive REST APIs for the frontend clients to consume seamlessly. I specialize entirely in the JS ecosystem and have no prior experience with Java or Spring ecosystems.
+
+HOBBIES
+Playing badminton, creating digital art.

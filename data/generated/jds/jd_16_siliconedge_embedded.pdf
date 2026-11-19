@@ -1,0 +1,98 @@
+%PDF-1.4
+%ту╧╙
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [6 0 R 8 0 R] /Count 2 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+5 0 obj
+<< /Length 3130 >>
+stream
+BT /F2 16.0 Tf 56.00 762.80 Td (SiliconEdge Micro Ц Embedded/Firmware Engineer) Tj ET
+BT /F2 12.5 Tf 56.00 729.92 Td (Company Name: SiliconEdge Micro) Tj ET
+BT /F2 12.5 Tf 56.00 703.05 Td (Website: careers.siliconedge.example.com) Tj ET
+BT /F2 12.5 Tf 56.00 676.17 Td (Job Title: Embedded/Firmware Engineer) Tj ET
+BT /F2 12.5 Tf 56.00 649.30 Td (Job Type: Full-time) Tj ET
+BT /F2 12.5 Tf 56.00 622.42 Td (Experience: Freshers) Tj ET
+BT /F2 12.5 Tf 56.00 595.55 Td (About the Company:) Tj ET
+BT /F1 10.5 Tf 56.00 580.32 Td (SiliconEdge Micro is a pioneer in the design and development of application-specific) Tj ET
+BT /F1 10.5 Tf 56.00 565.10 Td (integrated circuits \(ASICs\) and embedded systems for the medical device industry. Our) Tj ET
+BT /F1 10.5 Tf 56.00 549.87 Td (firmware controls life-saving equipment, meaning our engineering standards are) Tj ET
+BT /F1 10.5 Tf 56.00 534.65 Td (incredibly strict. We operate in a highly regulated environment where precision, safety,) Tj ET
+BT /F1 10.5 Tf 56.00 519.42 Td (and reliability are paramount.) Tj ET
+BT /F2 12.5 Tf 56.00 492.55 Td (Role Overview & Responsibilities:) Tj ET
+BT /F1 10.5 Tf 56.00 477.32 Td (As an Embedded/Firmware Engineer, you will develop the low-level code that interfaces) Tj ET
+BT /F1 10.5 Tf 56.00 462.10 Td (directly with custom hardware. You will write code for microcontrollers, manage memory) Tj ET
+BT /F1 10.5 Tf 56.00 446.87 Td (constraints, and ensure real-time responsiveness. This role demands a meticulous) Tj ET
+BT /F1 10.5 Tf 56.00 431.65 Td (approach to programming and a deep understanding of hardware schematics.) Tj ET
+BT /F1 10.5 Tf 56.00 410.12 Td (Х  Write fail-safe C code for resource-constrained microcontrollers.) Tj ET
+BT /F1 10.5 Tf 56.00 394.90 Td (Х  Develop bootloaders and over-the-air \(OTA\) update mechanisms for medical devices.) Tj ET
+BT /F1 10.5 Tf 56.00 379.67 Td (Х  Interface microcontrollers with various analog and digital sensors via SPI/I2C/UART.) Tj ET
+BT /F1 10.5 Tf 56.00 364.45 Td (Х  Conduct rigorous static analysis and modular testing to ensure code safety) Tj ET
+BT /F1 10.5 Tf 70.00 349.22 Td (compliance.) Tj ET
+BT /F1 10.5 Tf 56.00 334.00 Td (Х  Work closely with hardware engineers to bring up new prototype boards.) Tj ET
+BT /F1 10.5 Tf 56.00 318.77 Td (Х  Optimize firmware for minimal power consumption in portable devices.) Tj ET
+BT /F2 12.5 Tf 56.00 291.90 Td (Required Skills:) Tj ET
+BT /F1 10.5 Tf 56.00 270.37 Td (Х  Embedded C) Tj ET
+BT /F1 10.5 Tf 56.00 255.15 Td (Х  Microcontrollers) Tj ET
+BT /F1 10.5 Tf 56.00 239.92 Td (Х  RTOS) Tj ET
+BT /F1 10.5 Tf 56.00 224.70 Td (Х  UART/SPI/I2C) Tj ET
+BT /F1 10.5 Tf 56.00 209.47 Td (Х  Hardware debugging) Tj ET
+BT /F2 12.5 Tf 56.00 182.60 Td (Preferred Skills:) Tj ET
+BT /F1 10.5 Tf 56.00 161.07 Td (Х  C++) Tj ET
+BT /F1 10.5 Tf 56.00 145.85 Td (Х  Python) Tj ET
+BT /F1 10.5 Tf 56.00 130.62 Td (Х  MISRA C standards) Tj ET
+BT /F2 12.5 Tf 56.00 103.75 Td (Eligibility Criteria:) Tj ET
+BT /F1 10.5 Tf 56.00 82.22 Td (Х  Minimum CGPA: 8.5 threshold.) Tj ET
+BT /F1 10.5 Tf 56.00 67.00 Td (Х  Allowed Branches: Electronics and Communication.) Tj ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 5 0 R /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> >>
+endobj
+7 0 obj
+<< /Length 977 >>
+stream
+BT /F1 10.5 Tf 56.00 770.77 Td (Х  Batch: 2027.) Tj ET
+BT /F1 10.5 Tf 56.00 755.55 Td (Х  Familiarity with reading electronic schematics and using oscilloscopes.) Tj ET
+BT /F2 12.5 Tf 56.00 728.67 Td (Compensation and Perks:) Tj ET
+BT /F1 10.5 Tf 56.00 707.15 Td (Х  CTC: 10.0 LPA.) Tj ET
+BT /F1 10.5 Tf 56.00 691.92 Td (Х  Location: Ahmedabad, Gujarat.) Tj ET
+BT /F1 10.5 Tf 56.00 676.70 Td (Х  Relocation assistance, ongoing technical certifications, and subsidized cafeteria.) Tj ET
+BT /F2 12.5 Tf 56.00 649.82 Td (Application Details:) Tj ET
+BT /F1 10.5 Tf 56.00 634.60 Td (Students should apply on the placement portal. The evaluation involves a written test) Tj ET
+BT /F1 10.5 Tf 56.00 619.37 Td (covering digital electronics and C programming, a practical hardware debugging session,) Tj ET
+BT /F1 10.5 Tf 56.00 604.15 Td (a technical interview on microcontroller architecture, and a final HR round.) Tj ET
+BT /F1 10.5 Tf 56.00 588.92 Td (Deadline: rolling basis.) Tj ET
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 7 0 R /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> >>
+endobj
+9 0 obj
+<< /Title <FEFF00530069006C00690063006F006E00450064006700650020004D006900630072006F0020201300200045006D006200650064006400650064002F004600690072006D007700610072006500200045006E00670069006E006500650072> /Producer (placement-agent text_to_pdf) >>
+endobj
+xref
+0 10
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000127 00000 n 
+0000000224 00000 n 
+0000000326 00000 n 
+0000003508 00000 n 
+0000003644 00000 n 
+0000004672 00000 n 
+0000004808 00000 n 
+trailer
+<< /Size 10 /Root 1 0 R /Info 9 0 R >>
+startxref
+5067
+%%EOF

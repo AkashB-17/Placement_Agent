@@ -1,0 +1,14 @@
+Rahul Iyer
+B.Tech Artificial Intelligence and Machine Learning, 2023-2027
+
+SKILLS
+Python, SQL, Statistics
+
+PROJECTS
+Retail Data Analysis: Utilized Python along with Pandas to clean and process a dataset of 1 million retail transactions. Wrote advanced SQL queries to extract cohort behavior and aggregate sales metrics. Applied advanced Statistics to run A/B testing on pricing models, deriving a p-value to prove statistical significance.
+
+INTERNSHIPS
+Data Analyst Intern: Cleaned data and built basic dashboards. I am familiar with the basics of Machine Learning but have not yet deployed predictive models in a production environment.
+
+HOBBIES
+Chess, Table Tennis.

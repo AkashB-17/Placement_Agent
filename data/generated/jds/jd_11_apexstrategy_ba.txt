@@ -1,0 +1,48 @@
+Company Name: Apex Strategy Partners
+Website: www.apexstrategy.example.com
+Job Title: Business Analyst
+Job Type: Full-time
+Experience: Freshers
+
+About the Company:
+Apex Strategy Partners is a premier management and technology consulting firm. We help traditional enterprises digitize their operations, optimize supply chains, and improve customer retention through data-driven strategies. Our consultants work closely with C-level executives to map out business transformations. We foster a culture of intellectual curiosity, rigorous analysis, and collaborative problem-solving.
+
+Role Overview & Responsibilities:
+As a Business Analyst, you will act as the liaison between our technical execution teams and our corporate clients. You will gather business requirements, analyze large datasets to identify market trends, and create detailed project roadmaps. You will be expected to balance technical feasibility with business viability, ensuring that the software solutions we deliver drive actual business value.
+
+* Conduct stakeholder meetings to gather and document business requirements.
+* Analyze operational data using spreadsheets and basic querying languages to find inefficiencies.
+* Create process flow diagrams and business requirement documents (BRDs).
+* Manage conflicting priorities and negotiate project scopes with client representatives.
+* Track project progress and report on key performance indicators to senior management.
+* Assist in organizing user acceptance testing (UAT) for newly developed software modules.
+
+Required Skills:
+
+* SQL
+* Excel
+* Stakeholder management
+* Analytical thinking
+* Presentation skills
+
+Preferred Skills:
+
+* Power BI
+* JIRA
+
+Eligibility Criteria:
+
+* Minimum CGPA: 6.5 minimum.
+* Allowed Branches: all branches.
+* Batch: Class of 2027.
+* Excellent command of both written and spoken English is mandatory.
+
+Compensation and Perks:
+
+* CTC: 8.0 LPA.
+* Location: Gurugram, Haryana.
+* Fast-track promotion cycles, corporate travel benefits, and continuous learning budgets.
+
+Application Details:
+Apply via the university training and placement cell. The selection pipeline consists of a resume shortlisting phase, an online cognitive and analytical reasoning test, a case-study presentation round, and a final partner interview.
+Deadline: 20 Nov 2026.

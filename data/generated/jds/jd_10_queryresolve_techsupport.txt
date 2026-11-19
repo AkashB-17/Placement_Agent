@@ -1,0 +1,48 @@
+Company Name: QueryResolve Networks
+Website: support.queryresolve.example.com
+Job Title: Technical Support Engineer (SQL)
+Job Type: Full-time
+Experience: Freshers
+
+About the Company:
+QueryResolve Networks provides enterprise-grade technical support and infrastructure monitoring solutions for global telecom operators and cloud service providers. We act as the critical bridge between complex backend systems and end-user satisfaction. Our 24/7 operations command center in Hyderabad is equipped with state-of-the-art diagnostic tools, enabling our engineers to resolve critical database and network issues in real time.
+
+Role Overview & Responsibilities:
+The Technical Support Engineer will be the first line of defense for investigating and resolving complex data anomalies reported by our clients. You will write and execute database queries to extract logs, trace transaction failures, and correct data integrity issues. This role requires an analytical mindset, the ability to work under pressure, and exceptional communication abilities when dealing with frustrated clients.
+
+* Monitor incoming support tickets and categorize them based on severity and impact.
+* Write complex queries to extract and analyze data from relational databases.
+* Troubleshoot transaction failures and system bottlenecks using log analysis.
+* Communicate technical solutions to non-technical client stakeholders clearly and calmly.
+* Collaborate with backend development teams to escalate deep-rooted software bugs.
+* Update internal knowledge base articles with common troubleshooting steps and resolutions.
+
+Required Skills:
+
+* SQL
+* Customer communication
+* Troubleshooting
+* Ticketing systems
+
+Preferred Skills:
+
+* Linux
+* Bash
+* ITIL framework
+
+Eligibility Criteria:
+
+* Minimum CGPA: No cut-off; we value problem-solving skills over grades.
+* Allowed Branches: Any circuit branch.
+* Batch: 2023-27 batch.
+* Willingness to work in rotating shifts, including night shifts.
+
+Compensation and Perks:
+
+* CTC: 5.5 LPA (plus attractive shift allowances).
+* Location: Hyderabad, Telangana.
+* Free transportation for night shifts, on-site gym, and meal cards.
+
+Application Details:
+Interested candidates should register directly on the company career portal. The recruitment drive will feature a group discussion to evaluate communication skills, a hands-on database querying test, and a personal interview focusing on situational judgment and technical troubleshooting.
+Deadline: 2026-11-15.

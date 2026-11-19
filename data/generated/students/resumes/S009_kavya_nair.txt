@@ -1,0 +1,11 @@
+Kavya Nair
+B.Tech ECE, 2023-2027
+
+SKILLS
+Java, SQL, REST APIs, Git
+
+PROJECTS
+Student Database API: Developed a robust backend server in Java to process student enrollment data. Designed the relational schemas and wrote SQL queries for data retrieval. Exposed the functionality via secure REST APIs for third-party consumption. Managed source code efficiently using Git. I exclusively focus on server-side logic and do not know JavaScript or frontend technologies.
+
+HOBBIES
+Playing guitar, competitive programming.

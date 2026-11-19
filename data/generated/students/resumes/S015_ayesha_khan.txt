@@ -1,0 +1,23 @@
+Ayesha Khan
+B.Tech AI-ML, 2023-2027
+
+PROFESSIONAL SUMMARY
+I am a highly focused, research-driven undergraduate student deeply committed to pushing the boundaries of artificial intelligence. Throughout my academic career, I have cultivated an intense interest in deep learning architectures, specifically focusing on how machines can understand and generate human language. My goal is to join a cutting-edge AI laboratory or forward-thinking tech company where I can apply my rigorous academic training to create scalable, impactful machine learning solutions. I am particularly fascinated by multimodal models and the ethical implications of deployed AI. I am a firm believer in continuous learning, open-source contribution, and collaborative problem-solving.
+
+EDUCATION
+Bachelor of Technology in Artificial Intelligence and Machine Learning. Expected Graduation: 2027.
+Current CGPA: 9.2. 
+I have completed advanced coursework in Calculus, Probability, Linear Algebra, Optimization Techniques, Natural Language Processing, and Computer Vision. I actively participate in academic seminars and have presented preliminary findings on generative models at regional student conferences.
+
+TECHNICAL SKILLS
+My expertise lies in building and evaluating deep learning models. I have extensive experience utilizing PyTorch to design complex neural network graphs, implement custom loss functions, and manage distributed training across GPU clusters. I have specialized heavily in working with Large Language Models, adapting foundational weights to highly specific enterprise tasks using techniques like LoRA. I also excel at Prompt Engineering, carefully designing input contexts and few-shot examples to drastically reduce model hallucination and improve reasoning steps. Please note that I explicitly have no prior experience with Python; I exclusively use the R programming language and its ecosystem for all my deep learning and scripting tasks, utilizing R-based wrappers for model training.
+
+PROJECTS
+1. Enterprise Document Summarization Engine: Led a three-person team to build a tool that digests 50-page legal contracts and outputs concise summaries. The core model was a transformer architecture implemented from scratch in PyTorch. I was responsible for fine-tuning several open-source Large Language Models on a proprietary dataset of legal texts. I heavily utilized advanced Prompt Engineering to ensure the models did not omit crucial liability clauses. The final application reduced reading time for end-users by 70% while maintaining high factual accuracy.
+2. Medical Query Answering System: Developed a retrieval-augmented generation pipeline to answer complex medical questions. Used PyTorch to train the dense passage retriever. The generative component relied on carefully constructed contexts via Prompt Engineering to ensure the model only answered based on provided medical literature, minimizing dangerous hallucinations.
+
+EXTRACURRICULARS
+Core committee member of the Data Science Club. Organized a 48-hour hackathon focused on AI for social good. Mentored freshmen in linear algebra and basic programming logic.
+
+HOBBIES
+I enjoy solving complex jigsaw puzzles, playing classical violin to unwind, and hiking in nature reserves to disconnect from screens.

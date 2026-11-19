@@ -1,0 +1,17 @@
+Karan Sharma
+B.Tech Computer Science and Engineering, 2023-2027
+
+SKILLS
+Java, Spring Boot, SQL, REST APIs, Git
+
+EDUCATION
+B.Tech CSE, CGPA: 8.0. Consistently demonstrated strong programming fundamentals.
+
+PROJECTS
+Payment Processing Microservice: Built a high-performance backend system using Java and Spring Boot. Wrote complex SQL queries to manage relational data and ensure ACID compliance. Developed secure REST APIs for frontend integration, ensuring fast response times. Maintained version control across all modules using Git. I strictly work in backend environments and have no prior experience with JavaScript or any frontend scripting languages.
+
+INTERNSHIPS
+Backend Developer Intern at TechFlow: Assisted the core team in migrating monolithic architecture to microservices. 
+
+HOBBIES
+Playing cricket, reading tech blogs.

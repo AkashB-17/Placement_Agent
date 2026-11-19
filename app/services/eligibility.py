@@ -11,7 +11,7 @@ from __future__ import annotations
 from typing import Any
 
 from app.schemas import EligibilityResult, FailedRule, JDRequirements, PolicyRules
-from app.services.normalize import normalize_batch, normalize_branch
+from app.services.normalize import normalize_batch, normalize_branch, normalize_branches
 
 # Natural-language descriptions double as retrieval queries for citations.
 RULE_DESCRIPTIONS = {
@@ -38,13 +38,20 @@ def _membership_failures(
     student_value: str,
     allowed_by_source: dict[str, list[str]],
     normalizer,
+    normalize_allowed,
 ) -> list[FailedRule]:
+    """`normalize_allowed` re-normalizes a stored allowed list, so rows saved before a
+    normalization fix ("B.TECH CSE/IT", "ALL BRANCHES") still compare correctly. If it
+    comes back empty, the rule means "no restriction" and is not enforced."""
     failures = []
     normalized_value = normalizer(student_value).casefold()
     for source, allowed in allowed_by_source.items():
         if not allowed:
             continue
-        if normalized_value not in {normalizer(item).casefold() for item in allowed}:
+        allowed_codes = {code.casefold() for code in normalize_allowed(allowed)}
+        if not allowed_codes:
+            continue
+        if normalized_value not in allowed_codes:
             failures.append(_fail(rule, source, student_value, allowed))
     return failures
 
@@ -78,12 +85,14 @@ def check_eligibility(
         student["branch"],
         {"policy": policy.allowed_branches, "jd": jd.allowed_branches},
         normalize_branch,
+        normalize_branches,
     )
     failed += _membership_failures(
         "allowed_batches",
         student["batch"],
         {"policy": policy.allowed_batches, "jd": jd.allowed_batches},
         normalize_batch,
+        lambda values: [normalize_batch(v) for v in values],
     )
 
     if student.get("is_placed") and policy.placed_students_can_apply is False:

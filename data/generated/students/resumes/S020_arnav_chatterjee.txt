@@ -1,0 +1,13 @@
+Arnav Chatterjee
+B.Tech ECE, 2023-2027
+
+SKILLS
+Embedded C, RTOS, C++
+
+PROJECTS
+Real-Time Sensor Hub: Developed firmware in Embedded C for a multi-sensor array. Implemented task scheduling and resource management using an RTOS framework. Wrote high-level data processing algorithms utilizing C++ object-oriented principles.
+
+I am familiar with the basics of Microcontrollers through theoretical coursework, but my projects primarily focused on the software abstraction layers.
+
+HOBBIES
+Football, photography.

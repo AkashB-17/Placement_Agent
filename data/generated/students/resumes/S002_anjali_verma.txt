@@ -1,0 +1,14 @@
+Anjali Verma
+B.Tech CSE, 2023-2027
+
+SKILLS
+AWS, Docker, Linux, CI/CD pipelines, Python
+
+PROJECTS
+Cloud Infrastructure Automation: Leveraged AWS services to deploy web applications dynamically. Containerized backend services using Docker to ensure environment consistency. Managed Ubuntu servers utilizing core Linux commands and bash scripting. Designed and maintained automated CI/CD pipelines to streamline deployment workflows, reducing manual errors by 40%. Wrote multiple Python scripts for infrastructure-as-code provisioning and server health monitoring.
+
+CERTIFICATIONS
+AWS Certified Solutions Architect - Associate.
+
+HOBBIES
+Sketching, studying cloud architectures, researching Kubernetes in my free time.

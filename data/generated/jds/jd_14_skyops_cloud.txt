@@ -1,0 +1,49 @@
+Company Name: SkyOps Technologies
+Website: cloud.skyops.example.com
+Job Title: Cloud/DevOps Engineer
+Job Type: Full-time
+Experience: Freshers
+
+About the Company:
+SkyOps Technologies provides managed cloud hosting and automated deployment solutions for the gaming industry. Multiplayer game servers require immense scalability, ultra-low latency, and absolute reliability. We build the hidden infrastructure that keeps millions of gamers connected seamlessly. We are a team of Linux enthusiasts and automation advocates who hate doing the same manual task twice.
+
+Role Overview & Responsibilities:
+We are hiring a Cloud/DevOps Engineer to help manage and scale our massive global server fleets. You will spend your days configuring virtual machines, writing shell scripts, and ensuring our continuous integration systems are running flawlessly. You will learn how to design architectures that can survive massive traffic spikes during major game launches.
+
+* Provision and manage cloud resources using infrastructure-as-code principles.
+* Write shell scripts to automate repetitive system administration tasks.
+* Manage source code repositories and configure automated build and test pipelines.
+* Implement robust monitoring and alerting systems to detect server degradation.
+* Perform regular security patching and system updates across server clusters.
+* Respond to critical infrastructure alerts and document root cause analyses.
+
+Required Skills:
+
+* Linux
+* Bash
+* Git
+* AWS
+* Python
+
+Preferred Skills:
+
+* Terraform
+* Docker
+* Ansible
+
+Eligibility Criteria:
+
+* Minimum CGPA: 6.0 overall.
+* Allowed Branches: CSE, ECE, EEE.
+* Batch: 2027.
+* Foundational knowledge of computer networking (TCP/IP, DNS, Load Balancing) is expected.
+
+Compensation and Perks:
+
+* CTC: 7.0 LPA.
+* Location: Chennai, Tamil Nadu.
+* Free gaming console on joining, internet reimbursement, and comprehensive technical training.
+
+Application Details:
+Register on the university portal to apply. The hiring process will involve an online objective test on OS and Networking, a live Linux debugging interview, a system design round, and an HR interaction.
+Deadline: December 5, 2026.
