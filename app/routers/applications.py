@@ -15,6 +15,11 @@ from app.auth import CurrentUser, require_role, staff_only
 from app.config import get_settings
 from app.schemas import (
     ApplicationOut,
+    JDRequirements,
+    MyJob,
+    MyJobApplication,
+    MyJobsResponse,
+    PolicyRules,
     ApplicationStatus,
     AutoApplyPreferences,
     AutoApplyRun,
@@ -23,6 +28,7 @@ from app.schemas import (
     ResumeLink,
 )
 from app.services import auto_apply
+from app.services.eligibility import check_eligibility
 from app.services.storage import signed_resume_url
 
 router = APIRouter(tags=["auto-apply"])
@@ -100,6 +106,56 @@ def withdraw(application_id: str, user: CurrentUser = Depends(student_only)) -> 
             raise HTTPException(status_code=409, detail="Too late: this application has already been sent to the company.")
         raise HTTPException(status_code=409, detail=f"This application is already {current['status']}.")
     return auto_apply.to_out(db.get_application(application_id))
+
+
+@router.get("/me/jobs", response_model=MyJobsResponse)
+def my_jobs(
+    policy_id: str | None = Query(None, description="Policy to check eligibility against; default: the newest"),
+    user: CurrentUser = Depends(student_only),
+) -> MyJobsResponse:
+    """The student's job board in one request: every JD with its deadline, the student's
+    eligibility (deterministic rules, with reasons) and their application, if any.
+    No LLM or embedding calls: scores are fetched per job on demand via POST /match."""
+    student = _my_student(user)
+    auto_apply.release_due()
+
+    if policy_id is not None:
+        row = db.get_policy(policy_id)
+        if row is None:
+            raise HTTPException(status_code=404, detail="Policy not found.")
+        rules = PolicyRules(**row["rules"])
+    else:
+        newest = db.list_policies()
+        policy_id = newest[0]["id"] if newest else None
+        rules = PolicyRules(**db.get_policy(policy_id)["rules"]) if policy_id else PolicyRules()
+
+    now = auto_apply.utcnow()
+    applications = {a["jd_id"]: a for a in db.list_applications(student_id=student["id"])}
+    jobs: list[MyJob] = []
+    for row in db.list_jd_rows():
+        jd = JDRequirements(**row["requirements"])
+        deadline_at = auto_apply.parse_deadline(jd.deadline)
+        app = applications.get(row["id"])
+        jobs.append(
+            MyJob(
+                id=row["id"],
+                company=jd.company,
+                role=jd.role,
+                ctc=jd.ctc,
+                deadline=jd.deadline,
+                deadline_at=deadline_at,
+                posted_at=row["created_at"],
+                closed=deadline_at is not None and deadline_at <= now,
+                eligibility=check_eligibility(student, rules, jd),
+                application=MyJobApplication(
+                    id=app["id"],
+                    status=app["status"],
+                    release_at=app["release_at"],
+                    can_withdraw=app["status"] == "pending" and app["release_at"] > now,
+                ) if app else None,
+            )
+        )
+    return MyJobsResponse(policy_id=policy_id, jobs=jobs)
 
 
 @router.get("/me/notifications", response_model=list[NotificationOut])

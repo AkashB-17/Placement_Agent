@@ -45,7 +45,7 @@ Students create their own account (**Create an account** on the sign-in page) wi
 **Upload** (left menu → Upload)
 - *Placement policy*: paste the text or drop a PDF/TXT. The system reads out the rules (minimum CGPA, maximum backlogs, branches, batches, placed-student rule).
 - *Job description*: same, for each company. The system reads the company, role, required and preferred skills, any stricter CGPA, branch and batch rules, CTC and deadline.
-- *Student*: name, login email, branch, batch, CGPA, backlogs, placed status and the resume (PDF/TXT). The resume is stored privately (see §7).
+- *Student*: name, login email, branch, batch, CGPA, backlogs and placed status, the academic record the placement cell holds. The CV is optional here: **students upload their own CV** after signing in. Re-adding a student updates their record and never wipes their CV.
 
 After an upload you see what was read. If the AI "found" a rule the document never states (for example it mistook the application deadline for a batch year), the system drops that rule and shows a **warning** instead of silently enforcing something that isn't there.
 
@@ -69,12 +69,11 @@ After an upload you see what was read. If the AI "found" a rule the document nev
 
 ### 4.2 Student
 
-**My placements** (the student's home page)
-- **Profile card**: branch, batch, CGPA, backlogs, and the skills found in their resume.
-- **My applications**: each auto-apply application with a live countdown and a **Withdraw** button while it is pending.
-- **Open positions**: every job, with **Check my match** to see eligibility, score and evidence for that job.
-- **Auto-apply** settings: on/off switch, a minimum score (can only be raised above the college threshold), and companies to never apply to.
-- **Notifications**: "We applied to X for you, it will be sent on…", "Your application has been sent", "You withdrew…".
+Students get their own layout: a top bar with a **notification bell** (unread count; "We applied to X for you, it will be sent on…", "Your application has been sent", "You withdrew…") and an icon rail with four pages (a slide-out menu on phones).
+- **Jobs** (home page): a job board. The list shows every job with its company, CTC, when it was posted, how long until it closes (red in the last 24 hours) and a status: *Eligible*, *Not eligible*, *Applied*, *Sent to company*, *Withdrawn* or *Applications closed*. Filter by status, sort by newest or closing soon, search, and switch between *All jobs* and *Applied jobs*. Selecting a job opens its detail: the application (with countdown and **Withdraw**) if one exists, and three tabs: **Job description**, **Eligibility criteria** (each rule the student fails, with their value against the requirement and whether the rule came from the policy or the job), and **My match** (score, matched/missing skills and evidence; needs a CV). Eligibility on the board is the fixed rule check, so the board loads without any AI call.
+- **Applications**: each auto-apply application with a live countdown and a **Withdraw** button while it is pending.
+- **Profile & CV**: branch, batch, CGPA, backlogs (set by the placement cell, not editable), the skills found in their CV, and **Your CV**: upload or replace it (PDF/TXT) and open the current one. Until a CV is uploaded the student can see jobs and eligibility but has no score, and auto-apply skips them. Applications already made keep the CV version they were scored on.
+- **Auto-apply**: on/off switch, a minimum score (can only be raised above the college threshold), and companies to never apply to.
 
 A student only ever sees their own record. Their account is linked to their record by the email the placement cell entered.
 

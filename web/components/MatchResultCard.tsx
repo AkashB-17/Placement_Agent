@@ -96,7 +96,8 @@ export function MatchResultCard({
                 Auto-apply recommended{threshold !== undefined ? ` (≥ ${threshold})` : ""}
               </Chip>
             )}
-            {score && score.score === null && <Chip tone="slate">No required skills in JD</Chip>}
+            {result.score_source === "no_resume" && <Chip tone="amber">No CV uploaded yet</Chip>}
+            {score && score.score === null && result.score_source !== "no_resume" && <Chip tone="slate">No required skills in JD</Chip>}
           </div>
         </div>
         {score && score.score !== null && <ScoreRing score={score.score} threshold={threshold ?? 80} />}

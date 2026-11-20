@@ -104,6 +104,7 @@ class StudentSummary(BaseModel):
     cgpa: float
     active_backlogs: int
     is_placed: bool
+    has_resume: bool = False
 
 
 class StudentDetail(BaseModel):
@@ -111,7 +112,9 @@ class StudentDetail(BaseModel):
     profile: StudentProfile
     parsed_resume: ParsedResume
     resume_text: str
-    has_resume_file: bool = False
+    has_resume: bool = False  # a CV has been uploaded (text extracted)
+    has_resume_file: bool = False  # the original file is in storage (Supabase only)
+    resume_updated_at: datetime | None = None
 
 
 class ResumeLink(BaseModel):
@@ -198,7 +201,8 @@ class MatchResult(BaseModel):
     citations: list[Citation] = Field(default_factory=list)
     # Where the score came from: "cache" (stored verified result), "fresh" (new AI call),
     # "none" (JD has no required skills, nothing to call). None when not scored (ineligible).
-    score_source: Literal["cache", "fresh", "none"] | None = None
+    # "no_resume": eligible but no CV uploaded yet, so there is nothing to score.
+    score_source: Literal["cache", "fresh", "none", "no_resume"] | None = None
 
 
 class RankedResponse(BaseModel):
@@ -269,3 +273,30 @@ class NotificationOut(BaseModel):
     message: str
     created_at: datetime
     read: bool
+
+
+# ── Student job board ───────────────────────────────────────────────────────
+
+class MyJobApplication(BaseModel):
+    id: str
+    status: ApplicationStatus
+    release_at: datetime
+    can_withdraw: bool
+
+
+class MyJob(BaseModel):
+    id: str
+    company: str | None
+    role: str | None
+    ctc: str | None
+    deadline: str | None = Field(description="As written in the JD")
+    deadline_at: datetime | None = Field(description="Parsed by code; null if unrecognised (e.g. rolling)")
+    posted_at: datetime | None
+    closed: bool
+    eligibility: EligibilityResult
+    application: MyJobApplication | None
+
+
+class MyJobsResponse(BaseModel):
+    policy_id: str | None = Field(description="Policy eligibility was checked against; null if none exists")
+    jobs: list[MyJob]

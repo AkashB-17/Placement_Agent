@@ -138,6 +138,7 @@ Schema: `supabase/migrations/20261117000000_auto_apply.sql` (`auto_apply_prefere
 | Endpoint | Who | Purpose |
 |---|---|---|
 | `GET` / `PUT /me/auto-apply` | student | Read / set preferences |
+| `GET /me/jobs?policy_id=` | student | Job board: every JD with own eligibility, deadline and application (no AI calls) |
 | `GET /me/applications`, `POST /applications/{id}/withdraw` | student | Own applications; withdraw while pending |
 | `GET /me/notifications`, `POST /me/notifications/read` | student | Notification feed |
 | `POST /jds/{id}/auto-apply?policy_id=` | officer, admin | Run for a job; returns created + skipped with reasons |
@@ -155,7 +156,8 @@ Schema: `supabase/migrations/20261117000000_auto_apply.sql` (`auto_apply_prefere
 | `/jobs` | officer, admin | Pick a policy and a JD, rank students: score, matched/missing skills, verified resume quotes, failed rules with the policy/JD clause |
 | `/students` | officer, admin | Student list, parsed skills, 60-second signed link to the resume file |
 | `/upload` | officer, admin (recruiter: JD only) | Policy, JD and student forms; shows grounding warnings |
-| `/me` | student | Own record, and an eligibility + score check per JD |
+| `/me` | student | Job board: every job with eligibility, deadline and application status; detail tabs for the description, failed rules and "My match" |
+| `/me/applications`, `/me/profile`, `/me/auto-apply` | student | Own applications with withdraw; academic record + CV upload; auto-apply preferences |
 | `/applications` | officer, admin, recruiter | Track applications: pending with countdown, sent, withdrawn |
 | `/admin` | admin | Invite users with a role, change roles |
 

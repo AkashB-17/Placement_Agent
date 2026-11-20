@@ -135,12 +135,13 @@ _SQLITE_ADDED_COLUMNS = {
         "email TEXT",
         "resume_path TEXT",
         "created_by TEXT",
+        "resume_updated_at TEXT",
     ],
 }
 
 _STUDENT_FULL_COLUMNS = (
     "id, name, email, branch, batch, cgpa, active_backlogs, is_placed, "
-    "resume_text, parsed_json, resume_path"
+    "resume_text, parsed_json, resume_path, resume_updated_at"
 )
 
 
@@ -319,6 +320,13 @@ def init_db() -> None:
                 "(npx supabase@latest db push --linked)."
             ) from exc
         try:
+            _fetchone("SELECT resume_updated_at FROM students LIMIT 1")
+        except psycopg.errors.UndefinedColumn as exc:
+            raise RuntimeError(
+                "The student CV migration is missing. Apply supabase/migrations/20261120000000_student_cv.sql "
+                "(npx supabase@latest db push --linked)."
+            ) from exc
+        try:
             _fetchone("SELECT 1 AS ok FROM score_cache LIMIT 1")
         except psycopg.errors.UndefinedTable as exc:
             raise RuntimeError(
@@ -424,38 +432,36 @@ def upsert_jd(jd_id: str, source_text: str, requirements_json: str, created_by: 
     )
 
 
-def upsert_student(
+def upsert_student_record(
     student_id: str,
     name: str,
     branch: str,
     batch: str,
     cgpa: float,
     active_backlogs: int,
-    resume_text: str,
-    parsed_json: str,
     is_placed: bool = False,
     email: str | None = None,
-    resume_path: str | None = None,
     created_by: str | None = None,
 ) -> None:
+    """Create or update the academic record the placement office owns.
+
+    Never touches the CV columns of an existing record: the student owns their CV, so an
+    officer correcting a CGPA must not wipe an uploaded CV. A new record starts with no CV."""
     _execute(
         """
         INSERT INTO students (
             id, name, email, branch, batch, cgpa, active_backlogs, is_placed,
             resume_text, parsed_json, resume_path, created_by
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, NULL, ?)
         ON CONFLICT(id) DO UPDATE SET
             name = excluded.name,
-            email = excluded.email,
+            email = COALESCE(excluded.email, students.email),
             branch = excluded.branch,
             batch = excluded.batch,
             cgpa = excluded.cgpa,
             active_backlogs = excluded.active_backlogs,
             is_placed = excluded.is_placed,
-            resume_text = excluded.resume_text,
-            parsed_json = excluded.parsed_json,
-            resume_path = COALESCE(excluded.resume_path, students.resume_path),
             created_by = COALESCE(students.created_by, excluded.created_by)
         """,
         (
@@ -467,12 +473,38 @@ def upsert_student(
             cgpa,
             active_backlogs,
             is_placed if using_postgres() else int(is_placed),
-            resume_text,
-            _json_param(parsed_json),
-            resume_path,
+            _json_param("{}"),
             created_by,
         ),
     )
+
+
+def set_student_resume(
+    student_id: str, resume_text: str, parsed_json: str, resume_path: str | None, now: datetime
+) -> None:
+    """Make this the student's current CV. Earlier files stay in storage untouched, so
+    applications that pinned them still point at what was scored."""
+    _execute(
+        "UPDATE students SET resume_text = ?, parsed_json = ?, resume_path = ?, resume_updated_at = ? WHERE id = ?",
+        (resume_text, _json_param(parsed_json), resume_path, _ts(now), student_id),
+    )
+
+
+def find_student_id(email: str | None, name: str, branch: str, batch: str) -> str | None:
+    """An existing record for this student, so re-adding them updates instead of duplicating.
+
+    Matched by login email when there is one, otherwise by name + branch + batch."""
+    if email:
+        row = _fetchone(
+            "SELECT id FROM students WHERE lower(email) = lower(?) ORDER BY created_at DESC LIMIT 1", (email,)
+        )
+    else:
+        row = _fetchone(
+            "SELECT id FROM students WHERE lower(name) = lower(?) AND branch = ? AND batch = ? "
+            "ORDER BY created_at DESC LIMIT 1",
+            (name, branch, batch),
+        )
+    return row["id"] if row else None
 
 
 # ── Reads ───────────────────────────────────────────────────────────────────
@@ -497,6 +529,15 @@ def list_jds() -> list[dict]:
     ]
 
 
+def list_jd_rows() -> list[dict[str, Any]]:
+    """Every JD with its requirements and when it was posted, newest first."""
+    rows = _fetchall("SELECT id, requirements_json, created_at FROM jds ORDER BY created_at DESC")
+    return [
+        {"id": row["id"], "requirements": _json_value(row["requirements_json"]), "created_at": _dt(row["created_at"])}
+        for row in rows
+    ]
+
+
 def get_jd(jd_id: str) -> dict | None:
     row = _fetchone(
         "SELECT id, source_text, requirements_json, created_by FROM jds WHERE id = ?", (jd_id,)
@@ -513,10 +554,11 @@ def get_jd(jd_id: str) -> dict | None:
 
 def list_students() -> list[dict]:
     rows = _fetchall(
-        "SELECT id, name, email, branch, batch, cgpa, active_backlogs, is_placed "
+        "SELECT id, name, email, branch, batch, cgpa, active_backlogs, is_placed, "
+        "CASE WHEN resume_text IS NOT NULL AND resume_text <> '' THEN 1 ELSE 0 END AS has_resume "
         "FROM students ORDER BY created_at DESC"
     )
-    return [{**row, "is_placed": bool(row["is_placed"])} for row in rows]
+    return [{**row, "is_placed": bool(row["is_placed"]), "has_resume": bool(row["has_resume"])} for row in rows]
 
 
 def _student(row: dict[str, Any]) -> dict[str, Any]:
@@ -530,8 +572,9 @@ def _student(row: dict[str, Any]) -> dict[str, Any]:
         "active_backlogs": row["active_backlogs"],
         "is_placed": bool(row["is_placed"]),
         "resume_text": row["resume_text"] or "",
-        "parsed": _json_value(row["parsed_json"]),
+        "parsed": _json_value(row["parsed_json"]) or {},
         "resume_path": row["resume_path"],
+        "resume_updated_at": _dt(row["resume_updated_at"]),
     }
 
 

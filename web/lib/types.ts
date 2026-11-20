@@ -70,6 +70,7 @@ export interface StudentSummary {
   cgpa: number;
   active_backlogs: number;
   is_placed: boolean;
+  has_resume: boolean;
 }
 
 export interface StudentProfile {
@@ -87,7 +88,10 @@ export interface StudentDetail {
   profile: StudentProfile;
   parsed_resume: ParsedResume;
   resume_text: string;
+  /** A CV has been uploaded (students upload their own). */
+  has_resume: boolean;
   has_resume_file: boolean;
+  resume_updated_at: string | null;
 }
 
 export interface IngestResponse {
@@ -132,7 +136,7 @@ export interface MatchResult {
   auto_apply_recommended: boolean;
   citations: Citation[];
   /** "cache" = stored verified score, "fresh" = new AI call, "none" = JD has no required skills. */
-  score_source?: "cache" | "fresh" | "none" | null;
+  score_source?: "cache" | "fresh" | "none" | "no_resume" | null;
 }
 
 export interface RankedResponse {
@@ -202,4 +206,31 @@ export interface Notification {
   message: string;
   created_at: string;
   read: boolean;
+}
+
+// ── Student job board (GET /me/jobs) ─────────────────────────────────────────
+
+export interface MyJobApplication {
+  id: string;
+  status: ApplicationStatus;
+  release_at: string;
+  can_withdraw: boolean;
+}
+
+export interface MyJob {
+  id: string;
+  company: string | null;
+  role: string | null;
+  ctc: string | null;
+  deadline: string | null;
+  deadline_at: string | null;
+  posted_at: string | null;
+  closed: boolean;
+  eligibility: { eligible: boolean; failed_rules: FailedRule[] };
+  application: MyJobApplication | null;
+}
+
+export interface MyJobsResponse {
+  policy_id: string | null;
+  jobs: MyJob[];
 }

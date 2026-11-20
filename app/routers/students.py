@@ -1,8 +1,18 @@
+from datetime import UTC, datetime
+
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 
 from app.auth import CurrentUser, require_role, staff_only
 from app.config import get_settings
-from app.db import get_student, get_student_by_email, list_students, make_document_id, upsert_student
+from app.db import (
+    find_student_id,
+    get_student,
+    get_student_by_email,
+    list_students,
+    make_document_id,
+    set_student_resume,
+    upsert_student_record,
+)
 from app.schemas import (
     ParsedResume,
     ResumeLink,
@@ -39,8 +49,36 @@ def _detail(row: dict) -> StudentDetail:
         profile=profile,
         parsed_resume=ParsedResume(**row["parsed"]),
         resume_text=row["resume_text"],
+        has_resume=bool(row["resume_text"].strip()),
         has_resume_file=bool(row["resume_path"]),
+        resume_updated_at=row["resume_updated_at"],
     )
+
+
+async def _prepare_cv(student_id: str, upload: UploadFile) -> tuple[str, ParsedResume, str | None]:
+    """Read, parse and store a CV file; returns (text, parsed, storage path).
+
+    Shared by the office (attaching a CV when adding a student) and the student (uploading
+    or replacing their own). Runs before any database write, so a bad file or a storage
+    failure saves nothing. The file goes to private storage under a content-addressed path,
+    so earlier versions are never overwritten."""
+    data = await upload.read()
+    if not data:
+        raise HTTPException(status_code=400, detail="The CV file is empty.")
+    resume_text = text_from_upload(upload.filename, data)
+    if not resume_text:
+        raise HTTPException(status_code=422, detail="Could not extract text from the CV file.")
+    parsed = extract_structured(resume_text, ParsedResume, RESUME_INSTRUCTIONS)
+    resume_path = None
+    if storage_enabled():
+        resume_path = resume_object_path(student_id, upload.filename, data)
+        upload_resume(resume_path, data)
+    return resume_text, parsed, resume_path
+
+
+def _set_cv(student_id: str, cv: tuple[str, ParsedResume, str | None]) -> None:
+    resume_text, parsed, resume_path = cv
+    set_student_resume(student_id, resume_text, parsed.model_dump_json(), resume_path, datetime.now(UTC))
 
 
 def owns_student_record(user: CurrentUser, student: dict) -> bool:
@@ -57,61 +95,75 @@ async def create_student(
     active_backlogs: int = Form(..., ge=0),
     is_placed: bool = Form(False),
     email: str | None = Form(None, description="Student's login email; links the record to their account"),
-    resume: UploadFile = File(...),
+    resume: UploadFile | None = File(None, description="Optional: students can upload their own CV"),
     user: CurrentUser = Depends(staff_only),
 ) -> StudentIngestResponse:
-    # Academic fields come from the placement office, so only staff create records.
+    """Add or update a student's academic record. Academic fields come from the placement
+    office, so only staff create records; the CV is optional because students upload it."""
     branch = normalize_branch(branch)
     batch = normalize_batch(batch)
-    if not branch or not batch:
-        raise HTTPException(status_code=422, detail="Branch and batch must not be blank.")
+    if not branch or not batch or not name.strip():
+        raise HTTPException(status_code=422, detail="Name, branch and batch must not be blank.")
     email = (email or "").strip().lower() or None
     if email is not None and "@" not in email:
         raise HTTPException(status_code=422, detail="Email is not valid.")
+    has_cv = resume is not None and bool(resume.filename)
+    if not has_cv and email is None:
+        raise HTTPException(
+            status_code=422,
+            detail="Add the student's login email so they can upload their CV, or attach a CV now.",
+        )
 
-    data = await resume.read()
-    if not data:
-        raise HTTPException(status_code=400, detail="Resume file is empty.")
-
-    resume_text = text_from_upload(resume.filename, data)
-    if not resume_text:
-        raise HTTPException(status_code=422, detail="Could not extract text from the resume file.")
-
-    parsed = extract_structured(resume_text, ParsedResume, RESUME_INSTRUCTIONS)
-    student_id = make_document_id(name, branch, batch, resume_text)
-
-    resume_path = None
-    if storage_enabled():
-        resume_path = resume_object_path(student_id, resume.filename, data)
-        upload_resume(resume_path, data)
-
-    upsert_student(
+    # Stable id: re-adding the same student updates their record (and keeps their CV),
+    # instead of creating a duplicate. A new CV never changes the id.
+    student_id = find_student_id(email, name.strip(), branch, batch) or (
+        make_document_id("student", email) if email else make_document_id(name.strip(), branch, batch)
+    )
+    cv = await _prepare_cv(student_id, resume) if has_cv else None
+    upsert_student_record(
         student_id,
-        name=name,
+        name=name.strip(),
         branch=branch,
         batch=batch,
         cgpa=cgpa,
         active_backlogs=active_backlogs,
-        resume_text=resume_text,
-        parsed_json=parsed.model_dump_json(),
         is_placed=is_placed,
         email=email,
-        resume_path=resume_path,
         created_by=user.id if user.id != "dev-admin" else None,
     )
-    # Resumes are not embedded: scoring reads the full text, and keeping resume chunks
-    # in the local vector store would leave student data on this machine.
+    if cv is not None:
+        _set_cv(student_id, cv)
+    # CVs are not embedded: scoring reads the full text, and keeping CV chunks in the local
+    # vector store would leave student data on this machine.
+    row = get_student(student_id)
+    parsed = ParsedResume(**row["parsed"])
     profile = StudentProfile(
-        name=name,
-        email=email,
-        branch=branch,
-        batch=batch,
-        cgpa=cgpa,
-        active_backlogs=active_backlogs,
-        is_placed=is_placed,
+        name=row["name"],
+        email=row["email"],
+        branch=row["branch"],
+        batch=row["batch"],
+        cgpa=row["cgpa"],
+        active_backlogs=row["active_backlogs"],
+        is_placed=row["is_placed"],
         parsed_resume=parsed,
     )
     return StudentIngestResponse(id=student_id, profile=profile, parsed_resume=parsed)
+
+
+@router.put("/me/resume", response_model=StudentDetail)
+async def upload_my_resume(
+    resume: UploadFile = File(..., description="Your CV as a .pdf or .txt file"),
+    user: CurrentUser = Depends(require_role("student")),
+) -> StudentDetail:
+    """A student uploads or replaces their own CV. Academic details stay as the office set them."""
+    row = get_student_by_email(user.email) if user.email else None
+    if row is None:
+        raise HTTPException(
+            status_code=404,
+            detail="No student record is linked to your email yet. Ask the placement office to add you first.",
+        )
+    _set_cv(row["id"], await _prepare_cv(row["id"], resume))
+    return _detail(get_student(row["id"]))
 
 
 @router.get("", response_model=list[StudentSummary])

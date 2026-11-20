@@ -1,6 +1,6 @@
 "use client";
 
-import { BarChart3, GraduationCap, LogOut, Menu, Send, ShieldCheck, Sparkles, Upload, UserRound, Users, X, type LucideIcon } from "lucide-react";
+import { BarChart3, GraduationCap, LogOut, Menu, Send, ShieldCheck, Sparkles, Upload, Users, X, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, type ReactNode } from "react";
@@ -8,6 +8,7 @@ import { useState, type ReactNode } from "react";
 import { useAuth } from "@/lib/auth";
 import type { Role } from "@/lib/types";
 
+import { StudentShell } from "./StudentShell";
 import { Avatar } from "./ui";
 
 const LINKS: { href: string; label: string; icon: LucideIcon; roles: Role[] }[] = [
@@ -15,7 +16,6 @@ const LINKS: { href: string; label: string; icon: LucideIcon; roles: Role[] }[] 
   { href: "/students", label: "Students", icon: GraduationCap, roles: ["officer", "admin"] },
   { href: "/applications", label: "Applications", icon: Send, roles: ["officer", "admin", "recruiter"] },
   { href: "/upload", label: "Upload", icon: Upload, roles: ["officer", "admin", "recruiter"] },
-  { href: "/me", label: "My placements", icon: UserRound, roles: ["student"] },
   { href: "/admin", label: "Users & roles", icon: Users, roles: ["admin"] },
 ];
 
@@ -107,6 +107,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   if (!profile || AUTH_PAGES.has(pathname)) {
     return <main className="min-h-screen">{children}</main>;
   }
+  if (profile.role === "student") return <StudentShell>{children}</StudentShell>;
 
   return (
     <div className="min-h-screen lg:pl-64">

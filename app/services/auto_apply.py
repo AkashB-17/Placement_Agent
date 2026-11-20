@@ -181,6 +181,8 @@ def run_auto_apply(jd_id: str, policy_id: str, actor_id: str | None) -> AutoAppl
         reason = None
         if student["id"] in existing:
             reason = f"Already has a {existing[student['id']]} application for this job (never sent twice)."
+        elif not (student.get("resume_text") or "").strip():
+            reason = "Has not uploaded a CV yet."
         elif company_key and company_key in {c.strip().casefold() for c in prefs["excluded_companies"]}:
             reason = "Excluded this company in their auto-apply preferences."
         elif (

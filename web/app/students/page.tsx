@@ -184,7 +184,12 @@ function StudentRows({ student: s, open, onToggle }: { student: StudentSummary; 
         <td className={`px-4 py-3 text-right tabular-nums ${s.active_backlogs > 0 ? "font-medium text-rose-600" : "text-slate-700"}`}>
           {s.active_backlogs}
         </td>
-        <td className="px-4 py-3">{s.is_placed ? <Chip tone="green">Placed</Chip> : <Chip>Seeking</Chip>}</td>
+        <td className="px-4 py-3">
+          <div className="flex flex-wrap gap-1">
+            {s.is_placed ? <Chip tone="green">Placed</Chip> : <Chip>Seeking</Chip>}
+            {!s.has_resume && <Chip tone="amber">No CV yet</Chip>}
+          </div>
+        </td>
         <td className="px-2 py-3 text-slate-400">
           <ChevronRight className={`size-4 transition ${open ? "rotate-90" : ""}`} aria-hidden />
         </td>

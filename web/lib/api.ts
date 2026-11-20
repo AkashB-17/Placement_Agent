@@ -1,6 +1,9 @@
 import { supabase } from "./supabase";
 
-const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000").replace(/\/$/, "");
+const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000").trim().replace(/\/+$/, "");
+// Must be an absolute URL. A bare word (e.g. the variable's own name pasted as its value)
+// would be fetched relative to the web app's own domain and come back as the host's 404.
+const API_URL_IS_VALID = /^https?:\/\/[^\s/]+/i.test(API_URL);
 
 export class ApiError extends Error {
   constructor(
@@ -22,11 +25,22 @@ function detailMessage(body: unknown, status: number): string {
         .join("; ");
     }
   }
-  return `Request failed (${status})`;
+  // Every error from our API is JSON with a "detail". Anything else came from something in
+  // front of it (the hosting platform, or a wrong address), so say where we were looking.
+  if (status === 404) {
+    return `The server at ${API_URL} answered "not found" without an API error. NEXT_PUBLIC_API_URL may point to the wrong server.`;
+  }
+  return `Request failed (${status}) at ${API_URL}.`;
 }
 
 /** Calls the FastAPI backend with the current user's access token. */
 export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
+  if (!API_URL_IS_VALID) {
+    throw new ApiError(
+      0,
+      `The app's API address is misconfigured: NEXT_PUBLIC_API_URL is "${API_URL}". It must be the API's full URL, e.g. https://your-api.onrender.com. Fix it in the hosting settings and redeploy.`,
+    );
+  }
   const { data } = await supabase.auth.getSession();
   const headers = new Headers(init.headers);
   if (data.session) headers.set("Authorization", `Bearer ${data.session.access_token}`);
@@ -40,7 +54,7 @@ export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
   } catch {
     throw new ApiError(
       0,
-      `No response from the API at ${API_URL}. Check that it's running, and look at its terminal for an error.`,
+      `No response from the API at ${API_URL}. Check that it's running (a sleeping free server can take a minute to wake), and look at its logs for an error.`,
     );
   }
 

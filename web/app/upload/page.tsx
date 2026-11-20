@@ -180,6 +180,8 @@ function StudentForm() {
     const form = new FormData(e.currentTarget);
     form.set("is_placed", form.get("is_placed") ? "true" : "false");
     if (!form.get("email")) form.delete("email");
+    const cv = form.get("resume");
+    if (!(cv instanceof File) || cv.size === 0) form.delete("resume"); // CV is optional
     if (await submit(form)) {
       setFile(null);
       setFormKey((k) => k + 1);
@@ -190,7 +192,7 @@ function StudentForm() {
     <form key={formKey} onSubmit={onSubmit} className="card space-y-5">
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Full name" name="name" required />
-        <Field label="Login email" name="email" type="email" hint="Links this record to the student's account." />
+        <Field label="Login email" name="email" type="email" hint="Links the record to the student's account so they can upload their CV. Required unless you attach a CV." />
         <Field label="Branch" name="branch" placeholder="CSE" required />
         <Field label="Batch (graduation year)" name="batch" placeholder="2027" required />
         <Field label="CGPA" name="cgpa" type="number" step="0.01" min="0" max="10" placeholder="0 – 10" required />
@@ -200,8 +202,8 @@ function StudentForm() {
         <input type="checkbox" name="is_placed" className="size-4 rounded border-slate-300 accent-brand-600" /> Already placed
       </label>
       <div>
-        <p className="label">Resume</p>
-        <DropZone file={file} onFile={setFile} name="resume" required />
+        <p className="label">CV <span className="font-normal text-slate-400">(optional: students upload their own)</span></p>
+        <DropZone file={file} onFile={setFile} name="resume" />
       </div>
       <div className="flex justify-end">
         <button className="btn" disabled={status.busy}>

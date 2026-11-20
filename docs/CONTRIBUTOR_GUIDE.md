@@ -191,7 +191,7 @@ One set of functions over two backends. Write queries once with `?` placeholders
 | Ids | `make_document_id(*parts)` | sha256 prefix of the content: same text → same id → upsert, not duplicate. |
 | Profiles | `get_profile`, `get_profile_cached`, `clear_profile_cache`, `list_profiles`, `set_profile_role`, `upsert_profile` | Auth reads roles through a 60 s cache (Postgres only); `set_profile_role` clears it. `upsert_profile` is for SQLite/tests (Supabase creates profiles with a trigger). |
 | Documents | `upsert_policy`, `upsert_jd`, `list_policies`, `get_policy`, `list_jds`, `get_jd`, `list_policy_sources`, `list_jd_sources` | `created_by` keeps the original creator (`COALESCE`). The `*_sources` functions feed the index rebuild. |
-| Students | `upsert_student`, `list_students`, `get_student`, `get_student_by_email`, `get_all_students`, `_student` | `get_student_by_email` is case-insensitive; it links a student login to their record. |
+| Students | `upsert_student_record`, `set_student_resume`, `find_student_id`, `list_students`, `get_student`, `get_student_by_email`, `get_all_students`, `_student` | The office owns the academic record (`upsert_student_record` never touches CV columns); the student owns the CV (`set_student_resume`). `find_student_id` reuses an existing record (by email, else name+branch+batch) so ids are stable and a new CV never creates a new student. `get_student_by_email` is case-insensitive. |
 | Timestamps | `_ts`, `_dt`, `_bool` | `timestamptz` in Postgres, UTC ISO text in SQLite (sorts correctly as text). |
 | Auto-apply | `get_preferences`, `upsert_preferences`, `list_opted_in_students`, `application_statuses_for_jd`, `active_application_counts`, `create_application`, `release_due_applications`, `withdraw_application`, `get_application`, `list_applications`, `_application` | `create_application`, `release_due_applications` and `withdraw_application` each write the state change **and** its notification atomically. Release and withdraw are single conditional `UPDATE`s, so they cannot both win a race. |
 | Notifications | `_insert_notification`, `list_notifications`, `mark_notifications_read` | In-app only. |
@@ -214,7 +214,7 @@ Routers are thin: role check → validate → call services/db → shape the res
 |---|---|---|
 | `policies.py` | Upload/list/read placement policies. | `POLICY_INSTRUCTIONS` (extraction prompt), `_creator` |
 | `jds.py` | Upload/list/read JDs; recruiter ownership check. | `JD_INSTRUCTIONS` (extraction prompt) |
-| `students.py` | Add students (resume → text → parse → Storage upload), list, read, own record, resume link. | `RESUME_INSTRUCTIONS`, `_detail`, `owns_student_record` (email match) |
+| `students.py` | Office adds/updates academic records (CV optional; email required without one); students upload/replace their own CV (`PUT /students/me/resume`); list, read, own record, CV link. | `RESUME_INSTRUCTIONS`, `_detail`, `_prepare_cv` (read, parse, store; runs before any DB write), `_set_cv`, `owns_student_record` (email match) |
 | `match.py` | `POST /match` (one student) and `GET /jds/{id}/ranked` (all students). | uses `services/matching.py` |
 | `applications.py` | Auto-apply: student preferences, applications, withdraw, notifications; officer run; staff/recruiter list; pinned-resume link. | `_my_student`, `_preferences_out` |
 | `admin.py` | List users, invite with a role, change a role (an admin can't demote themselves), `/admin/me`. | |
@@ -304,18 +304,19 @@ The Postgres schema lives in `supabase/migrations/` and is the source of truth. 
 | `20261105000000_init.sql` | `profiles` (role check), `policies`, `jds`, `students`; `handle_new_user` trigger (every sign-up → `student`); `has_role(variadic text[])` (security definer); RLS on every table; private `resumes` bucket + read policies |
 | `20261117000000_auto_apply.sql` | `auto_apply_preferences`, `applications` (`unique(student_id, jd_id)`, `release_at > created_at`, `decided_at` set iff not pending), `notifications`; RLS (recruiters read only *submitted* applications for their own JDs); recruiter storage read policy |
 | `20261117120000_score_cache.sql` | `score_cache` (backend-only: RLS on, no policies) |
+| `20261120000000_student_cv.sql` | Students without a CV (`parsed_json` default `{}`), `resume_updated_at` |
 
 | Table | Key columns | Written by |
 |---|---|---|
 | `profiles` | `id` (= auth user), `email`, `role` | sign-up trigger, `set_profile_role` |
 | `policies` / `jds` | `id` (content hash), `source_text`, `rules_json` / `requirements_json`, `created_by` | upload routers |
-| `students` | `id` (hash of name+branch+batch+resume text), profile fields, `resume_text`, `parsed_json`, `resume_path`, `email` | `POST /students` |
+| `students` | `id` (stable: hash of email, else name+branch+batch; older rows keep their original id), profile fields, `resume_text`, `parsed_json`, `resume_path`, `resume_updated_at`, `email` | `POST /students` (office, academic fields), `PUT /students/me/resume` (student, CV) |
 | `auto_apply_preferences` | `student_id`, `enabled`, `min_score`, `excluded_companies` | `PUT /me/auto-apply` |
 | `applications` | `status`, `score`, `match_json` (snapshot), `resume_path` + `resume_sha` (pin), `release_at`, `decided_at` | auto-apply service |
 | `notifications` | `student_id`, `application_id`, `kind`, `message`, `read_at` | in the same transaction as each application change |
 | `score_cache` | `cache_key`, `breakdown_json`, `model`, `student_id`, `jd_id` | `score_student_cached` |
 
-A new resume gives a **new student id** (the id hashes the resume text), so an existing application's pinned resume can never change underneath it.
+A new CV keeps the **same student id**; applications pin the CV that was scored (storage path + text hash), and stored files are never overwritten, so a pinned CV can't change underneath an application.
 
 ---
 
@@ -333,10 +334,12 @@ Interactive docs at `/docs` when the API is running. "Staff" = officer + admin.
 | POST | `/students` | staff | `students.create_student` |
 | GET | `/students`, `/students/{id}` | staff | `students.list_students_endpoint`, `get_student_endpoint` |
 | GET | `/students/me` | student | `students.get_my_record` |
+| PUT | `/students/me/resume` | student (own linked record) | `students.upload_my_resume` |
 | GET | `/students/{id}/resume` | staff, owning student | `students.get_resume_link` |
 | POST | `/match` | staff, student (self only) | `match.match` |
 | GET | `/jds/{id}/ranked?policy_id=&refresh=` | staff | `match.ranked` |
 | GET / PUT | `/me/auto-apply` | student | `applications.get_my_preferences` / `set_my_preferences` |
+| GET | `/me/jobs?policy_id=` | student | `applications.my_jobs` (every JD with the student's rule-based eligibility, deadline, closed flag and own application; policy defaults to the newest; no LLM calls) |
 | GET | `/me/applications` | student | `applications.my_applications` |
 | POST | `/applications/{id}/withdraw` | student (owner) | `applications.withdraw` |
 | GET | `/me/notifications` | student | `applications.my_notifications` |
@@ -355,7 +358,7 @@ Interactive docs at `/docs` when the API is running. "Staff" = officer + admin.
 
 ## 9. Frontend reference
 
-Next.js 16 (App Router), Tailwind 4, `lucide-react` icons, `@supabase/supabase-js` for sign-in only. Every page is a client component; there is no server-side data fetching.
+Next.js 16 (App Router), Tailwind 4, `lucide-react` icons, `@supabase/supabase-js` for sign-in only. Every page is a client component; there is no server-side data fetching. Component classes in `app/globals.css` (`.card`, `.btn`, `.input`, `.chip`, …) sit inside `@layer components` so Tailwind utilities on an element (`lg:hidden`, `bg-rose-600`) override them; keep new ones there.
 
 ### 9.1 `web/lib/`
 | File | Exports | Purpose |
@@ -370,7 +373,13 @@ Next.js 16 (App Router), Tailwind 4, `lucide-react` icons, `@supabase/supabase-j
 ### 9.2 `web/components/`
 | File | Exports | Purpose |
 |---|---|---|
-| `AppShell.tsx` | `AppShell` | Sidebar layout (desktop) / slide-out menu (mobile), role-filtered nav (`LINKS`), user card with sign-out. No shell on the account pages (`AUTH_PAGES`: login, sign-up, forgot/set password, callback). |
+| `AppShell.tsx` | `AppShell` | Staff/recruiter layout: sidebar (desktop) / slide-out menu (mobile), role-filtered nav (`LINKS`), user card with sign-out. Students get `StudentShell` instead. No shell on the account pages (`AUTH_PAGES`: login, sign-up, forgot/set password, callback). |
+| `StudentShell.tsx` | `StudentShell` | Student layout: top bar (brand, `NotificationBell`, account menu with sign-out), left icon rail (Jobs, Applications, Profile & CV, Auto-apply), slide-out menu on mobile. |
+| `NotificationBell.tsx` | `NotificationBell` | Unread badge + dropdown over `/me/notifications`, "Mark all read", refreshes every 60 s. |
+| `JobBoard.tsx` | `JobBoard` | Student job board over `GET /me/jobs`: `jobStatus` (Applied / Sent to company / Withdrawn / closed / eligible / not eligible), filters, list + detail (stacked on mobile), `DescriptionTab` (`GET /jds/{id}`), `EligibilityTab`, `MatchTab` (`POST /match`). |
+| `AutoApplySettings.tsx` | `AutoApplySettings` | Student auto-apply preferences form (switch, min score, excluded companies). |
+| `StudentCvCard.tsx` | `StudentCvCard` | Upload/replace/open the student's own CV. |
+| `NotLinked.tsx` | `NotLinked` | Shown when a student account has no matching record (`/students/me` → 404). |
 | `AuthCard.tsx` | `AuthCard`, `passwordProblem`, `MIN_PASSWORD_LENGTH` | Centered card for the account pages, and the shared password rule (8+ characters, both fields match). |
 | `ui.tsx` | `ErrorBox`, `SuccessBox`, `Warnings`, `Chip`, `Chips`, `PageHeader`, `StatCard`, `EmptyState`, `Spinner`, `Skeleton`, `CardSkeletons`, `Avatar`, `display`, `errorText`, `Tone` | Shared UI primitives. |
 | `MatchResultCard.tsx` | `MatchResultCard`, `ScoreRing` | One student × one JD: eligibility chips, failed rules (keyed by rule+source), skills, evidence quotes, citations. |
@@ -391,7 +400,10 @@ Next.js 16 (App Router), Tailwind 4, `lucide-react` icons, `@supabase/supabase-j
 | `/students` | officer, admin | Searchable student table; detail panel with skills, projects, resume link. |
 | `/upload` | officer, admin, recruiter | Tabs: policy, JD (recruiters see only this), student; drag-and-drop; shows warnings. `?tab=student` deep-links. |
 | `/applications` | officer, admin, recruiter | Application tracking; status tiles (staff); `?jd=` filter; refreshes every 60 s. |
-| `/me` | student | Profile, applications with withdraw, open positions with "Check my match", auto-apply preferences, notifications. |
+| `/me` | student | Job board (`JobBoard`): list with status/sort/search filters and All/Applied tabs, detail with application banner and Description / Eligibility / My match tabs. |
+| `/me/applications` | student | Own applications (`ApplicationCard`) with withdraw. |
+| `/me/profile` | student | Read-only academic record, CV skills, `StudentCvCard`. |
+| `/me/auto-apply` | student | `AutoApplySettings`; warns when no CV is uploaded. |
 | `/admin` | admin | Role counts, invite form, role changes. |
 
 ---
@@ -432,6 +444,8 @@ Next.js 16 (App Router), Tailwind 4, `lucide-react` icons, `@supabase/supabase-j
 | `test_score_cache.py` | Cache hit/miss, refresh, shared cache, eligibility never cached, key components |
 | `test_match.py` | `/match` and `/ranked`: scoring, citations, sorting |
 | `test_auto_apply.py` | Preferences, the run, pinning, notifications, withdraw window, release, idempotency, deadlines and parsing, recruiter visibility, roles |
+| `test_student_cv.py` | Office records without a CV, student CV upload/replace, stable ids, no-CV scoring and auto-apply skip, storage failure leaves no record |
+| `test_my_jobs.py` | `GET /me/jobs`: eligibility per job, application status, closed deadlines, policy default/unknown, roles, no LLM calls |
 | `test_index_sync.py` | Rebuilding a wiped index, idempotency, non-fatal failure |
 | `test_performance.py` | Profile cache, Chroma client race, citation query cache |
 | `test_ingest_errors.py` | Config, OpenAI failures → 502, upload validation, normalisation at ingest, line endings, clause chunking |

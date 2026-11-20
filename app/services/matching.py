@@ -13,7 +13,7 @@ from fastapi import HTTPException
 
 from app.config import get_settings
 from app.db import get_jd, get_policy, get_student
-from app.schemas import Citation, CitationChunk, FailedRule, JDRequirements, MatchResult, PolicyRules
+from app.schemas import Citation, CitationChunk, FailedRule, JDRequirements, MatchResult, PolicyRules, ScoreBreakdown
 from app.services.eligibility import check_eligibility
 from app.services.scoring import score_student_cached
 from app.services.vectorstore import COLLECTION_JDS, COLLECTION_POLICIES, retrieve
@@ -76,6 +76,17 @@ def evaluate_student(
     )
     if not eligibility.eligible:
         result.citations = [_cite(rule, policy_id, jd_id) for rule in eligibility.failed_rules]
+        return result
+
+    if not (student.get("resume_text") or "").strip():
+        # Eligible, but the student hasn't uploaded a CV yet: nothing to score, no AI call.
+        required = list(dict.fromkeys(jd.required_skills))
+        result.score_breakdown = ScoreBreakdown(
+            score=None,
+            missing_required=required,
+            missing_preferred=[s for s in dict.fromkeys(jd.preferred_skills) if s not in required],
+        )
+        result.score_source = "no_resume"
         return result
 
     # Only the LLM-backed score is cached; eligibility above is always recomputed.
