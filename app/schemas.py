@@ -218,6 +218,7 @@ class RankedResponse(BaseModel):
 # ── Staged auto-apply ───────────────────────────────────────────────────────
 
 ApplicationStatus = Literal["pending", "withdrawn", "submitted"]
+ApplicationSource = Literal["auto", "manual"]
 
 
 class AutoApplyPreferences(BaseModel):
@@ -247,6 +248,7 @@ class ApplicationOut(BaseModel):
     decided_at: datetime | None
     can_withdraw: bool
     has_resume_file: bool
+    source: ApplicationSource = Field(description="manual: the student applied; auto: an auto-apply run")
 
 
 class SkippedStudent(BaseModel):
@@ -282,6 +284,7 @@ class MyJobApplication(BaseModel):
     status: ApplicationStatus
     release_at: datetime
     can_withdraw: bool
+    source: ApplicationSource
 
 
 class MyJob(BaseModel):
@@ -300,3 +303,21 @@ class MyJob(BaseModel):
 class MyJobsResponse(BaseModel):
     policy_id: str | None = Field(description="Policy eligibility was checked against; null if none exists")
     jobs: list[MyJob]
+
+
+class CvTip(BaseModel):
+    skill: str
+    required: bool = Field(description="Required by the JD (else preferred)")
+    kind: Literal["surface", "build"] = Field(
+        description="surface: the CV shows related work (related_quote, verified by code) that could be "
+        "written to show this skill; build: no related evidence, the student needs to gain it first"
+    )
+    related_quote: str | None = None
+    suggestion: str
+
+
+class CvTipsResponse(BaseModel):
+    jd_id: str
+    score: float | None
+    tips: list[CvTip]
+    source: Literal["cache", "fresh", "none"] = Field(description="none: nothing missing, no AI call")

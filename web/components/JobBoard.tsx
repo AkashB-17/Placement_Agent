@@ -8,8 +8,10 @@ import {
   CircleX,
   Clock3,
   FileText,
+  Lightbulb,
   ListChecks,
   Search,
+  Send,
   Sparkles,
   Target,
 } from "lucide-react";
@@ -22,7 +24,7 @@ import { NotLinked } from "./NotLinked";
 import { Chip, EmptyState, ErrorBox, Skeleton, Spinner, display, errorText, type Tone } from "./ui";
 import { api } from "@/lib/api";
 import { formatDateTime, timeAgo, timeUntil, useNow } from "@/lib/time";
-import type { Application, JDDetail, MatchResult, MyJob, MyJobsResponse, StudentDetail } from "@/lib/types";
+import type { Application, CvTipsResponse, JDDetail, MatchResult, MyJob, MyJobsResponse, StudentDetail } from "@/lib/types";
 import { invalidate, useApi } from "@/lib/useApi";
 
 type StatusFilter = "all" | "eligible" | "applied" | "not_eligible" | "closed";
@@ -129,6 +131,87 @@ function EligibilityTab({ job }: { job: MyJob }) {
   );
 }
 
+const withPolicy = (path: string, policyId: string | null) =>
+  policyId ? `${path}?policy_id=${encodeURIComponent(policyId)}` : path;
+
+/** Gaps come from the verified score (code); the AI only suggests what to do about each. */
+function CvTipsPanel({ job, policyId, missingRequired, missingPreferred }: {
+  job: MyJob;
+  policyId: string | null;
+  missingRequired: string[];
+  missingPreferred: string[];
+}) {
+  const [tips, setTips] = useState<CvTipsResponse | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const missing = missingRequired.length + missingPreferred.length;
+
+  async function load() {
+    setBusy(true);
+    setError(null);
+    try {
+      setTips(await api<CvTipsResponse>(withPolicy(`/me/jobs/${job.id}/cv-tips`, policyId), { method: "POST" }));
+    } catch (e) {
+      setError(errorText(e));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  if (missing === 0) return null;
+  return (
+    <section className="space-y-3 rounded-xl border border-amber-200 bg-amber-50/40 p-4">
+      <div className="flex flex-wrap items-start gap-3">
+        <div className="min-w-0 flex-1">
+          <h3 className="flex items-center gap-2 font-semibold text-slate-900">
+            <Lightbulb className="size-4 text-amber-600" aria-hidden /> Improve your CV for this job
+          </h3>
+          <p className="mt-1 text-sm text-slate-600">
+            Your CV doesn&apos;t show {missing} of the skills this job asks for:
+          </p>
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {missingRequired.map((s) => <Chip key={`r-${s}`} tone="red">{s} · required</Chip>)}
+            {missingPreferred.map((s) => <Chip key={`p-${s}`} tone="amber">{s} · preferred</Chip>)}
+          </div>
+        </div>
+        {!tips && (
+          <button className="btn-secondary" onClick={load} disabled={busy}>
+            {busy ? <Spinner /> : <Sparkles className="size-4" aria-hidden />}
+            {busy ? "Thinking…" : "Suggest changes"}
+          </button>
+        )}
+      </div>
+      <ErrorBox message={error} />
+      {tips && (
+        <ul className="space-y-2.5">
+          {tips.tips.map((tip) => (
+            <li key={tip.skill} className="rounded-lg border border-slate-200 bg-white p-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="font-medium text-slate-900">{tip.skill}</span>
+                <Chip tone={tip.required ? "red" : "amber"}>{tip.required ? "Required" : "Preferred"}</Chip>
+                <Chip tone={tip.kind === "surface" ? "brand" : "slate"}>
+                  {tip.kind === "surface" ? "You may already have this" : "Skill to build"}
+                </Chip>
+              </div>
+              {tip.related_quote && (
+                <p className="mt-2 border-l-2 border-brand-200 pl-3 text-sm text-slate-500 italic">
+                  From your CV: &ldquo;{tip.related_quote}&rdquo;
+                </p>
+              )}
+              <p className="mt-2 text-sm text-slate-700">{tip.suggestion}</p>
+            </li>
+          ))}
+        </ul>
+      )}
+      <p className="text-xs text-slate-500">
+        Only add skills you have really used: recruiters check. The gaps come from a fixed check of your CV; the suggestions are
+        written by AI. After editing, upload the new CV under{" "}
+        <Link href="/me/profile" className="font-medium text-brand-700 hover:underline">Profile &amp; CV</Link> and check your match again.
+      </p>
+    </section>
+  );
+}
+
 function MatchTab({ job, student, policyId }: { job: MyJob; student: StudentDetail; policyId: string | null }) {
   const [result, setResult] = useState<MatchResult | null>(null);
   const [busy, setBusy] = useState(false);
@@ -172,6 +255,85 @@ function MatchTab({ job, student, policyId }: { job: MyJob; student: StudentDeta
       </div>
       <ErrorBox message={error} />
       {result && <MatchResultCard result={result} showName={false} />}
+      {result?.eligibility.eligible && result.score_breakdown && (
+        <CvTipsPanel
+          job={job}
+          policyId={policyId}
+          missingRequired={result.score_breakdown.missing_required}
+          missingPreferred={result.score_breakdown.missing_preferred}
+        />
+      )}
+    </div>
+  );
+}
+
+/** Apply button under the status chip; disabled with the reason when applying isn't possible. */
+function ApplyAction({ job, student, policyId, onApplied }: {
+  job: MyJob;
+  student: StudentDetail;
+  policyId: string | null;
+  onApplied: () => void;
+}) {
+  const [confirming, setConfirming] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  useEffect(() => {
+    setConfirming(false);
+    setError(null);
+  }, [job.id]);
+
+  if (job.application) return null;
+  const blocked = job.closed
+    ? "Applications for this job are closed."
+    : !job.eligibility.eligible
+      ? "You don't meet this job's eligibility rules: see Eligibility criteria."
+      : !student.has_resume
+        ? "Upload your CV under Profile & CV before applying."
+        : !policyId
+          ? "The placement office hasn't published a policy yet."
+          : null;
+
+  async function apply() {
+    setBusy(true);
+    setError(null);
+    try {
+      await api<Application>(withPolicy(`/me/jobs/${job.id}/apply`, policyId), { method: "POST" });
+      setConfirming(false);
+      invalidate("/me/applications", "/me/notifications");
+      onApplied();
+    } catch (e) {
+      setError(errorText(e));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="flex flex-col items-end gap-2">
+      {!confirming && (
+        <button className="btn" disabled={!!blocked} title={blocked ?? undefined} onClick={() => setConfirming(true)}>
+          <Send className="size-4" aria-hidden /> Apply
+        </button>
+      )}
+      {!student.has_resume && job.eligibility.eligible && !job.closed && (
+        <p className="text-xs text-slate-500">
+          <Link href="/me/profile" className="font-medium text-brand-700 hover:underline">Upload your CV</Link> to apply.
+        </p>
+      )}
+      {confirming && (
+        <div className="max-w-xs space-y-2 rounded-lg border border-brand-200 bg-brand-50/60 p-3 text-sm">
+          <p className="text-slate-700">
+            Apply with your current CV and match score? It&apos;s sent to the company after a withdraw window; you can withdraw until then.
+          </p>
+          <div className="flex gap-2">
+            <button className="btn" onClick={apply} disabled={busy}>
+              {busy ? <Spinner /> : <Send className="size-4" aria-hidden />} {busy ? "Applying…" : "Yes, apply"}
+            </button>
+            <button className="btn-ghost" onClick={() => setConfirming(false)} disabled={busy}>Cancel</button>
+          </div>
+        </div>
+      )}
+      <ErrorBox message={error} />
     </div>
   );
 }
@@ -219,14 +381,18 @@ function JobDetail({
           </p>
           {job.deadline && <p className="mt-0.5 text-xs text-slate-400">Deadline as posted: {job.deadline}</p>}
         </div>
-        <Chip tone={status.tone}>{status.label}</Chip>
+        <div className="flex flex-col items-end gap-2">
+          <Chip tone={status.tone}>{status.label}</Chip>
+          <ApplyAction job={job} student={student} policyId={policyId} onApplied={onChanged} />
+        </div>
       </div>
 
       {application && (
         <div className="space-y-2">
           <p className="flex items-center gap-1.5 text-sm text-slate-600">
             <Clock3 className="size-4 text-brand-500" aria-hidden />
-            You applied through auto-apply on {formatDateTime(application.created_at)} with the CV you had then.
+            {application.source === "manual" ? "You applied" : "You applied through auto-apply"} on{" "}
+            {formatDateTime(application.created_at)} with the CV you had then.
           </p>
           <ApplicationCard app={application} viewer="student" onChanged={onChanged} />
         </div>

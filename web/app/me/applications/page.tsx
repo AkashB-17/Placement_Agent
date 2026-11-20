@@ -20,15 +20,16 @@ function ApplicationsPage() {
     <>
       <PageHeader
         title="My applications"
-        subtitle="Applications made for you by auto-apply. A pending application is sent when its countdown ends; withdraw before then if you don't want it."
+        subtitle="Jobs you applied to, and applications auto-apply made for you. A pending application is sent when its countdown ends; withdraw before then if you don't want it."
       />
       <ErrorBox message={me.error?.message ?? applications.error?.message} />
       {applications.loading && !applications.data ? (
         <CardSkeletons count={2} />
       ) : !applications.data?.length ? (
         <EmptyState icon={Rocket} title="No applications yet">
-          Turn on <Link href="/me/auto-apply" className="font-medium text-brand-700 hover:underline">auto-apply</Link> and
-          you&apos;ll appear here when the placement office runs it for a job you qualify for.
+          Apply from the <Link href="/me" className="font-medium text-brand-700 hover:underline">Jobs</Link> page, or turn on{" "}
+          <Link href="/me/auto-apply" className="font-medium text-brand-700 hover:underline">auto-apply</Link> and you&apos;ll
+          appear here when the placement office runs it for a job you qualify for.
         </EmptyState>
       ) : (
         <div className="grid gap-4 lg:grid-cols-2">

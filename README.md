@@ -139,6 +139,8 @@ Schema: `supabase/migrations/20261117000000_auto_apply.sql` (`auto_apply_prefere
 |---|---|---|
 | `GET` / `PUT /me/auto-apply` | student | Read / set preferences |
 | `GET /me/jobs?policy_id=` | student | Job board: every JD with own eligibility, deadline and application (no AI calls) |
+| `POST /me/jobs/{id}/apply` | student | Apply yourself: same staged pipeline as auto-apply (rules, score snapshot, withdraw window), no score bar |
+| `POST /me/jobs/{id}/cv-tips` | student | Skills the job asks for that the CV doesn't show (from the verified score), with an AI suggestion per gap; cited CV lines are verified |
 | `GET /me/applications`, `POST /applications/{id}/withdraw` | student | Own applications; withdraw while pending |
 | `GET /me/notifications`, `POST /me/notifications/read` | student | Notification feed |
 | `POST /jds/{id}/auto-apply?policy_id=` | officer, admin | Run for a job; returns created + skipped with reasons |

@@ -28,8 +28,9 @@ from fastapi import HTTPException
 
 from app import db
 from app.config import get_settings
-from app.schemas import ApplicationOut, AutoApplyRun, ScoreBreakdown, SkippedStudent
-from app.services.matching import evaluate_many, load_jd, load_policy
+from app.schemas import ApplicationOut, AutoApplyRun, JDRequirements, ScoreBreakdown, SkippedStudent
+from app.services.eligibility import check_eligibility
+from app.services.matching import evaluate_many, evaluate_student, load_jd, load_policy
 
 logger = logging.getLogger("uvicorn.error")
 
@@ -143,18 +144,18 @@ def to_out(application: dict[str, Any], now: datetime | None = None) -> Applicat
         decided_at=application["decided_at"],
         can_withdraw=application["status"] == "pending" and application["release_at"] > now,
         has_resume_file=bool(application["resume_path"]),
+        source=application["source"],
     )
 
 
 # ── Run ─────────────────────────────────────────────────────────────────────
 
-def run_auto_apply(jd_id: str, policy_id: str, actor_id: str | None) -> AutoApplyRun:
-    settings = get_settings()
-    release_due()  # statuses and application counts must be current before deciding
-    policy = load_policy(policy_id)
-    jd = load_jd(jd_id)
+def application_window(jd: JDRequirements, now: datetime) -> tuple[datetime | None, datetime, datetime | None]:
+    """(deadline, release_at, cutoff) for an application made now, or 409 if too late.
 
-    now = utcnow()
+    Shared by auto-apply runs and students applying themselves, so both get the same
+    withdraw window and the same deadline rules."""
+    settings = get_settings()
     deadline = parse_deadline(jd.deadline)
     release_at, cutoff = release_time(now, deadline)
     if deadline is not None and deadline <= now:
@@ -168,6 +169,80 @@ def run_auto_apply(jd_id: str, policy_id: str, actor_id: str | None) -> AutoAppl
                 f"{settings.auto_apply_min_window_minutes:g} minutes to withdraw."
             ),
         )
+    return deadline, release_at, cutoff
+
+
+def _new_application(
+    student: dict[str, Any], jd_id: str, policy_id: str, breakdown: ScoreBreakdown,
+    now: datetime, release_at: datetime, actor_id: str | None,
+) -> dict[str, Any]:
+    return {
+        "id": uuid.uuid4().hex,
+        "student_id": student["id"],
+        "jd_id": jd_id,
+        "policy_id": policy_id,
+        "score": breakdown.score,
+        "match_json": breakdown.model_dump_json(),
+        # The resume as scored: content-addressed file path (never overwritten) and text hash.
+        "resume_path": student["resume_path"],
+        "resume_sha": hashlib.sha256(student["resume_text"].encode("utf-8")).hexdigest(),
+        "created_at": now,
+        "release_at": release_at,
+        "created_by": actor_id,
+    }
+
+
+def apply_manually(student: dict[str, Any], jd_id: str, policy_id: str, actor_id: str | None) -> ApplicationOut:
+    """A student applies to one job from their job board.
+
+    Same pipeline as auto-apply (deterministic eligibility, evidence-based score snapshot,
+    pinned CV, pending with a withdraw window, then release), minus the score bar and the
+    excluded-companies preference: the student chose this job themselves."""
+    release_due()
+    policy = load_policy(policy_id)
+    jd = load_jd(jd_id)
+    existing = db.application_statuses_for_jd(jd_id).get(student["id"])
+    if existing == "withdrawn":
+        raise HTTPException(status_code=409, detail="You withdrew from this job earlier. Withdrawals are final.")
+    if existing:
+        raise HTTPException(status_code=409, detail=f"You already have a {existing} application for this job.")
+    now = utcnow()
+    _, release_at, _ = application_window(jd, now)
+    if not (student.get("resume_text") or "").strip():
+        raise HTTPException(status_code=409, detail="Upload your CV under Profile & CV before applying.")
+    limit = policy.max_applications_per_student
+    if limit is not None and db.active_application_counts().get(student["id"], 0) >= limit:
+        raise HTTPException(status_code=409, detail=f"You've reached the policy limit of {limit} active applications.")
+
+    eligibility = check_eligibility(student, policy, jd)  # rules first: no AI call if ineligible
+    if not eligibility.eligible:
+        failed = "; ".join(rule.description for rule in eligibility.failed_rules)
+        raise HTTPException(status_code=409, detail=f"You're not eligible for this job: {failed}.")
+    breakdown = evaluate_student(student, policy, jd, policy_id, jd_id).score_breakdown
+    if breakdown is None or breakdown.score is None:
+        raise HTTPException(
+            status_code=409,
+            detail="This job lists no required skills, so it can't be scored. Contact the placement office.",
+        )
+
+    application = _new_application(student, jd_id, policy_id, breakdown, now, release_at, actor_id)
+    message = (
+        f"You applied to {_job_label(jd.company, jd.role)} (score {breakdown.score:.1f}). "
+        f"It will be sent on {format_local(release_at)}. Withdraw before then if you change your mind."
+    )
+    if not db.create_application(application, message):
+        raise HTTPException(status_code=409, detail="You already have an application for this job.")
+    return to_out(db.get_application(application["id"]), now)
+
+
+def run_auto_apply(jd_id: str, policy_id: str, actor_id: str | None) -> AutoApplyRun:
+    settings = get_settings()
+    release_due()  # statuses and application counts must be current before deciding
+    policy = load_policy(policy_id)
+    jd = load_jd(jd_id)
+
+    now = utcnow()
+    deadline, release_at, cutoff = application_window(jd, now)
 
     opted_in = db.list_opted_in_students()
     total_students = len(db.list_students())
@@ -213,20 +288,7 @@ def run_auto_apply(jd_id: str, policy_id: str, actor_id: str | None) -> AutoAppl
             skipped.append(SkippedStudent(student_id=student["id"], student_name=student["name"], reason=reason))
             continue
 
-        application = {
-            "id": uuid.uuid4().hex,
-            "student_id": student["id"],
-            "jd_id": jd_id,
-            "policy_id": policy_id,
-            "score": breakdown.score,
-            "match_json": breakdown.model_dump_json(),
-            # The resume as scored: content-addressed file path (never overwritten) and text hash.
-            "resume_path": student["resume_path"],
-            "resume_sha": hashlib.sha256(student["resume_text"].encode("utf-8")).hexdigest(),
-            "created_at": now,
-            "release_at": release_at,
-            "created_by": actor_id,
-        }
+        application = _new_application(student, jd_id, policy_id, breakdown, now, release_at, actor_id)
         message = (
             f"We applied to {_job_label(jd.company, jd.role)} for you (score {breakdown.score:.1f}). "
             f"It will be sent on {format_local(release_at)}. Withdraw before then if you don't want to apply."

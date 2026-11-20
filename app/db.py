@@ -683,8 +683,9 @@ def list_opted_in_students() -> list[tuple[dict[str, Any], dict[str, Any]]]:
 _APPLICATION_SELECT = (
     "SELECT a.id, a.student_id, a.jd_id, a.policy_id, a.status, a.score, a.match_json, a.resume_path, "
     "a.resume_sha, a.created_at, a.release_at, a.decided_at, s.name AS student_name, "
-    "j.requirements_json AS jd_requirements, j.created_by AS jd_created_by "
-    "FROM applications a JOIN students s ON s.id = a.student_id JOIN jds j ON j.id = a.jd_id"
+    "j.requirements_json AS jd_requirements, j.created_by AS jd_created_by, p.role AS created_by_role "
+    "FROM applications a JOIN students s ON s.id = a.student_id JOIN jds j ON j.id = a.jd_id "
+    "LEFT JOIN profiles p ON p.id = a.created_by"
 )
 
 
@@ -707,6 +708,8 @@ def _application(row: dict[str, Any]) -> dict[str, Any]:
         "created_at": _dt(row["created_at"]),
         "release_at": _dt(row["release_at"]),
         "decided_at": _dt(row["decided_at"]),
+        # A student applying from their job board is "manual"; an officer's run is "auto".
+        "source": "manual" if row["created_by_role"] == "student" else "auto",
     }
 
 

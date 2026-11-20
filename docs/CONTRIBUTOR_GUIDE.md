@@ -271,8 +271,13 @@ Routers are thin: role check → validate → call services/db → shape the res
 | `release_time(now, deadline)` | `(release_at, cutoff)` = (min(now + window, deadline − buffer), deadline − buffer). |
 | `format_local`, `_job_label` | Message formatting. |
 | `release_due()`, `release_due_quietly()` | Run the release `UPDATE`; the quiet version logs instead of raising (for the background sweep). |
-| `to_out(application, now)` | DB row → `ApplicationOut` (computes `can_withdraw`). |
+| `to_out(application, now)` | DB row → `ApplicationOut` (computes `can_withdraw`; `source` is `manual` when the creator's profile role is `student`, else `auto`). |
+| `application_window(jd, now)` | `(deadline, release_at, cutoff)` or 409 (deadline passed / too little time to withdraw). Shared by runs and manual applies. |
+| `apply_manually(student, jd_id, policy_id, actor_id)` | A student applies from the job board: already applied (withdrawn is final) → window → CV present → policy limit → `check_eligibility` (before any AI call) → score snapshot → same pending application + notification. No score bar or excluded-companies check: the student chose the job. |
 | `run_auto_apply(jd_id, policy_id, actor_id)` | The whole run (see [§3.3](#33-auto-apply-post-jdsidauto-applypolicy_id)); returns created + skipped-with-reason + not-opted-in count. |
+
+#### `cv_tips.py`: CV improvement tips
+The gaps are the missing skills from the verified score breakdown (code); one LLM call writes a suggestion per gap and may cite a related resume line. That quote must pass `scoring.quote_in_resume`, else it is dropped and the tip is `build` (gain the skill) instead of `surface` (make existing work visible). Skills the LLM adds are ignored; skills it skips get a fallback suggestion. The prompt forbids advising students to claim skills they haven't used. Results are cached in `score_cache` under a separate key (`kind: cv-tips`, `TIPS_VERSION`, model, prompt, resume hash). The CV is never edited.
 
 #### `llm.py`: OpenAI structured extraction
 - `EXTRACT_PREAMBLE`: "extract only stated facts; null/[] when absent; never invent".
@@ -340,6 +345,8 @@ Interactive docs at `/docs` when the API is running. "Staff" = officer + admin.
 | GET | `/jds/{id}/ranked?policy_id=&refresh=` | staff | `match.ranked` |
 | GET / PUT | `/me/auto-apply` | student | `applications.get_my_preferences` / `set_my_preferences` |
 | GET | `/me/jobs?policy_id=` | student | `applications.my_jobs` (every JD with the student's rule-based eligibility, deadline, closed flag and own application; policy defaults to the newest; no LLM calls) |
+| POST | `/me/jobs/{jd_id}/apply?policy_id=` | student | `applications.apply_to_job` → `auto_apply.apply_manually` (201; 409 with the reason when not allowed) |
+| POST | `/me/jobs/{jd_id}/cv-tips?policy_id=` | student | `applications.my_cv_tips` → `cv_tips.cv_tips` (eligible + CV required; nothing missing → no AI call) |
 | GET | `/me/applications` | student | `applications.my_applications` |
 | POST | `/applications/{id}/withdraw` | student (owner) | `applications.withdraw` |
 | GET | `/me/notifications` | student | `applications.my_notifications` |
@@ -446,6 +453,7 @@ Next.js 16 (App Router), Tailwind 4, `lucide-react` icons, `@supabase/supabase-j
 | `test_auto_apply.py` | Preferences, the run, pinning, notifications, withdraw window, release, idempotency, deadlines and parsing, recruiter visibility, roles |
 | `test_student_cv.py` | Office records without a CV, student CV upload/replace, stable ids, no-CV scoring and auto-apply skip, storage failure leaves no record |
 | `test_my_jobs.py` | `GET /me/jobs`: eligibility per job, application status, closed deadlines, policy default/unknown, roles, no LLM calls |
+| `test_apply_and_tips.py` | Manual apply (staged, `source`, twice/after withdrawal, ineligible without AI calls, closed, no CV, roles) and CV tips (only missing skills, quote verification, cache, nothing missing, ineligible) |
 | `test_index_sync.py` | Rebuilding a wiped index, idempotency, non-fatal failure |
 | `test_performance.py` | Profile cache, Chroma client race, citation query cache |
 | `test_ingest_errors.py` | Config, OpenAI failures → 502, upload validation, normalisation at ingest, line endings, clause chunking |

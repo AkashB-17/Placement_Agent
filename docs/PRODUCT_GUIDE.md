@@ -71,7 +71,9 @@ After an upload you see what was read. If the AI "found" a rule the document nev
 
 Students get their own layout: a top bar with a **notification bell** (unread count; "We applied to X for you, it will be sent on…", "Your application has been sent", "You withdrew…") and an icon rail with four pages (a slide-out menu on phones).
 - **Jobs** (home page): a job board. The list shows every job with its company, CTC, when it was posted, how long until it closes (red in the last 24 hours) and a status: *Eligible*, *Not eligible*, *Applied*, *Sent to company*, *Withdrawn* or *Applications closed*. Filter by status, sort by newest or closing soon, search, and switch between *All jobs* and *Applied jobs*. Selecting a job opens its detail: the application (with countdown and **Withdraw**) if one exists, and three tabs: **Job description**, **Eligibility criteria** (each rule the student fails, with their value against the requirement and whether the rule came from the policy or the job), and **My match** (score, matched/missing skills and evidence; needs a CV). Eligibility on the board is the fixed rule check, so the board loads without any AI call.
-- **Applications**: each auto-apply application with a live countdown and a **Withdraw** button while it is pending.
+  - **Apply** sits under the job's status. It is greyed out, with the reason, when the student isn't eligible, applications are closed or no CV is uploaded. After a confirmation it goes through the same steps as auto-apply (rules checked by code, CV and score snapshot, withdraw window, then sent), without the score bar: the student chose the job. A withdrawn application can't be re-sent.
+  - **Improve your CV for this job** (in My match, for an eligible student): lists the job's skills the CV doesn't show, worked out by code from the score. **Suggest changes** asks the AI for one suggestion per gap. Where the CV already describes related work, the tip quotes that line (checked to really be in the CV) and suggests how to make the skill visible: *You may already have this*. Otherwise it suggests a concrete way to gain it: *Skill to build*. Tips never suggest claiming skills the student hasn't used, and the CV is never edited for them.
+- **Applications**: every application, whether the student made it or auto-apply did, with a live countdown and a **Withdraw** button while it is pending.
 - **Profile & CV**: branch, batch, CGPA, backlogs (set by the placement cell, not editable), the skills found in their CV, and **Your CV**: upload or replace it (PDF/TXT) and open the current one. Until a CV is uploaded the student can see jobs and eligibility but has no score, and auto-apply skips them. Applications already made keep the CV version they were scored on.
 - **Auto-apply**: on/off switch, a minimum score (can only be raised above the college threshold), and companies to never apply to.
 
@@ -152,6 +154,7 @@ Officer runs auto-apply
 - If the deadline has passed, or less than an hour would be left to withdraw, the run is refused with a clear message.
 - Each application keeps a snapshot of **the resume as it was scored** and **the score with its evidence**. If the student later uploads a new resume, what the company receives does not change.
 - Recruiters see an application only after it is **sent**.
+- A student can also **apply themselves** from the job board. That application follows the same path (pending, withdraw window, sent), without the score bar and the "never apply to" list.
 
 ## 7. Trust, privacy and security
 

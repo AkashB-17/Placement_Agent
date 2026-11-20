@@ -87,7 +87,12 @@ export function ApplicationCard({
         )}
         <div className="min-w-0 flex-1">
           <p className="truncate font-medium text-slate-900">{title}</p>
-          <p className="truncate text-sm text-slate-500">{subtitle || "—"}</p>
+          <p className="truncate text-sm text-slate-500">
+            {subtitle || "—"}
+            {viewer !== "recruiter" && (
+              <span className="text-slate-400"> · {app.source === "manual" ? "applied by student" : "auto-apply"}</span>
+            )}
+          </p>
         </div>
         <StatusChip status={app.status} />
         <ScoreRing score={app.score} size={48} />

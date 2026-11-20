@@ -152,6 +152,8 @@ export interface RankedResponse {
 // ── Staged auto-apply ────────────────────────────────────────────────────────
 
 export type ApplicationStatus = "pending" | "withdrawn" | "submitted";
+/** manual: the student applied from their job board; auto: an auto-apply run. */
+export type ApplicationSource = "auto" | "manual";
 
 export interface AutoApplyPreferences {
   enabled: boolean;
@@ -180,6 +182,7 @@ export interface Application {
   decided_at: string | null;
   can_withdraw: boolean;
   has_resume_file: boolean;
+  source: ApplicationSource;
 }
 
 export interface SkippedStudent {
@@ -215,6 +218,7 @@ export interface MyJobApplication {
   status: ApplicationStatus;
   release_at: string;
   can_withdraw: boolean;
+  source: ApplicationSource;
 }
 
 export interface MyJob {
@@ -233,4 +237,22 @@ export interface MyJob {
 export interface MyJobsResponse {
   policy_id: string | null;
   jobs: MyJob[];
+}
+
+// ── CV tips (POST /me/jobs/{id}/cv-tips) ─────────────────────────────────────
+
+export interface CvTip {
+  skill: string;
+  required: boolean;
+  /** surface: the CV shows related work (verified quote); build: the skill needs gaining first. */
+  kind: "surface" | "build";
+  related_quote: string | null;
+  suggestion: string;
+}
+
+export interface CvTipsResponse {
+  jd_id: string;
+  score: number | null;
+  tips: CvTip[];
+  source: "cache" | "fresh" | "none";
 }

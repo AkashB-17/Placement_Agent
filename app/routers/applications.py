@@ -15,6 +15,7 @@ from app.auth import CurrentUser, require_role, staff_only
 from app.config import get_settings
 from app.schemas import (
     ApplicationOut,
+    CvTipsResponse,
     JDRequirements,
     MyJob,
     MyJobApplication,
@@ -28,7 +29,9 @@ from app.schemas import (
     ResumeLink,
 )
 from app.services import auto_apply
+from app.services.cv_tips import cv_tips
 from app.services.eligibility import check_eligibility
+from app.services.matching import evaluate_student, load_jd, load_policy
 from app.services.storage import signed_resume_url
 
 router = APIRouter(tags=["auto-apply"])
@@ -125,8 +128,7 @@ def my_jobs(
             raise HTTPException(status_code=404, detail="Policy not found.")
         rules = PolicyRules(**row["rules"])
     else:
-        newest = db.list_policies()
-        policy_id = newest[0]["id"] if newest else None
+        policy_id = _newest_policy_id()
         rules = PolicyRules(**db.get_policy(policy_id)["rules"]) if policy_id else PolicyRules()
 
     now = auto_apply.utcnow()
@@ -152,10 +154,65 @@ def my_jobs(
                     status=app["status"],
                     release_at=app["release_at"],
                     can_withdraw=app["status"] == "pending" and app["release_at"] > now,
+                    source=app["source"],
                 ) if app else None,
             )
         )
     return MyJobsResponse(policy_id=policy_id, jobs=jobs)
+
+
+def _newest_policy_id() -> str | None:
+    policies = db.list_policies()
+    return policies[0]["id"] if policies else None
+
+
+def _policy_or_newest(policy_id: str | None) -> str:
+    """The policy a student's request is judged against: the one given, else the newest."""
+    policy_id = policy_id or _newest_policy_id()
+    if policy_id is None:
+        raise HTTPException(status_code=409, detail="The placement office hasn't published a policy yet.")
+    return policy_id
+
+
+@router.post("/me/jobs/{jd_id}/apply", response_model=ApplicationOut, status_code=201)
+def apply_to_job(
+    jd_id: str,
+    policy_id: str | None = Query(None, description="Policy to check eligibility against; default: the newest"),
+    user: CurrentUser = Depends(student_only),
+) -> ApplicationOut:
+    """The student applies themselves. Same staged pipeline as auto-apply: eligibility by
+    code, score snapshot, pinned CV, then a withdraw window before it is sent."""
+    student = _my_student(user)
+    return auto_apply.apply_manually(student, jd_id, _policy_or_newest(policy_id), actor_id=user.id)
+
+
+@router.post("/me/jobs/{jd_id}/cv-tips", response_model=CvTipsResponse)
+def my_cv_tips(
+    jd_id: str,
+    policy_id: str | None = Query(None, description="Policy to check eligibility against; default: the newest"),
+    user: CurrentUser = Depends(student_only),
+) -> CvTipsResponse:
+    """What this job asks for that the student's CV doesn't show, with a suggestion per gap.
+    The gaps come from the verified score breakdown; the AI only writes the advice."""
+    student = _my_student(user)
+    policy_id = _policy_or_newest(policy_id)
+    jd = load_jd(jd_id)
+    if not (student.get("resume_text") or "").strip():
+        raise HTTPException(status_code=409, detail="Upload your CV under Profile & CV first.")
+    policy = load_policy(policy_id)
+    if not check_eligibility(student, policy, jd).eligible:  # rules first: no AI call if ineligible
+        raise HTTPException(
+            status_code=409,
+            detail="CV tips are for jobs you're eligible for: the rules you miss can't be fixed by editing a CV.",
+        )
+    result = evaluate_student(student, policy, jd, policy_id, jd_id)
+    if result.score_breakdown is None:
+        raise HTTPException(
+            status_code=409,
+            detail="CV tips are for jobs you're eligible for: the rules you miss can't be fixed by editing a CV.",
+        )
+    tips, source = cv_tips(student, jd, jd_id, result.score_breakdown)
+    return CvTipsResponse(jd_id=jd_id, score=result.score_breakdown.score, tips=tips, source=source)
 
 
 @router.get("/me/notifications", response_model=list[NotificationOut])
