@@ -10,6 +10,7 @@
   --color-brand-600: #4f46e5;
   --color-brand-700: #4338ca;
   --color-brand-900: #1e1b4b;
+  --color-page: #f4f0e6; /* app background */
 }
 
 :root {
@@ -17,7 +18,7 @@
 }
 
 body {
-  @apply bg-slate-50 text-slate-900 antialiased;
+  @apply bg-page text-slate-900 antialiased;
 }
 
 /* Component classes live in the components layer so utilities can override them

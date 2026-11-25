@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 /** Centered card used by the sign-up, password and email-link pages. */
 export function AuthCard({ title, subtitle, children, footer }: { title: string; subtitle?: ReactNode; children: ReactNode; footer?: ReactNode }) {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 p-6">
+    <div className="flex min-h-screen items-center justify-center bg-page p-6">
       <div className="w-full max-w-sm">
         <Link href="/login" className="mb-8 flex items-center gap-2.5">
           <span className="flex size-9 items-center justify-center rounded-lg bg-brand-600 text-white">
