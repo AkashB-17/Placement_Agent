@@ -1,20 +1,104 @@
 @import "tailwindcss";
 
+/* `dark:` follows the .dark class on <html> (set by ThemeToggle), not the OS setting. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Theme. Components use ordinary Tailwind names (bg-slate-50, text-brand-700, …); this file
+   decides what those names mean. Light is a warm "paper" palette around the page colour,
+   so neutrals are warm greys instead of Tailwind's blue-grey slate. Dark (:root.dark below)
+   redefines the same names, so most components need no dark: classes at all. */
 @theme {
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --color-brand-50: #eef2ff;
-  --color-brand-100: #e0e7ff;
-  --color-brand-200: #c7d2fe;
-  --color-brand-300: #a5b4fc;
+
+  --color-page: #f4f0e6; /* app background */
+  --color-surface: #fbf9f4; /* cards, bars, inputs */
+  --color-ink: #1e1b4b; /* always-dark panel (login), same in both themes */
+
+  /* Warm neutrals, used through the slate-* names. */
+  --color-slate-50: #f6f2ea;
+  --color-slate-100: #eee9de;
+  --color-slate-200: #e2dccf;
+  --color-slate-300: #cdc5b6;
+  --color-slate-400: #a29a8b;
+  --color-slate-500: #776f63;
+  --color-slate-600: #5d564c;
+  --color-slate-700: #474139;
+  --color-slate-800: #322d27;
+  --color-slate-900: #24201b;
+
+  --color-brand-50: #eef0fd;
+  --color-brand-100: #e0e4fb;
+  --color-brand-200: #c7cdf6;
+  --color-brand-300: #a5b0f0;
   --color-brand-500: #6366f1;
   --color-brand-600: #4f46e5;
   --color-brand-700: #4338ca;
   --color-brand-900: #1e1b4b;
-  --color-page: #f4f0e6; /* app background */
+  --color-brand-strong: #4338ca; /* button hover: darker in both themes */
 }
 
 :root {
   color-scheme: light;
+}
+
+:root.dark {
+  color-scheme: dark;
+  --color-page: #171512;
+  --color-surface: #211e1a;
+
+  --color-slate-50: #282420;
+  --color-slate-100: #2f2b26;
+  --color-slate-200: #3b3630;
+  --color-slate-300: #4d473f;
+  --color-slate-400: #7d7569;
+  --color-slate-500: #a29a8b;
+  --color-slate-600: #bdb5a6;
+  --color-slate-700: #d3ccbe;
+  --color-slate-800: #e5dfd3;
+  --color-slate-900: #f2ede3;
+
+  /* Tints become dark washes; text shades become light. */
+  --color-brand-50: #22203d;
+  --color-brand-100: #2b2856;
+  --color-brand-200: #3b3680;
+  --color-brand-300: #5a54c9;
+  --color-brand-500: #818cf8;
+  --color-brand-600: #5b5be0;
+  --color-brand-700: #aab4fb;
+  --color-brand-900: #e0e4fb;
+  --color-brand-strong: #4f46e5;
+
+  --color-emerald-50: #10271e;
+  --color-emerald-100: #133226;
+  --color-emerald-200: #1d4a36;
+  --color-emerald-500: #34d399;
+  --color-emerald-600: #2fbf8a;
+  --color-emerald-700: #7fe3bd;
+  --color-emerald-800: #a7f3d0;
+
+  --color-rose-50: #2e1519;
+  --color-rose-100: #3b1b20;
+  --color-rose-200: #5a2630;
+  --color-rose-500: #fb7185;
+  --color-rose-600: #e9435f;
+  --color-rose-700: #fda4af;
+  --color-rose-800: #fecdd3;
+  --color-rose-900: #ffe4e6;
+
+  --color-amber-50: #2b2312;
+  --color-amber-100: #382d14;
+  --color-amber-200: #574419;
+  --color-amber-500: #f0a020;
+  --color-amber-600: #fbbf24;
+  --color-amber-700: #fcd34d;
+  --color-amber-800: #fde68a;
+  --color-amber-900: #fef3c7;
+
+  --color-violet-100: #2c2148;
+  --color-violet-500: #a78bfa;
+  --color-violet-700: #c4b5fd;
+  --color-sky-100: #0f2a3b;
+  --color-sky-700: #7dd3fc;
 }
 
 body {
@@ -25,15 +109,15 @@ body {
    (e.g. `btn lg:hidden`, `btn bg-rose-600`). Unlayered CSS would always win. */
 @layer components {
   .card {
-    @apply rounded-xl border border-slate-200/80 bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04)];
+    @apply rounded-xl border border-slate-200/80 bg-surface p-5 shadow-[0_1px_2px_rgba(60,45,20,0.05)];
   }
 
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500 disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-brand-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500 disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-slate-900 disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-surface px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-slate-900 disabled:opacity-50;
   }
 
   .btn-ghost {
@@ -41,7 +125,7 @@ body {
   }
 
   .input {
-    @apply w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm transition placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100 disabled:bg-slate-50;
+    @apply w-full rounded-lg border border-slate-200 bg-surface px-3 py-2 text-sm shadow-sm transition placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100 disabled:bg-slate-50;
   }
 
   .label {
@@ -72,7 +156,7 @@ body {
   position: absolute;
   inset: 0;
   transform: translateX(-100%);
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+  background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--color-surface) 60%, transparent), transparent);
   animation: shimmer 1.4s infinite;
 }
 

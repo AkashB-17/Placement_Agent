@@ -141,7 +141,7 @@ function Results({ jd, policyId }: { jd: JDSummary; policyId: string }) {
       <ErrorBox message={error?.message} />
       <AutoApplyPanel jd={jd} policyId={policyId} threshold={data.auto_apply_threshold} />
 
-      <div className="inline-flex rounded-lg border border-slate-200 bg-white p-1 text-sm shadow-sm" role="tablist">
+      <div className="inline-flex rounded-lg border border-slate-200 bg-surface p-1 text-sm shadow-sm" role="tablist">
         {(
           [
             ["all", `All (${stats.eligible + stats.ineligible})`],

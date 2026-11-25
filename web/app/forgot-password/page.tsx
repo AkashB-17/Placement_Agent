@@ -38,7 +38,7 @@ export default function ForgotPasswordPage() {
         subtitle={<>If an account exists for <span className="font-medium text-slate-800">{sentTo}</span>, we&apos;ve sent a link to set a new password.</>}
         footer={<Link href="/login" className="font-medium text-brand-700 hover:underline">Back to sign in</Link>}
       >
-        <div className="flex gap-3 rounded-lg border border-slate-200 bg-white p-4 text-sm text-slate-600">
+        <div className="flex gap-3 rounded-lg border border-slate-200 bg-surface p-4 text-sm text-slate-600">
           <MailCheck className="mt-0.5 size-5 shrink-0 text-brand-600" aria-hidden />
           <span>The link works once and expires after a while. Didn&apos;t get it? Check spam, then request another.</span>
         </div>

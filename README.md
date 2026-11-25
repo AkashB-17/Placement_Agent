@@ -102,6 +102,7 @@ Open http://127.0.0.1:8000/docs.
 | `POST /policies`, `POST /jds` | Form field `text` **or** a `.pdf`/`.txt` `file` (not both) |
 | `POST /students` | Form fields `name`, `email`, `branch`, `batch`, `cgpa` (0–10), `active_backlogs`, `is_placed`, plus a `.pdf`/`.txt` `resume` |
 | `GET /policies`, `/jds`, `/students` and `GET /{resource}/{id}` | Discover ids, inspect extracted JSON |
+| `PUT /students/{id}` | Staff edit a student's academic record (JSON: name, email, branch, batch, cgpa, active_backlogs, is_placed); the CV and id never change |
 | `GET /students/me`, `GET /students/{id}/resume` | A student's own record; a short-lived signed link to the resume file |
 | `POST /match` | `{jd_id, student_id, policy_id}` → eligibility, score breakdown, citations |
 | `GET /jds/{jd_id}/ranked?policy_id=...` | Eligible students by score, then ineligible students with failed rules and citations |
@@ -122,7 +123,7 @@ This makes real OpenAI calls (about 20 per run). Re-running is safe: ids are con
 The feature that saves students and officers the most time, built so nothing is sent behind a student's back.
 
 1. **Opt in.** A student turns auto-apply on and can raise the minimum score (never below the college threshold) and exclude companies. Off by default.
-2. **Run.** An officer clicks *Run auto-apply* on a job. For each opted-in student, code checks, in order: already applied to this job (a withdrawal is final; it is never re-sent), excluded company, the policy's `max_applications_per_student`, then the same eligibility and evidence-based score as `/ranked`. Qualifiers get a **pending** application and a notification; everyone else is listed with the reason.
+2. **Run.** An officer clicks *Run auto-apply* on a job. For each opted-in student, code checks, in order: already applied to this job (auto-apply never re-sends a withdrawn application; the student may re-apply manually from the job board), excluded company, the policy's `max_applications_per_student`, then the same eligibility and evidence-based score as `/ranked`. Qualifiers get a **pending** application and a notification; everyone else is listed with the reason.
 3. **Pin.** Each application stores the resume version as scored (content-addressed file path + SHA-256 of the text) and the score breakdown with its verified quotes. A later resume upload doesn't change what was sent.
 4. **Withdraw window.** The student can withdraw until `release_at = min(created + 24 h, JD deadline − 6 h)`. A run is refused if that leaves under an hour (or the deadline has passed). Deadlines are parsed by code ("November 20, 2026", "20/11/2026", ISO); a date means 23:59 IST.
 5. **Release.** One conditional `UPDATE … WHERE status = 'pending' AND release_at <= now` marks applications *submitted* and notifies the student. It runs every 60 s and before every read of applications, so a status is never stale. Because release and withdraw are both single conditional updates, they can't both win.

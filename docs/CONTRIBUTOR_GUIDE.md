@@ -29,7 +29,7 @@ These are design decisions, not accidents. A change that breaks one needs a stro
 | 1 | **Eligibility is plain Python**, never an LLM or a similarity search. Only eligible students are scored. | `app/services/eligibility.py` |
 | 2 | **The score is computed in code** from skill coverage. The LLM only returns per-skill evidence with a quote; code verifies each quote against the resume. Every score ships with matched/missing skills and evidence. | `app/services/scoring.py` |
 | 3 | **Retrieval (RAG) only cites**, never decides. It finds the policy/JD clause behind a failed rule. | `app/services/matching.py` (`_cite`), `vectorstore.py` |
-| 4 | **Auto-apply is staged**: pending → notify → withdraw window → submitted. Withdrawal is final. Applications pin the resume version and score snapshot. Resumes are never rewritten. | `app/services/auto_apply.py`, `db.release_due_applications` |
+| 4 | **Auto-apply is staged**: pending → notify → withdraw window → submitted. Auto-apply never re-applies after a withdrawal (the student may, manually). Applications pin the resume version and score snapshot. Resumes are never rewritten. | `app/services/auto_apply.py`, `db.release_due_applications` |
 | 5 | **Every endpoint has an explicit role check** (`require_role`). The API uses the Supabase *secret* key, which bypasses RLS, so RLS is defence in depth, not the main guard. | `app/auth.py`, every router |
 | 6 | **Roles live in `public.profiles`**, never in `user_metadata` or token claims. Sign-up always creates a `student`. | migration `20261105000000_init.sql`, `auth.get_current_user` |
 | 7 | **Secrets never reach the browser, logs or git.** `.env` is git-ignored; the web app only holds `NEXT_PUBLIC_` (browser-safe) values. | `.gitignore`, `web/.env.local.example` |
@@ -273,7 +273,7 @@ Routers are thin: role check → validate → call services/db → shape the res
 | `release_due()`, `release_due_quietly()` | Run the release `UPDATE`; the quiet version logs instead of raising (for the background sweep). |
 | `to_out(application, now)` | DB row → `ApplicationOut` (computes `can_withdraw`; `source` is `manual` when the creator's profile role is `student`, else `auto`). |
 | `application_window(jd, now)` | `(deadline, release_at, cutoff)` or 409 (deadline passed / too little time to withdraw). Shared by runs and manual applies. |
-| `apply_manually(student, jd_id, policy_id, actor_id)` | A student applies from the job board: already applied (withdrawn is final) → window → CV present → policy limit → `check_eligibility` (before any AI call) → score snapshot → same pending application + notification. No score bar or excluded-companies check: the student chose the job. |
+| `apply_manually(student, jd_id, policy_id, actor_id)` | A student applies from the job board: already pending/submitted → 409 (withdrawn → re-apply: `db.reapply_application` flips the same row back to pending with a fresh snapshot and window) → window → CV present → policy limit → `check_eligibility` (before any AI call) → score snapshot → same pending application + notification. No score bar or excluded-companies check: the student chose the job. |
 | `run_auto_apply(jd_id, policy_id, actor_id)` | The whole run (see [§3.3](#33-auto-apply-post-jdsidauto-applypolicy_id)); returns created + skipped-with-reason + not-opted-in count. |
 
 #### `highlights.py`: "why they stand out"
@@ -341,6 +341,7 @@ Interactive docs at `/docs` when the API is running. "Staff" = officer + admin.
 | GET | `/jds`, `/jds/{id}` | any signed-in user | `jds.list_jds_endpoint`, `get_jd_endpoint` |
 | POST | `/students` | staff | `students.create_student` |
 | GET | `/students`, `/students/{id}` | staff | `students.list_students_endpoint`, `get_student_endpoint` |
+| PUT | `/students/{id}` | staff | `students.update_student_endpoint` → `db.update_student_record` (academic fields only; branch/batch normalised; email unique across students, required while there's no CV; id and CV unchanged) |
 | GET | `/students/me` | student | `students.get_my_record` |
 | PUT | `/students/me/resume` | student (own linked record) | `students.upload_my_resume` |
 | GET | `/students/{id}/resume` | staff, owning student | `students.get_resume_link` |
@@ -370,6 +371,8 @@ Interactive docs at `/docs` when the API is running. "Staff" = officer + admin.
 
 Next.js 16 (App Router), Tailwind 4, `lucide-react` icons, `@supabase/supabase-js` for sign-in only. Every page is a client component; there is no server-side data fetching. Component classes in `app/globals.css` (`.card`, `.btn`, `.input`, `.chip`, …) sit inside `@layer components` so Tailwind utilities on an element (`lg:hidden`, `bg-rose-600`) override them; keep new ones there.
 
+**Theme and dark mode.** `globals.css` redefines Tailwind's colour names as theme variables: `slate-*` is a warm neutral scale, plus `page` (background), `surface` (cards, bars, inputs: use `bg-surface`, not `bg-white`) and `ink` (the always-dark login panel). `:root.dark` redefines the same names (neutrals invert; `brand`/`emerald`/`rose`/`amber` tints become dark washes and text shades become light), so components need almost no `dark:` classes. Dark mode is the `.dark` class on `<html>`: `ThemeToggle` sets it and saves the choice in `localStorage`; `THEME_INIT_SCRIPT` in `app/layout.tsx` applies it before first paint (no light flash), defaulting to the OS setting. Text that must stay light on the always-dark panel uses fixed Tailwind colours (`text-white`, `text-indigo-100`), not theme names. `text-white` is never themed, so it stays white on coloured buttons.
+
 ### 9.1 `web/lib/`
 | File | Exports | Purpose |
 |---|---|---|
@@ -389,7 +392,9 @@ Next.js 16 (App Router), Tailwind 4, `lucide-react` icons, `@supabase/supabase-j
 | `JobBoard.tsx` | `JobBoard` | Student job board over `GET /me/jobs`: `jobStatus` (Applied / Sent to company / Withdrawn / closed / eligible / not eligible), filters, list + detail (stacked on mobile), `DescriptionTab` (`GET /jds/{id}`), `EligibilityTab`, `MatchTab` (`POST /match`). |
 | `AutoApplySettings.tsx` | `AutoApplySettings` | Student auto-apply preferences form (switch, min score, excluded companies). |
 | `StudentCvCard.tsx` | `StudentCvCard` | Upload/replace/open the student's own CV. |
+| `StudentEditForm.tsx` | `StudentEditForm` | Staff form for a student's academic record (`PUT /students/{id}`); warns when the login email changes. |
 | `NotLinked.tsx` | `NotLinked` | Shown when a student account has no matching record (`/students/me` → 404). |
+| `ThemeToggle.tsx` | `ThemeToggle`, `THEME_INIT_SCRIPT` | Light/dark switch (student top bar beside the bell, staff sidebar and mobile header, top-right on account pages); saved in `localStorage`. |
 | `AuthCard.tsx` | `AuthCard`, `passwordProblem`, `MIN_PASSWORD_LENGTH` | Centered card for the account pages, and the shared password rule (8+ characters, both fields match). |
 | `ui.tsx` | `ErrorBox`, `SuccessBox`, `Warnings`, `Chip`, `Chips`, `PageHeader`, `StatCard`, `EmptyState`, `Spinner`, `Skeleton`, `CardSkeletons`, `Avatar`, `display`, `errorText`, `Tone` | Shared UI primitives. |
 | `MatchResultCard.tsx` | `MatchResultCard`, `ScoreRing` | One student × one JD: eligibility chips, failed rules (keyed by rule+source), skills, evidence quotes, citations. |
@@ -407,7 +412,7 @@ Next.js 16 (App Router), Tailwind 4, `lucide-react` icons, `@supabase/supabase-j
 | `/auth/callback` | public | Landing page for every email link; `?next=set-password` (reset, invite) or `confirmed` (sign-up); shows a clear message for expired links. |
 | `/set-password` | signed in via an email link | Choose a new password (`supabase.auth.updateUser`). |
 | `/jobs` | officer, admin | Policy picker, job cards, ranking results (stats, filter tabs, Re-run / Re-score with AI, cache line), auto-apply panel. |
-| `/students` | officer, admin | Searchable student table; detail panel with skills, projects, resume link. |
+| `/students` | officer, admin | Searchable student table; detail panel with skills, projects, resume link and **Edit details** (`StudentEditForm`, `PUT /students/{id}`). |
 | `/upload` | officer, admin, recruiter | Tabs: policy, JD (recruiters see only this), student; drag-and-drop; shows warnings. `?tab=student` deep-links. |
 | `/applications` | officer, admin, recruiter | Application tracking; status tiles (staff); `?jd=` filter; refreshes every 60 s. |
 | `/me` | student | Job board (`JobBoard`): list with status/sort/search filters and All/Applied tabs, detail with application banner and Description / Eligibility / My match tabs. |
@@ -454,10 +459,11 @@ Next.js 16 (App Router), Tailwind 4, `lucide-react` icons, `@supabase/supabase-j
 | `test_score_cache.py` | Cache hit/miss, refresh, shared cache, eligibility never cached, key components |
 | `test_match.py` | `/match` and `/ranked`: scoring, citations, sorting |
 | `test_auto_apply.py` | Preferences, the run, pinning, notifications, withdraw window, release, idempotency, deadlines and parsing, recruiter visibility, roles |
+| `test_student_edit.py` | Office edits: fields and normalisation, CV kept, eligibility uses new CGPA at once, email change moves the login link, duplicate email 409, email required without a CV, validation, roles |
 | `test_student_cv.py` | Office records without a CV, student CV upload/replace, stable ids, no-CV scoring and auto-apply skip, storage failure leaves no record |
 | `test_my_jobs.py` | `GET /me/jobs`: eligibility per job, application status, closed deadlines, policy default/unknown, roles, no LLM calls |
 | `test_highlights.py` | Highlight lines (coverage, stricter CGPA floor, backlogs), snapshot on new applications, fallback for older ones |
-| `test_apply_and_tips.py` | Manual apply (staged, `source`, twice/after withdrawal, ineligible without AI calls, closed, no CV, roles) and CV tips (only missing skills, quote verification, cache, nothing missing, ineligible) |
+| `test_apply_and_tips.py` | Manual apply (staged, `source`, twice, re-apply after withdrawal (same row, fresh snapshot; not once sent or past the deadline; never by auto-apply), ineligible without AI calls, closed, no CV, roles) and CV tips (only missing skills, quote verification, cache, nothing missing, ineligible) |
 | `test_index_sync.py` | Rebuilding a wiped index, idempotency, non-fatal failure |
 | `test_performance.py` | Profile cache, Chroma client race, citation query cache |
 | `test_ingest_errors.py` | Config, OpenAI failures → 502, upload validation, normalisation at ingest, line endings, clause chunking |

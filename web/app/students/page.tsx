@@ -1,19 +1,22 @@
 "use client";
 
-import { ChevronRight, ExternalLink, FileText, GraduationCap, Search, UserPlus } from "lucide-react";
+import { ChevronRight, ExternalLink, FileText, GraduationCap, Pencil, Search, UserPlus } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
-import { Avatar, Chip, Chips, EmptyState, ErrorBox, PageHeader, Skeleton, Spinner, errorText } from "@/components/ui";
+import { StudentEditForm } from "@/components/StudentEditForm";
+import { Avatar, Chip, Chips, EmptyState, ErrorBox, PageHeader, Skeleton, Spinner, SuccessBox, errorText } from "@/components/ui";
 import { api } from "@/lib/api";
 import { RequireRole } from "@/lib/auth";
 import type { StudentDetail, StudentSummary } from "@/lib/types";
-import { useApi } from "@/lib/useApi";
+import { invalidate, useApi } from "@/lib/useApi";
 
-function StudentDetailPanel({ student }: { student: StudentSummary }) {
-  const { data: detail, error, loading } = useApi<StudentDetail>(`/students/${student.id}`);
+function StudentDetailPanel({ student, onEdited }: { student: StudentSummary; onEdited: () => void }) {
+  const { data: detail, error, loading, refresh } = useApi<StudentDetail>(`/students/${student.id}`);
   const [opening, setOpening] = useState(false);
   const [linkError, setLinkError] = useState<string | null>(null);
+  const [editing, setEditing] = useState(false);
+  const [saved, setSaved] = useState(false);
 
   async function openResume() {
     setOpening(true);
@@ -41,6 +44,25 @@ function StudentDetailPanel({ student }: { student: StudentSummary }) {
   if (!detail) return null;
 
   const { parsed_resume: resume } = detail;
+  if (editing) {
+    return (
+      <div className="bg-slate-50/60 p-5">
+        <p className="eyebrow mb-3">Edit academic record</p>
+        <StudentEditForm
+          detail={detail}
+          onCancel={() => setEditing(false)}
+          onSaved={() => {
+            setEditing(false);
+            setSaved(true);
+            // Eligibility and rankings read the record, so cached views of them are stale too.
+            invalidate("/students", "/jds/");
+            void refresh();
+            onEdited();
+          }}
+        />
+      </div>
+    );
+  }
   return (
     <div className="grid gap-5 bg-slate-50/60 p-5 md:grid-cols-3">
       <div className="md:col-span-2 space-y-4">
@@ -63,6 +85,10 @@ function StudentDetailPanel({ student }: { student: StudentSummary }) {
         )}
       </div>
       <div className="space-y-3">
+        <button className="btn-secondary w-full" onClick={() => { setSaved(false); setEditing(true); }}>
+          <Pencil className="size-4" aria-hidden /> Edit details
+        </button>
+        {saved && <SuccessBox>Details saved.</SuccessBox>}
         <p className="eyebrow">Resume file</p>
         {detail.has_resume_file ? (
           <button className="btn-secondary w-full" onClick={openResume} disabled={opening}>
@@ -81,7 +107,7 @@ function StudentDetailPanel({ student }: { student: StudentSummary }) {
 }
 
 function StudentsPage() {
-  const { data: students, error, loading } = useApi<StudentSummary[]>("/students");
+  const { data: students, error, loading, refresh } = useApi<StudentSummary[]>("/students");
   const [query, setQuery] = useState("");
   const [openId, setOpenId] = useState<string | null>(null);
 
@@ -95,7 +121,7 @@ function StudentsPage() {
     <>
       <PageHeader
         title="Students"
-        subtitle="Everyone in the placement pool. Click a student for parsed skills and their resume file."
+        subtitle="Everyone in the placement pool. Click a student for parsed skills, their resume file, and to edit their details."
         actions={
           <Link href="/upload?tab=student" className="btn">
             <UserPlus className="size-4" aria-hidden /> Add student
@@ -148,7 +174,7 @@ function StudentsPage() {
                 {filtered.map((s) => {
                   const open = openId === s.id;
                   return (
-                    <StudentRows key={s.id} student={s} open={open} onToggle={() => setOpenId(open ? null : s.id)} />
+                    <StudentRows key={s.id} student={s} open={open} onToggle={() => setOpenId(open ? null : s.id)} onEdited={() => void refresh()} />
                   );
                 })}
               </tbody>
@@ -161,7 +187,7 @@ function StudentsPage() {
   );
 }
 
-function StudentRows({ student: s, open, onToggle }: { student: StudentSummary; open: boolean; onToggle: () => void }) {
+function StudentRows({ student: s, open, onToggle, onEdited }: { student: StudentSummary; open: boolean; onToggle: () => void; onEdited: () => void }) {
   return (
     <>
       <tr
@@ -197,7 +223,7 @@ function StudentRows({ student: s, open, onToggle }: { student: StudentSummary; 
       {open && (
         <tr>
           <td colSpan={7} className="border-t border-slate-100 p-0">
-            <StudentDetailPanel student={s} />
+            <StudentDetailPanel student={s} onEdited={onEdited} />
           </td>
         </tr>
       )}

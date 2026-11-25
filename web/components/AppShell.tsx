@@ -9,6 +9,7 @@ import { useAuth } from "@/lib/auth";
 import type { Role } from "@/lib/types";
 
 import { StudentShell } from "./StudentShell";
+import { ThemeToggle } from "./ThemeToggle";
 import { Avatar } from "./ui";
 
 const LINKS: { href: string; label: string; icon: LucideIcon; roles: Role[] }[] = [
@@ -51,7 +52,10 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
 
   return (
     <div className="flex h-full flex-col gap-6 p-4">
-      <Brand />
+      <div className="flex items-center justify-between gap-2">
+        <Brand />
+        <ThemeToggle />
+      </div>
       <nav className="flex flex-1 flex-col gap-1" aria-label="Main">
         {LINKS.filter((l) => l.roles.includes(profile.role)).map(({ href, label, icon: Icon }) => {
           const active = pathname.startsWith(href);
@@ -105,18 +109,24 @@ export function AppShell({ children }: { children: ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   if (!profile || AUTH_PAGES.has(pathname)) {
-    return <main className="min-h-screen">{children}</main>;
+    return (
+      <main className="relative min-h-screen">
+        <ThemeToggle className="absolute top-4 right-4 z-10" />
+        {children}
+      </main>
+    );
   }
   if (profile.role === "student") return <StudentShell>{children}</StudentShell>;
 
   return (
     <div className="min-h-screen lg:pl-64">
-      <aside className="fixed inset-y-0 left-0 hidden w-64 border-r border-slate-200 bg-white lg:block">
+      <aside className="fixed inset-y-0 left-0 hidden w-64 border-r border-slate-200 bg-surface lg:block">
         <SidebarContent />
       </aside>
 
-      <header className="sticky top-0 z-20 flex items-center justify-between border-b border-slate-200 bg-white/90 px-4 py-3 backdrop-blur lg:hidden">
+      <header className="sticky top-0 z-20 flex items-center justify-between border-b border-slate-200 bg-surface/90 px-4 py-3 backdrop-blur lg:hidden">
         <Brand />
+        <ThemeToggle className="ml-auto" />
         <button className="btn-ghost" onClick={() => setMenuOpen(true)} aria-label="Open menu">
           <Menu className="size-5" aria-hidden />
         </button>
@@ -124,8 +134,8 @@ export function AppShell({ children }: { children: ReactNode }) {
 
       {menuOpen && (
         <div className="fixed inset-0 z-30 lg:hidden" role="dialog" aria-modal="true">
-          <div className="absolute inset-0 bg-slate-900/30" onClick={() => setMenuOpen(false)} />
-          <aside className="absolute inset-y-0 left-0 w-72 bg-white shadow-xl">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setMenuOpen(false)} />
+          <aside className="absolute inset-y-0 left-0 w-72 bg-surface shadow-xl">
             <button className="btn-ghost absolute top-4 right-3" onClick={() => setMenuOpen(false)} aria-label="Close menu">
               <X className="size-5" aria-hidden />
             </button>

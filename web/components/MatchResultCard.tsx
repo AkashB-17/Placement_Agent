@@ -137,7 +137,7 @@ export function MatchResultCard({
             {score.evidence.length ? (
               <ul className="grid gap-2 sm:grid-cols-2">
                 {score.evidence.map((e, i) => (
-                  <li key={`${e.skill}-${i}`} className="rounded-lg border border-slate-200 bg-white p-3 text-sm">
+                  <li key={`${e.skill}-${i}`} className="rounded-lg border border-slate-200 bg-surface p-3 text-sm">
                     <p className="mb-1 flex items-center gap-1.5 font-medium text-slate-800">
                       <Quote className="size-3.5 text-brand-500" aria-hidden />
                       {e.skill}
@@ -165,7 +165,7 @@ export function MatchResultCard({
                   <span className="font-normal text-slate-500">· {c.source === "jd" ? "job description" : "placement policy"}</span>
                 </p>
                 {c.chunks.map((chunk, i) => (
-                  <blockquote key={i} className="mt-1.5 rounded-r-lg border-l-4 border-brand-200 bg-white px-3 py-2 text-sm whitespace-pre-line text-slate-600">
+                  <blockquote key={i} className="mt-1.5 rounded-r-lg border-l-4 border-brand-200 bg-surface px-3 py-2 text-sm whitespace-pre-line text-slate-600">
                     {chunk.text}
                   </blockquote>
                 ))}

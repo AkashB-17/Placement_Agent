@@ -80,7 +80,7 @@ export default function SignUpPage() {
         footer={<>Confirmed already? <Link href="/login" className="font-medium text-brand-700 hover:underline">Sign in</Link></>}
       >
         <div className="space-y-4">
-          <div className="flex gap-3 rounded-lg border border-slate-200 bg-white p-4 text-sm text-slate-600">
+          <div className="flex gap-3 rounded-lg border border-slate-200 bg-surface p-4 text-sm text-slate-600">
             <MailCheck className="mt-0.5 size-5 shrink-0 text-brand-600" aria-hidden />
             <span>
               The link works once. If it isn&apos;t in your inbox within a few minutes, check spam, or send it again.

@@ -46,6 +46,17 @@ class StudentProfile(BaseModel):
     parsed_resume: ParsedResume | None = None
 
 
+class StudentUpdate(BaseModel):
+    """The office's edit of a student's academic record (the CV is the student's)."""
+    name: str = Field(min_length=1, max_length=200)
+    email: str | None = Field(None, max_length=320, description="Login email; links the record to the student's account")
+    branch: str = Field(min_length=1, max_length=100)
+    batch: str = Field(min_length=1, max_length=20)
+    cgpa: float = Field(ge=0, le=10)
+    active_backlogs: int = Field(ge=0, le=100)
+    is_placed: bool = False
+
+
 class PolicyIngestResponse(BaseModel):
     id: str
     rules: PolicyRules

@@ -185,7 +185,7 @@ function CvTipsPanel({ job, policyId, missingRequired, missingPreferred }: {
       {tips && (
         <ul className="space-y-2.5">
           {tips.tips.map((tip) => (
-            <li key={tip.skill} className="rounded-lg border border-slate-200 bg-white p-3">
+            <li key={tip.skill} className="rounded-lg border border-slate-200 bg-surface p-3">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="font-medium text-slate-900">{tip.skill}</span>
                 <Chip tone={tip.required ? "red" : "amber"}>{tip.required ? "Required" : "Preferred"}</Chip>
@@ -282,7 +282,9 @@ function ApplyAction({ job, student, policyId, onApplied }: {
     setError(null);
   }, [job.id]);
 
-  if (job.application) return null;
+  // A withdrawn application can be re-applied by the student (never by auto-apply).
+  const reapply = job.application?.status === "withdrawn";
+  if (job.application && !reapply) return null;
   const blocked = job.closed
     ? "Applications for this job are closed."
     : !job.eligibility.eligible
@@ -312,7 +314,7 @@ function ApplyAction({ job, student, policyId, onApplied }: {
     <div className="flex flex-col items-end gap-2">
       {!confirming && (
         <button className="btn" disabled={!!blocked} title={blocked ?? undefined} onClick={() => setConfirming(true)}>
-          <Send className="size-4" aria-hidden /> Apply
+          <Send className="size-4" aria-hidden /> {reapply ? "Apply again" : "Apply"}
         </button>
       )}
       {!student.has_resume && job.eligibility.eligible && !job.closed && (
@@ -323,7 +325,8 @@ function ApplyAction({ job, student, policyId, onApplied }: {
       {confirming && (
         <div className="max-w-xs space-y-2 rounded-lg border border-brand-200 bg-brand-50/60 p-3 text-sm">
           <p className="text-slate-700">
-            Apply with your current CV and match score? It&apos;s sent to the company after a withdraw window; you can withdraw until then.
+            {reapply ? "Apply again" : "Apply"} with your current CV and match score? It&apos;s sent to the company after a withdraw window; you
+            can withdraw until then.
           </p>
           <div className="flex gap-2">
             <button className="btn" onClick={apply} disabled={busy}>

@@ -43,15 +43,68 @@ def test_student_applies_and_gets_a_staged_application(client, board, login_as) 
     assert acme["application"]["status"] == "pending" and acme["application"]["source"] == "manual"
 
 
-def test_cannot_apply_twice_or_after_withdrawing(client, board, login_as) -> None:
+def test_cannot_apply_twice(client, board, login_as) -> None:
     _login_student(login_as)
-    app = client.post(f"/me/jobs/{board['open']}/apply").json()
+    client.post(f"/me/jobs/{board['open']}/apply")
     again = client.post(f"/me/jobs/{board['open']}/apply")
     assert again.status_code == 409 and "already have a pending" in again.json()["detail"]
 
+
+def test_student_can_reapply_after_withdrawing(client, board, login_as, clock) -> None:
+    _login_student(login_as)
+    first = client.post(f"/me/jobs/{board['open']}/apply").json()
+    client.post(f"/applications/{first['id']}/withdraw")
+
+    clock(hours=3)
+    response = client.post(f"/me/jobs/{board['open']}/apply")
+    assert response.status_code == 201, response.json()
+    again = response.json()
+    # Same application, back to pending with a fresh snapshot and a new window.
+    assert again["id"] == first["id"]
+    assert again["status"] == "pending" and again["decided_at"] is None and again["can_withdraw"] is True
+    assert again["created_at"] > first["created_at"] and again["release_at"] > first["release_at"]
+    assert again["highlights"]
+
+    messages = [n["message"] for n in client.get("/me/notifications").json()]
+    assert any(m.startswith("You re-applied to Acme – SDE") for m in messages)
+    [listed] = client.get("/me/applications").json()
+    assert listed["status"] == "pending"
+
+    # Withdrawing again works, and so does applying again after that.
+    assert client.post(f"/applications/{first['id']}/withdraw").status_code == 200
+    assert client.post(f"/me/jobs/{board['open']}/apply").status_code == 201
+
+
+def test_cannot_reapply_once_sent(client, board, login_as, clock) -> None:
+    _login_student(login_as)
+    client.post(f"/me/jobs/{board['open']}/apply")
+    clock(hours=25)  # released to the company
+    sent = client.post(f"/me/jobs/{board['open']}/apply")
+    assert sent.status_code == 409 and "already have a submitted" in sent.json()["detail"]
+
+
+def test_cannot_reapply_after_the_deadline(client, board, login_as, clock, monkeypatch) -> None:
+    login_as("admin")
+    soon = _post_jd(client, monkeypatch, JDRequirements(
+        company="Soon", role="Intern", required_skills=["Python"], deadline="2026-11-24"))
+    _login_student(login_as)
+    app = client.post(f"/me/jobs/{soon}/apply").json()
     client.post(f"/applications/{app['id']}/withdraw")
-    after = client.post(f"/me/jobs/{board['open']}/apply")
-    assert after.status_code == 409 and "final" in after.json()["detail"]
+    clock(days=5)  # past 24 Nov
+    late = client.post(f"/me/jobs/{soon}/apply")
+    assert late.status_code == 409 and "deadline" in late.json()["detail"]
+    assert client.get("/me/applications").json()[0]["status"] == "withdrawn"
+
+
+def test_auto_apply_never_reapplies_after_withdrawal(client, board, login_as) -> None:
+    _login_student(login_as)
+    app = client.post(f"/me/jobs/{board['open']}/apply").json()
+    client.post(f"/applications/{app['id']}/withdraw")
+    client.put("/me/auto-apply", json={"enabled": True, "min_score": 80})
+    login_as("officer", email="tpo@uni.edu")
+    run = client.post(f"/jds/{board['open']}/auto-apply", params={"policy_id": board["policy"]}).json()
+    assert run["created"] == []
+    assert "withdrawn" in run["skipped"][0]["reason"]
 
 
 def test_ineligible_student_is_refused_without_ai_calls(client, board, login_as) -> None:

@@ -479,6 +479,34 @@ def upsert_student_record(
     )
 
 
+def update_student_record(
+    student_id: str,
+    name: str,
+    email: str | None,
+    branch: str,
+    batch: str,
+    cgpa: float,
+    active_backlogs: int,
+    is_placed: bool,
+) -> bool:
+    """The office edits an existing academic record. Unlike upsert_student_record, the email
+    is set as given (it can be changed or removed). The id and CV columns never change,
+    so applications, scores and the student's CV stay attached. False if no such student."""
+    row = _fetchone(
+        """
+        UPDATE students SET name = ?, email = ?, branch = ?, batch = ?, cgpa = ?,
+            active_backlogs = ?, is_placed = ?
+        WHERE id = ?
+        RETURNING id
+        """,
+        (
+            name, email, branch, batch, cgpa, active_backlogs,
+            is_placed if using_postgres() else int(is_placed), student_id,
+        ),
+    )
+    return row is not None
+
+
 def set_student_resume(
     student_id: str, resume_text: str, parsed_json: str, resume_path: str | None, now: datetime
 ) -> None:
@@ -820,6 +848,44 @@ def withdraw_application(application_id: str, student_id: str, now: datetime, me
             return False
         _insert_notification(cur, student_id, application_id, "application_withdrawn", message, now)
         return True
+
+
+def reapply_application(application: dict[str, Any], notification_message: str) -> str | None:
+    """A student re-applies to a job they withdrew from: the same row goes back to pending
+    with a fresh snapshot (CV, score, window). Only a withdrawn row changes, so a
+    pending or submitted application is never touched. Returns the application id, or None."""
+    with _atomic() as cur:
+        cur.execute(
+            _sql(
+                """
+                UPDATE applications SET
+                    status = 'pending', decided_at = NULL, policy_id = ?, score = ?, match_json = ?,
+                    resume_path = ?, resume_sha = ?, created_at = ?, release_at = ?, created_by = ?
+                WHERE student_id = ? AND jd_id = ? AND status = 'withdrawn'
+                RETURNING id
+                """
+            ),
+            (
+                application["policy_id"],
+                application["score"],
+                _json_param(application["match_json"]),
+                application["resume_path"],
+                application["resume_sha"],
+                _ts(application["created_at"]),
+                _ts(application["release_at"]),
+                application["created_by"],
+                application["student_id"],
+                application["jd_id"],
+            ),
+        )
+        row = cur.fetchone()
+        if row is None:
+            return None
+        _insert_notification(
+            cur, application["student_id"], row["id"], "application_pending",
+            notification_message, application["created_at"],
+        )
+        return row["id"]
 
 
 def get_application(application_id: str) -> dict[str, Any] | None:

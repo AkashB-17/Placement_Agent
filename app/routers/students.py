@@ -11,6 +11,7 @@ from app.db import (
     list_students,
     make_document_id,
     set_student_resume,
+    update_student_record,
     upsert_student_record,
 )
 from app.schemas import (
@@ -20,6 +21,7 @@ from app.schemas import (
     StudentIngestResponse,
     StudentProfile,
     StudentSummary,
+    StudentUpdate,
 )
 from app.services.llm import extract_structured
 from app.services.normalize import normalize_batch, normalize_branch
@@ -197,6 +199,48 @@ def get_student_endpoint(student_id: str, _: CurrentUser = Depends(staff_only)) 
     if row is None:
         raise HTTPException(status_code=404, detail="Student not found.")
     return _detail(row)
+
+
+@router.put("/{student_id}", response_model=StudentDetail)
+def update_student_endpoint(
+    student_id: str, body: StudentUpdate, _: CurrentUser = Depends(staff_only)
+) -> StudentDetail:
+    """The placement office corrects a student's academic record: name, email, branch,
+    batch, CGPA, backlogs, placed. The id and the student's CV never change. Eligibility
+    is recomputed from the record on every check, so the new values apply at once;
+    applications already made keep the snapshot taken when they were made."""
+    row = get_student(student_id)
+    if row is None:
+        raise HTTPException(status_code=404, detail="Student not found.")
+    branch = normalize_branch(body.branch)
+    batch = normalize_batch(body.batch)
+    name = body.name.strip()
+    if not branch or not batch or not name:
+        raise HTTPException(status_code=422, detail="Name, branch and batch must not be blank.")
+    email = (body.email or "").strip().lower() or None
+    if email is not None and "@" not in email:
+        raise HTTPException(status_code=422, detail="Email is not valid.")
+    if email is None and not (row["resume_text"] or "").strip():
+        raise HTTPException(
+            status_code=422,
+            detail="Keep a login email: without one and without a CV, the student can never upload a CV.",
+        )
+    if email is not None:
+        # The email is how a login finds its record, so two records can't share one.
+        other = get_student_by_email(email)
+        if other is not None and other["id"] != student_id:
+            raise HTTPException(status_code=409, detail=f"Another student ({other['name']}) already uses {email}.")
+    update_student_record(
+        student_id,
+        name=name,
+        email=email,
+        branch=branch,
+        batch=batch,
+        cgpa=body.cgpa,
+        active_backlogs=body.active_backlogs,
+        is_placed=body.is_placed,
+    )
+    return _detail(get_student(student_id))
 
 
 @router.get("/{student_id}/resume", response_model=ResumeLink)

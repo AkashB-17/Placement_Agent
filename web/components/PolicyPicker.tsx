@@ -23,7 +23,7 @@ export function PolicyPicker({
   onChange: (id: string) => void;
 }) {
   return (
-    <label className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white py-1 pr-1 pl-3 text-sm shadow-sm">
+    <label className="flex items-center gap-2 rounded-lg border border-slate-200 bg-surface py-1 pr-1 pl-3 text-sm shadow-sm">
       <ScrollText className="size-4 text-slate-400" aria-hidden />
       <span className="text-slate-500">Policy</span>
       <select

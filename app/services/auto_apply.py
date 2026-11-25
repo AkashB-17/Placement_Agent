@@ -204,14 +204,17 @@ def apply_manually(student: dict[str, Any], jd_id: str, policy_id: str, actor_id
 
     Same pipeline as auto-apply (deterministic eligibility, evidence-based score snapshot,
     pinned CV, pending with a withdraw window, then release), minus the score bar and the
-    excluded-companies preference: the student chose this job themselves."""
+    excluded-companies preference: the student chose this job themselves.
+
+    A student may re-apply to a job they withdrew from (while it is still open): the same
+    application goes back to pending with a fresh snapshot and a new withdraw window.
+    Auto-apply never does this; only the student's own click can."""
     release_due()
     policy = load_policy(policy_id)
     jd = load_jd(jd_id)
     existing = db.application_statuses_for_jd(jd_id).get(student["id"])
-    if existing == "withdrawn":
-        raise HTTPException(status_code=409, detail="You withdrew from this job earlier. Withdrawals are final.")
-    if existing:
+    reapplying = existing == "withdrawn"
+    if existing and not reapplying:
         raise HTTPException(status_code=409, detail=f"You already have a {existing} application for this job.")
     now = utcnow()
     _, release_at, _ = application_window(jd, now)
@@ -234,12 +237,17 @@ def apply_manually(student: dict[str, Any], jd_id: str, policy_id: str, actor_id
 
     application = _new_application(student, jd_id, policy_id, policy, jd, breakdown, now, release_at, actor_id)
     message = (
-        f"You applied to {_job_label(jd.company, jd.role)} (score {breakdown.score:.1f}). "
-        f"It will be sent on {format_local(release_at)}. Withdraw before then if you change your mind."
+        f"You {'re-applied' if reapplying else 'applied'} to {_job_label(jd.company, jd.role)} "
+        f"(score {breakdown.score:.1f}). It will be sent on {format_local(release_at)}. "
+        "Withdraw before then if you change your mind."
     )
-    if not db.create_application(application, message):
-        raise HTTPException(status_code=409, detail="You already have an application for this job.")
-    return to_out(db.get_application(application["id"]), now)
+    if reapplying:
+        application_id = db.reapply_application(application, message)
+    else:
+        application_id = application["id"] if db.create_application(application, message) else None
+    if application_id is None:  # another request changed it in between
+        raise HTTPException(status_code=409, detail="Your application for this job changed just now. Refresh and try again.")
+    return to_out(db.get_application(application_id), now)
 
 
 def run_auto_apply(jd_id: str, policy_id: str, actor_id: str | None) -> AutoApplyRun:

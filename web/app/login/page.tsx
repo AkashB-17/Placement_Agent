@@ -40,7 +40,7 @@ export default function LoginPage() {
 
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
-      <section className="relative hidden overflow-hidden bg-brand-900 p-12 text-white lg:flex lg:flex-col lg:justify-between">
+      <section className="relative hidden overflow-hidden bg-ink p-12 text-white lg:flex lg:flex-col lg:justify-between">
         <div className="absolute -top-24 -right-24 size-96 rounded-full bg-brand-600/40 blur-3xl" aria-hidden />
         <div className="absolute -bottom-32 -left-16 size-96 rounded-full bg-violet-500/20 blur-3xl" aria-hidden />
         <div className="relative flex items-center gap-2.5">
@@ -51,7 +51,7 @@ export default function LoginPage() {
         </div>
         <div className="relative max-w-md">
           <h1 className="text-3xl leading-tight font-semibold">Shortlist candidates you can explain.</h1>
-          <p className="mt-3 text-brand-100/80">
+          <p className="mt-3 text-indigo-100/80">
             Upload a job description and see who is eligible, how well each resume matches, and why.
           </p>
           <ul className="mt-10 space-y-6">
@@ -62,13 +62,13 @@ export default function LoginPage() {
                 </span>
                 <span>
                   <span className="block font-medium">{title}</span>
-                  <span className="block text-sm text-brand-100/70">{text}</span>
+                  <span className="block text-sm text-indigo-100/70">{text}</span>
                 </span>
               </li>
             ))}
           </ul>
         </div>
-        <p className="relative text-xs text-brand-100/50">Campus placement cell</p>
+        <p className="relative text-xs text-indigo-100/50">Campus placement cell</p>
       </section>
 
       <section className="flex items-center justify-center p-6">

@@ -8,6 +8,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useAuth } from "@/lib/auth";
 
 import { NotificationBell } from "./NotificationBell";
+import { ThemeToggle } from "./ThemeToggle";
 import { Avatar } from "./ui";
 
 const STUDENT_LINKS: { href: string; label: string; icon: LucideIcon }[] = [
@@ -41,7 +42,7 @@ function AccountMenu() {
         <Avatar name={profile?.email ?? "?"} className="size-9 text-sm" />
       </button>
       {open && (
-        <div className="absolute right-0 z-40 mt-2 w-64 rounded-xl border border-slate-200 bg-white p-3 shadow-lg">
+        <div className="absolute right-0 z-40 mt-2 w-64 rounded-xl border border-slate-200 bg-surface p-3 shadow-lg">
           <p className="truncate text-sm font-medium text-slate-800">{profile?.email}</p>
           <p className="text-xs text-slate-500">Student</p>
           <button
@@ -66,7 +67,7 @@ export function StudentShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-screen">
-      <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-slate-200 bg-white/95 px-4 backdrop-blur">
+      <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-slate-200 bg-surface/95 px-4 backdrop-blur">
         <button className="btn-ghost px-2 lg:hidden" onClick={() => setMenuOpen(true)} aria-label="Open menu">
           <Menu className="size-5" aria-hidden />
         </button>
@@ -77,13 +78,14 @@ export function StudentShell({ children }: { children: ReactNode }) {
           <span className="text-base font-semibold text-slate-900">Placement Portal</span>
         </Link>
         <div className="ml-auto flex items-center gap-2">
+          <ThemeToggle />
           <NotificationBell />
           <AccountMenu />
         </div>
       </header>
 
       <nav
-        className="fixed top-16 bottom-0 left-0 z-20 hidden w-24 flex-col items-stretch gap-1 border-r border-slate-200 bg-white px-2 py-4 lg:flex"
+        className="fixed top-16 bottom-0 left-0 z-20 hidden w-24 flex-col items-stretch gap-1 border-r border-slate-200 bg-surface px-2 py-4 lg:flex"
         aria-label="Student"
       >
         {STUDENT_LINKS.map(({ href, label, icon: Icon }) => {
@@ -106,8 +108,8 @@ export function StudentShell({ children }: { children: ReactNode }) {
 
       {menuOpen && (
         <div className="fixed inset-0 z-40 lg:hidden" role="dialog" aria-modal="true">
-          <div className="absolute inset-0 bg-slate-900/30" onClick={() => setMenuOpen(false)} />
-          <aside className="absolute inset-y-0 left-0 w-72 bg-white p-4 shadow-xl">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setMenuOpen(false)} />
+          <aside className="absolute inset-y-0 left-0 w-72 bg-surface p-4 shadow-xl">
             <button className="btn-ghost absolute top-4 right-3" onClick={() => setMenuOpen(false)} aria-label="Close menu">
               <X className="size-5" aria-hidden />
             </button>

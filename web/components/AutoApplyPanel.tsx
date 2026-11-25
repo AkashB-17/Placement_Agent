@@ -36,7 +36,7 @@ export function AutoApplyPanel({ jd, policyId, threshold }: { jd: JDSummary; pol
   }
 
   return (
-    <section className="card space-y-4 border-brand-200 bg-gradient-to-br from-brand-50/70 to-white">
+    <section className="card space-y-4 border-brand-200 bg-gradient-to-br from-brand-50/70 to-surface">
       <div className="flex flex-wrap items-start gap-4">
         <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-brand-600 text-white shadow-sm">
           <Rocket className="size-5" aria-hidden />
@@ -57,7 +57,7 @@ export function AutoApplyPanel({ jd, policyId, threshold }: { jd: JDSummary; pol
       </div>
 
       {confirming && (
-        <div className="flex flex-wrap items-center gap-3 rounded-lg border border-brand-200 bg-white p-3 text-sm">
+        <div className="flex flex-wrap items-center gap-3 rounded-lg border border-brand-200 bg-surface p-3 text-sm">
           <ShieldAlert className="size-4 text-brand-600" aria-hidden />
           <span className="flex-1 text-slate-700">
             This creates real pending applications and notifies students. Stored scores are reused; only students not yet scored for this job need an AI call.
@@ -87,7 +87,7 @@ export function AutoApplyPanel({ jd, policyId, threshold }: { jd: JDSummary; pol
               <p className="eyebrow mb-2">Applied</p>
               <ul className="flex flex-wrap gap-2">
                 {run.created.map((a) => (
-                  <li key={a.id} className="flex items-center gap-2 rounded-full border border-slate-200 bg-white py-1 pr-3 pl-1 text-sm">
+                  <li key={a.id} className="flex items-center gap-2 rounded-full border border-slate-200 bg-surface py-1 pr-3 pl-1 text-sm">
                     <Avatar name={a.student_name} className="size-6 text-[10px]" />
                     {a.student_name}
                     <span className="font-semibold tabular-nums text-emerald-600">{Math.round(a.score)}</span>
@@ -100,7 +100,7 @@ export function AutoApplyPanel({ jd, policyId, threshold }: { jd: JDSummary; pol
           {run.skipped.length > 0 && (
             <div>
               <p className="eyebrow mb-2">Not applied</p>
-              <ul className="divide-y divide-slate-100 rounded-lg border border-slate-200 bg-white text-sm">
+              <ul className="divide-y divide-slate-100 rounded-lg border border-slate-200 bg-surface text-sm">
                 {run.skipped.map((s) => (
                   <li key={s.student_id} className="flex gap-3 px-3 py-2">
                     <CircleSlash className="mt-0.5 size-4 shrink-0 text-slate-400" aria-hidden />

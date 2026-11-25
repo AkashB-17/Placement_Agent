@@ -160,8 +160,8 @@ export function ApplicationCard({
           {viewer === "student" && app.can_withdraw && pending && (
             confirming ? (
               <span className="flex flex-wrap items-center gap-2">
-                <span className="text-slate-600">Withdraw? This can&apos;t be undone.</span>
-                <button className="btn bg-rose-600 hover:bg-rose-700" onClick={withdraw} disabled={busy}>
+                <span className="text-slate-600">Withdraw? Auto-apply won&apos;t apply here again; you can re-apply yourself while the job is open.</span>
+                <button className="btn bg-rose-600 hover:bg-rose-600 hover:brightness-110" onClick={withdraw} disabled={busy}>
                   {busy && <Spinner />} Yes, withdraw
                 </button>
                 <button className="btn-ghost" onClick={() => setConfirming(false)} disabled={busy}>
