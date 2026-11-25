@@ -62,7 +62,8 @@ def local_zone() -> timezone:
 def parse_deadline(text: str | None) -> datetime | None:
     """Parse a JD deadline like "November 20, 2026" or "2026-11-20" deterministically.
 
-    A date without a time means the end of that day in the college's time zone. Anything
+    A date without a time means the end of that day in the college's time zone, including
+    its last second (23:59:59.999999), so a student can apply until the day is over. Anything
     unrecognised returns None: the run then relies on the withdraw window alone."""
     if not text:
         return None
@@ -72,7 +73,7 @@ def parse_deadline(text: str | None) -> datetime | None:
         if parsed.tzinfo is None:
             parsed = parsed.replace(tzinfo=local_zone())
         if len(cleaned) <= 10:  # date only
-            parsed = parsed.replace(hour=23, minute=59, second=59)
+            parsed = parsed.replace(hour=23, minute=59, second=59, microsecond=999999)
         return parsed.astimezone(UTC)
     except ValueError:
         pass
@@ -83,7 +84,7 @@ def parse_deadline(text: str | None) -> datetime | None:
             day = datetime.strptime(cleaned, fmt)
         except ValueError:
             continue
-        return day.replace(hour=23, minute=59, second=59, tzinfo=local_zone()).astimezone(UTC)
+        return day.replace(hour=23, minute=59, second=59, microsecond=999999, tzinfo=local_zone()).astimezone(UTC)
     return None
 
 
@@ -155,26 +156,41 @@ def to_out(application: dict[str, Any], now: datetime | None = None) -> Applicat
 
 # ── Run ─────────────────────────────────────────────────────────────────────
 
-def application_window(jd: JDRequirements, now: datetime) -> tuple[datetime | None, datetime, datetime | None]:
+def application_window(
+    jd: JDRequirements, now: datetime, manual: bool = False
+) -> tuple[datetime | None, datetime, datetime | None]:
     """(deadline, release_at, cutoff) for an application made now, or 409 if too late.
 
-    Shared by auto-apply runs and students applying themselves, so both get the same
-    withdraw window and the same deadline rules."""
+    Normally release_at = min(now + withdraw window, deadline - buffer), and auto-apply
+    refuses when that leaves under auto_apply_min_window_minutes: the system is acting for
+    the student, so they must have time to say no.
+
+    A student applying themselves (manual=True) chose to apply, so it is accepted until
+    the deadline itself. If the normal window doesn't fit, it is sent at the "last call",
+    manual_apply_last_call_minutes before the deadline, and can be withdrawn until then;
+    inside the last call it is sent straight away (one second later: the database requires
+    release_at > created_at, and every read releases due applications)."""
     settings = get_settings()
     deadline = parse_deadline(jd.deadline)
     release_at, cutoff = release_time(now, deadline)
     if deadline is not None and deadline <= now:
         raise HTTPException(status_code=409, detail=f"The application deadline ({format_local(deadline)}) has passed.")
-    if release_at - now < timedelta(minutes=settings.auto_apply_min_window_minutes):
-        when = format_local(deadline) if deadline else "unknown"
-        raise HTTPException(
-            status_code=409,
-            detail=(
-                f"Too close to the application deadline ({when}): students would have less than "
-                f"{settings.auto_apply_min_window_minutes:g} minutes to withdraw."
-            ),
-        )
-    return deadline, release_at, cutoff
+    min_window = timedelta(minutes=settings.auto_apply_min_window_minutes)
+    if release_at - now >= min_window:
+        return deadline, release_at, cutoff
+
+    when = format_local(deadline) if deadline else "unknown"
+    if manual and deadline is not None:
+        last_call = deadline - timedelta(minutes=settings.manual_apply_last_call_minutes)
+        release_at = min(max(last_call, now + timedelta(seconds=1)), deadline)
+        return deadline, release_at, last_call
+    raise HTTPException(
+        status_code=409,
+        detail=(
+            f"Too close to the application deadline ({when}): students would have less than "
+            f"{settings.auto_apply_min_window_minutes:g} minutes to withdraw."
+        ),
+    )
 
 
 def _new_application(
@@ -217,7 +233,7 @@ def apply_manually(student: dict[str, Any], jd_id: str, policy_id: str, actor_id
     if existing and not reapplying:
         raise HTTPException(status_code=409, detail=f"You already have a {existing} application for this job.")
     now = utcnow()
-    _, release_at, _ = application_window(jd, now)
+    _, release_at, _ = application_window(jd, now, manual=True)
     if not (student.get("resume_text") or "").strip():
         raise HTTPException(status_code=409, detail="Upload your CV under Profile & CV before applying.")
     limit = policy.max_applications_per_student

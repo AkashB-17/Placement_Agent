@@ -216,3 +216,69 @@ def test_build_tips_fills_skills_the_llm_skipped() -> None:
     tips = build_tips(_RawTips(tips=[]), ["Go"], [], resume_text=CV.decode())
     [tip] = tips
     assert tip.kind == "build" and "Go" in tip.suggestion
+
+
+# ── Near the deadline ───────────────────────────────────────────────────────
+
+@pytest.fixture
+def due_today(client, board, login_as, monkeypatch):
+    """A job closing at the end of 20 Nov IST (18:29:59 UTC); the clock starts 06:00 UTC."""
+    login_as("admin")
+    jd_id = _post_jd(client, monkeypatch, JDRequirements(
+        company="Lastco", role="SRE", required_skills=["Python"], deadline="2026-11-20"))
+    _login_student(login_as)
+    return jd_id
+
+
+def test_manual_apply_near_deadline_is_sent_at_last_call(client, due_today, clock) -> None:
+    clock(hours=10, minutes=30)  # 16:30 UTC: 2 h left, so "deadline - 6 h" has passed
+    response = client.post(f"/me/jobs/{due_today}/apply")
+    assert response.status_code == 201, response.json()
+    app = response.json()
+    assert app["release_at"].startswith("2026-11-20T18:19:59")  # 10 min before the deadline
+    assert app["can_withdraw"] is True
+
+    clock(hours=1, minutes=50)  # 18:20 UTC: past the last call, released on read
+    [listed] = client.get("/me/applications").json()
+    assert listed["status"] == "submitted"
+
+
+def test_manual_apply_inside_last_call_is_sent_at_once(client, due_today, clock) -> None:
+    clock(hours=12, minutes=25)  # 18:25 UTC: 5 min left
+    response = client.post(f"/me/jobs/{due_today}/apply")
+    assert response.status_code == 201, response.json()
+    assert response.json()["release_at"].startswith("2026-11-20T18:25:01")
+    clock(seconds=1)
+    assert client.get("/me/applications").json()[0]["status"] == "submitted"
+
+
+def test_manual_apply_accepted_one_second_before_deadline(client, due_today, clock) -> None:
+    clock(hours=12, minutes=29, seconds=58)  # 18:29:58 UTC: deadline is 18:29:59
+    response = client.post(f"/me/jobs/{due_today}/apply")
+    assert response.status_code == 201, response.json()
+    assert response.json()["release_at"].startswith("2026-11-20T18:29:59")  # never after the deadline
+
+
+def test_manual_apply_accepted_in_the_last_second(client, due_today, clock) -> None:
+    clock(hours=12, minutes=29, seconds=59, milliseconds=900)  # 23:59:59.9 IST
+    response = client.post(f"/me/jobs/{due_today}/apply")
+    assert response.status_code == 201, response.json()
+    from datetime import UTC, datetime
+
+    release_at = datetime.fromisoformat(response.json()["release_at"])
+    assert release_at == datetime(2026, 11, 20, 18, 29, 59, 999999, tzinfo=UTC)  # the deadline, never after
+
+
+def test_manual_apply_refused_once_the_day_is_over(client, due_today, clock) -> None:
+    clock(hours=12, minutes=30)  # 00:00:00 IST on 21 Nov
+    response = client.post(f"/me/jobs/{due_today}/apply")
+    assert response.status_code == 409 and "has passed" in response.json()["detail"]
+
+
+def test_auto_apply_still_needs_a_real_withdraw_window(client, due_today, login_as, clock) -> None:
+    client.put("/me/auto-apply", json={"enabled": True, "min_score": 80})
+    clock(hours=10, minutes=30)
+    login_as("officer", email="tpo@uni.edu")
+    policy = client.get("/policies").json()[0]["id"]
+    response = client.post(f"/jds/{due_today}/auto-apply", params={"policy_id": policy})
+    assert response.status_code == 409 and "60 minutes to withdraw" in response.json()["detail"]

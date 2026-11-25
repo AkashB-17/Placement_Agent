@@ -357,8 +357,14 @@ PROFILE_CACHE_SECONDS = 60.0
 _profile_cache: dict[str, tuple[float, dict[str, Any] | None]] = {}
 
 
+def _profile(row: dict[str, Any]) -> dict[str, Any]:
+    # profiles.id is a uuid column in Postgres: psycopg returns uuid.UUID, the API uses strings.
+    return {**row, "id": str(row["id"])}
+
+
 def get_profile(user_id: str) -> dict[str, Any] | None:
-    return _fetchone("SELECT id, email, full_name, role FROM profiles WHERE id = ?", (user_id,))
+    row = _fetchone("SELECT id, email, full_name, role FROM profiles WHERE id = ?", (user_id,))
+    return _profile(row) if row else None
 
 
 def get_profile_cached(user_id: str) -> dict[str, Any] | None:
@@ -383,7 +389,7 @@ def clear_profile_cache(user_id: str | None = None) -> None:
 
 
 def list_profiles() -> list[dict[str, Any]]:
-    return _fetchall("SELECT id, email, role FROM profiles ORDER BY role, email")
+    return [_profile(row) for row in _fetchall("SELECT id, email, role FROM profiles ORDER BY role, email")]
 
 
 def set_profile_role(user_id: str, role: str) -> None:
@@ -632,9 +638,13 @@ def _str_or_none(value: Any) -> str | None:
 # ── Timestamps ──────────────────────────────────────────────────────────────
 
 def _ts(value: datetime) -> Any:
-    """Bind a timestamp: timestamptz in Postgres, a UTC ISO string in SQLite."""
+    """Bind a timestamp: timestamptz in Postgres, a UTC ISO string in SQLite.
+
+    Microseconds, like Postgres: an application made in a deadline's last second has
+    created_at and release_at within the same second, and CHECK (release_at > created_at)
+    must still hold. (Older second-precision strings still sort correctly against these.)"""
     value = value.astimezone(UTC)
-    return value if using_postgres() else value.isoformat(timespec="seconds")
+    return value if using_postgres() else value.isoformat(timespec="microseconds")
 
 
 def _dt(value: Any) -> datetime | None:

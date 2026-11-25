@@ -26,7 +26,11 @@ class Settings(BaseSettings):
     auto_apply_withdraw_hours: float = 24.0
     auto_apply_deadline_buffer_hours: float = 6.0
     auto_apply_min_window_minutes: float = 60.0  # refuse a run that would leave less time to withdraw
-    deadline_utc_offset_minutes: int = 330  # a date-only JD deadline means 23:59:59 here (IST)
+    # A student's own application near the deadline: if the normal window doesn't fit, it is
+    # sent this long before the deadline instead; inside this period it is sent at once.
+    # Manual applications are accepted until the deadline itself.
+    manual_apply_last_call_minutes: float = 10.0
+    deadline_utc_offset_minutes: int = 330  # a date-only JD deadline runs to 23:59:59.999999 here (IST)
     release_sweep_seconds: float = 60.0  # background release interval; 0 disables (tests)
 
     # Re-embed policies/JDs missing from the vector index at startup (hosted disks are

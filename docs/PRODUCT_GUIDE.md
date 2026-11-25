@@ -157,6 +157,7 @@ Officer runs auto-apply
 
 - **Send time** = 24 hours after the application is created, or 6 hours before the JD's deadline, **whichever comes first**.
 - If the deadline has passed, or less than an hour would be left to withdraw, the run is refused with a clear message.
+- A student applying **themselves** close to the deadline is not refused: if the normal window doesn't fit, the application is sent **10 minutes before the deadline** (the "last call") and can be withdrawn until then. Inside those last 10 minutes it is sent straight away. A student's own application is accepted until the deadline's very last second (a date-only deadline such as "25 Nov 2026" runs to 23:59:59 that day, college time) and refused only once it has passed.
 - Each application keeps a snapshot of **the resume as it was scored** and **the score with its evidence**. If the student later uploads a new resume, what the company receives does not change.
 - Recruiters see an application only after it is **sent**.
 - A student can also **apply themselves** from the job board. That application follows the same path (pending, withdraw window, sent), without the score bar and the "never apply to" list.

@@ -248,3 +248,17 @@ def test_no_storage_configured_keeps_text_only(client, seeded) -> None:
     detail = client.get(f"/students/{seeded['asha']}").json()
     assert detail["has_resume_file"] is False
     assert client.get(f"/students/{seeded['asha']}/resume").status_code == 404
+
+
+def test_user_list_handles_postgres_uuid_ids(client, monkeypatch) -> None:
+    """Postgres returns profiles.id as uuid.UUID; the API must still send strings (was a 500)."""
+    import uuid
+
+    from app import db
+
+    user_id = uuid.uuid4()
+    monkeypatch.setattr(db, "_fetchall", lambda *a, **k: [{"id": user_id, "email": "tpo@uni.edu", "role": "officer"}])
+    response = client.get("/admin/users")
+    assert response.status_code == 200, response.text
+    assert response.json() == [{"id": str(user_id), "email": "tpo@uni.edu", "role": "officer"}]
+    assert db.get_profile(str(user_id))["id"] == str(user_id)

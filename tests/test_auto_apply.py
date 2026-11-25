@@ -202,11 +202,11 @@ def _jd_with_deadline(client, monkeypatch, deadline):
 
 
 def test_deadline_buffer_pulls_release_earlier(client, world, login_as, monkeypatch) -> None:
-    # Deadline 17 Nov 23:59:59 IST = 18:29:59 UTC; minus 6 h buffer = 12:29:59 UTC (< 24 h window).
+    # Deadline 17 Nov 23:59:59.999999 IST = 18:29:59.999999 UTC; minus 6 h buffer = 12:29:59.999999 UTC (< 24 h window).
     world["jd_soon"] = _jd_with_deadline(client, monkeypatch, "November 17, 2026")
     _opt_in(client, login_as, "alice@uni.edu")
     data = _run(client, login_as, world, jd_key="jd_soon").json()
-    expected = datetime(2026, 11, 17, 12, 29, 59, tzinfo=UTC)
+    expected = datetime(2026, 11, 17, 12, 29, 59, 999999, tzinfo=UTC)
     assert datetime.fromisoformat(data["release_cutoff"]) == expected
     assert datetime.fromisoformat(data["created"][0]["release_at"]) == expected
 
@@ -231,11 +231,11 @@ def test_run_refused_after_deadline(client, world, login_as, monkeypatch) -> Non
 @pytest.mark.parametrize(
     ("text", "expected_utc"),
     [
-        ("November 20, 2026", datetime(2026, 11, 20, 18, 29, 59, tzinfo=UTC)),
-        ("20th Nov 2026.", datetime(2026, 11, 20, 18, 29, 59, tzinfo=UTC)),
-        ("Friday, 20 November 2026", datetime(2026, 11, 20, 18, 29, 59, tzinfo=UTC)),
-        ("2026-11-20", datetime(2026, 11, 20, 18, 29, 59, tzinfo=UTC)),
-        ("20/11/2026", datetime(2026, 11, 20, 18, 29, 59, tzinfo=UTC)),
+        ("November 20, 2026", datetime(2026, 11, 20, 18, 29, 59, 999999, tzinfo=UTC)),
+        ("20th Nov 2026.", datetime(2026, 11, 20, 18, 29, 59, 999999, tzinfo=UTC)),
+        ("Friday, 20 November 2026", datetime(2026, 11, 20, 18, 29, 59, 999999, tzinfo=UTC)),
+        ("2026-11-20", datetime(2026, 11, 20, 18, 29, 59, 999999, tzinfo=UTC)),
+        ("20/11/2026", datetime(2026, 11, 20, 18, 29, 59, 999999, tzinfo=UTC)),
         ("2026-11-20T10:00:00+00:00", datetime(2026, 11, 20, 10, 0, tzinfo=UTC)),
     ],
 )

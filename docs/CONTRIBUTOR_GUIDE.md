@@ -267,12 +267,12 @@ Routers are thin: role check → validate → call services/db → shape the res
 |---|---|
 | `utcnow()` | The clock; tests monkeypatch it to move time. |
 | `local_zone()` | Fixed UTC offset from `deadline_utc_offset_minutes` (no tz database needed, which matters on Windows). |
-| `parse_deadline(text)` | Deterministic: ISO, "November 20, 2026", "20th Nov 2026", "Friday, 4 December 2026", "20/11/2026" (day first), "30-11-2026". A date means 23:59:59 local. Unrecognised → `None`. |
+| `parse_deadline(text)` | Deterministic: ISO, "November 20, 2026", "20th Nov 2026", "Friday, 4 December 2026", "20/11/2026" (day first), "30-11-2026". A date means the end of that day local time, 23:59:59.999999, so its last second counts. Unrecognised → `None`. |
 | `release_time(now, deadline)` | `(release_at, cutoff)` = (min(now + window, deadline − buffer), deadline − buffer). |
 | `format_local`, `_job_label` | Message formatting. |
 | `release_due()`, `release_due_quietly()` | Run the release `UPDATE`; the quiet version logs instead of raising (for the background sweep). |
 | `to_out(application, now)` | DB row → `ApplicationOut` (computes `can_withdraw`; `source` is `manual` when the creator's profile role is `student`, else `auto`). |
-| `application_window(jd, now)` | `(deadline, release_at, cutoff)` or 409 (deadline passed / too little time to withdraw). Shared by runs and manual applies. |
+| `application_window(jd, now, manual=False)` | `(deadline, release_at, cutoff)` or 409. Auto-apply: 409 when the deadline passed or less than `auto_apply_min_window_minutes` would be left to withdraw. Manual (`manual=True`): when the normal window doesn't fit, `release_at = min(max(deadline − manual_apply_last_call_minutes, now + 1 s), deadline)`: the last call (10 min before), or at once inside it, never after the deadline. Manual applies 409 only once the deadline has passed. SQLite timestamps keep microseconds (`_ts`), like Postgres, so `release_at > created_at` holds even in the last second. |
 | `apply_manually(student, jd_id, policy_id, actor_id)` | A student applies from the job board: already pending/submitted → 409 (withdrawn → re-apply: `db.reapply_application` flips the same row back to pending with a fresh snapshot and window) → window → CV present → policy limit → `check_eligibility` (before any AI call) → score snapshot → same pending application + notification. No score bar or excluded-companies check: the student chose the job. |
 | `run_auto_apply(jd_id, policy_id, actor_id)` | The whole run (see [§3.3](#33-auto-apply-post-jdsidauto-applypolicy_id)); returns created + skipped-with-reason + not-opted-in count. |
 
