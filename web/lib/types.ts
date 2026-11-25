@@ -59,6 +59,9 @@ export interface JDSummary {
   original_deadline: string | null;
   deadline_changed_at: string | null;
   can_edit_deadline: boolean;
+  posted_at: string | null;
+  /** When an admin last edited the job's details. */
+  edited_at: string | null;
 }
 
 export interface DeadlineChange {
@@ -76,6 +79,7 @@ export interface JDDetail {
   source_text: string;
   original_deadline: string | null;
   deadline_changed_at: string | null;
+  edited_at: string | null;
 }
 
 export interface StudentSummary {

@@ -3,14 +3,30 @@ from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from app.auth import CurrentUser, any_user, require_role
 
 from app.db import get_jd, list_jds, make_document_id, upsert_jd
-from app.schemas import DeadlineChange, DeadlineUpdate, JDDetail, JDIngestResponse, JDRequirements, JDSummary
+import logging
+from datetime import UTC, datetime
+
+from app import db
+from app.schemas import (
+    DeadlineChange,
+    DeadlineUpdate,
+    JDDeleted,
+    JDDetail,
+    JDEdit,
+    JDIngestResponse,
+    JDRequirements,
+    JDSummary,
+)
 from app.services import auto_apply
 from app.services.chunking import CLAUSE_CHUNK_OVERLAP, CLAUSE_CHUNK_SIZE
 from app.services.grounding import ground_jd
 from app.services.llm import extract_structured
 from app.services.normalize import normalize_batch, normalize_branches, normalize_list
 from app.services.pdf import resolve_source_text
-from app.services.vectorstore import COLLECTION_JDS, ingest_document
+from app.services.vectorstore import COLLECTION_JDS, delete_document, ingest_document
+
+logger = logging.getLogger("uvicorn.error")
+admin_only = require_role("admin")
 
 router = APIRouter(prefix="/jds", tags=["jds"])
 
@@ -73,6 +89,8 @@ def list_jds_endpoint(user: CurrentUser = Depends(any_user)) -> list[JDSummary]:
             original_deadline=row["original_deadline"],
             deadline_changed_at=row["deadline_changed_at"],
             can_edit_deadline=can_edit_deadline(user, row["created_by"]),
+            posted_at=row["posted_at"],
+            edited_at=row["edited_at"],
         )
         for row in rows
     ]
@@ -105,4 +123,83 @@ def get_jd_endpoint(jd_id: str, _: CurrentUser = Depends(any_user)) -> JDDetail:
         source_text=row["source_text"],
         original_deadline=row["original_deadline"],
         deadline_changed_at=row["deadline_changed_at"],
+        edited_at=row["edited_at"],
     )
+
+
+# ── Admin: edit and remove jobs ─────────────────────────────────────────────
+
+def _clean(value: str | None) -> str | None:
+    value = " ".join((value or "").split())
+    return value or None
+
+
+def _clean_list(values: list[str]) -> list[str]:
+    seen: dict[str, str] = {}
+    for value in values:
+        value = " ".join(value.split())
+        if value:
+            seen.setdefault(value.casefold(), value)
+    return list(seen.values())
+
+
+@router.put("/{jd_id}", response_model=JDDetail)
+def edit_jd(jd_id: str, body: JDEdit, user: CurrentUser = Depends(admin_only)) -> JDDetail:
+    """An admin corrects a job's details. Eligibility and scores use the new details at once
+    (cached scores are keyed on the skill lists, so changed skills are re-scored); applications
+    already made keep their snapshot. A changed deadline goes through the deadline change,
+    so pending applications are rescheduled and their students told."""
+    row = get_jd(jd_id)
+    if row is None:
+        raise HTTPException(status_code=404, detail="JD not found.")
+    required = _clean_list(body.required_skills)
+    if not required:
+        raise HTTPException(status_code=422, detail="Keep at least one required skill: the score is computed from them.")
+    actor = None if user.id == "dev-admin" else user.id
+
+    new_deadline = _clean(body.deadline)
+    current_deadline = row["requirements"].get("deadline")
+    if new_deadline != current_deadline:
+        if new_deadline is None:
+            raise HTTPException(status_code=422, detail="A deadline can be changed but not removed.")
+        auto_apply.change_deadline(jd_id, new_deadline, actor)  # validates the date first
+
+    extracted = db.get_jd_extracted_requirements(jd_id) or {}
+    edited = JDRequirements(
+        company=_clean(body.company),
+        role=_clean(body.role),
+        required_skills=required,
+        preferred_skills=[s for s in _clean_list(body.preferred_skills) if s.casefold() not in {r.casefold() for r in required}],
+        min_cgpa_override=body.min_cgpa_override,
+        allowed_branches=normalize_branches(_clean_list(body.allowed_branches)),
+        allowed_batches=normalize_list(_clean_list(body.allowed_batches), normalize_batch),
+        ctc=_clean(body.ctc),
+        # The deadline lives in deadline_override (set above); keep the extracted one here.
+        deadline=extracted.get("deadline"),
+        experience_required=_clean(body.experience_required),
+    )
+    db.set_jd_requirements_edited(jd_id, edited.model_dump_json(), datetime.now(UTC), actor)
+    return get_jd_endpoint(jd_id, user)
+
+
+@router.delete("/{jd_id}", response_model=JDDeleted)
+def delete_jd(jd_id: str, _: CurrentUser = Depends(admin_only)) -> JDDeleted:
+    """An admin removes a job with its applications and cached scores. Students who had a
+    pending or sent application are notified."""
+    row = get_jd(jd_id)
+    if row is None:
+        raise HTTPException(status_code=404, detail="JD not found.")
+    req = row["requirements"]
+    label = " – ".join(p for p in (req.get("company"), req.get("role")) if p) or "A job"
+    result = db.delete_jd(
+        jd_id,
+        auto_apply.utcnow(),
+        f"{label} was removed by the placement office, so your application to it no longer exists.",
+    )
+    if result is None:
+        raise HTTPException(status_code=404, detail="JD not found.")
+    try:
+        delete_document(COLLECTION_JDS, jd_id)
+    except Exception:  # the database is the source of truth; a stale index entry is harmless
+        logger.exception("Could not remove JD %s from the vector index", jd_id)
+    return JDDeleted(id=jd_id, **result)

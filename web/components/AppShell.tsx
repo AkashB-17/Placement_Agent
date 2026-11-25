@@ -1,6 +1,6 @@
 "use client";
 
-import { BarChart3, GraduationCap, LogOut, Menu, Send, ShieldCheck, Upload, Users, X, type LucideIcon } from "lucide-react";
+import { BarChart3, Briefcase, GraduationCap, LogOut, Menu, Send, ShieldCheck, Upload, Users, X, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, type ReactNode } from "react";
@@ -18,6 +18,7 @@ const LINKS: { href: string; label: string; icon: LucideIcon; roles: Role[] }[] 
   { href: "/students", label: "Students", icon: GraduationCap, roles: ["officer", "admin"] },
   { href: "/applications", label: "Applications", icon: Send, roles: ["officer", "admin", "recruiter"] },
   { href: "/upload", label: "Upload", icon: Upload, roles: ["officer", "admin", "recruiter"] },
+  { href: "/admin/jobs", label: "Jobs", icon: Briefcase, roles: ["admin"] },
   { href: "/admin", label: "Users & roles", icon: Users, roles: ["admin"] },
 ];
 
@@ -50,6 +51,10 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
   const router = useRouter();
   if (!profile) return null;
+  // The longest matching link wins, so /admin/jobs highlights "Jobs", not "Users & roles".
+  const activeHref = LINKS.map((l) => l.href)
+    .filter((href) => pathname === href || pathname.startsWith(`${href}/`))
+    .sort((a, b) => b.length - a.length)[0];
 
   return (
     <div className="flex h-full flex-col gap-6 p-4">
@@ -59,7 +64,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
       </div>
       <nav className="flex flex-1 flex-col gap-1" aria-label="Main">
         {LINKS.filter((l) => l.roles.includes(profile.role)).map(({ href, label, icon: Icon }) => {
-          const active = pathname.startsWith(href);
+          const active = href === activeHref;
           return (
             <Link
               key={href}

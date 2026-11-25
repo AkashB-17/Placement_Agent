@@ -93,6 +93,11 @@ A student only ever sees their own record. Their account is linked to their reco
 
 - **Users & roles**: see every account and its role; change a role; invite someone by email with a role. Admins cannot remove their own admin role, which prevents an accidental lock-out.
 
+**Jobs** (left menu → Jobs, admins only)
+- Every job in the portal with its deadline, when it was posted and how many applications it has; search by company or role.
+- **Edit** any detail: company, role, CTC, experience, deadline, minimum CGPA, allowed branches and batches, required and preferred skills. Eligibility, rankings and the student job board use the new details at once, and changed skills are re-scored. Applications already made keep their snapshot. Moving the deadline earlier reschedules pending applications and notifies those students. The posted JD text is not changed, and the details originally read from it are kept, so re-uploading the same JD can't undo an edit.
+- **Remove** a job. The confirmation shows how many applications it has (pending and sent); they are deleted with the job and its cached scores, and each student with a pending or sent application is notified. This can't be undone.
+
 ## 5. How decisions are made
 
 ### 5.1 Eligibility: fixed rules, every failure reported

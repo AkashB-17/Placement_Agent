@@ -129,7 +129,15 @@ CREATE TABLE IF NOT EXISTS score_cache (
 # Columns added after the first SQLite schema; added in place for existing local DBs.
 _SQLITE_ADDED_COLUMNS = {
     "policies": ["created_by TEXT"],
-    "jds": ["created_by TEXT", "deadline_override TEXT", "deadline_changed_at TEXT", "deadline_changed_by TEXT"],
+    "jds": [
+        "created_by TEXT",
+        "deadline_override TEXT",
+        "deadline_changed_at TEXT",
+        "deadline_changed_by TEXT",
+        "requirements_edited TEXT",
+        "edited_at TEXT",
+        "edited_by TEXT",
+    ],
     "students": [
         "is_placed INTEGER NOT NULL DEFAULT 0",
         "email TEXT",
@@ -324,6 +332,13 @@ def init_db() -> None:
         except psycopg.errors.UndefinedColumn as exc:
             raise RuntimeError(
                 "The student CV migration is missing. Apply supabase/migrations/20261120000000_student_cv.sql "
+                "(npx supabase@latest db push --linked)."
+            ) from exc
+        try:
+            _fetchone("SELECT requirements_edited FROM jds LIMIT 1")
+        except psycopg.errors.UndefinedColumn as exc:
+            raise RuntimeError(
+                "The JD edits migration is missing. Apply supabase/migrations/20261127000000_jd_edits.sql "
                 "(npx supabase@latest db push --linked)."
             ) from exc
         try:
@@ -562,12 +577,14 @@ def get_policy(policy_id: str) -> dict | None:
     return {"id": row["id"], "source_text": row["source_text"], "rules": _json_value(row["rules_json"])}
 
 
-_JD_DEADLINE_COLUMNS = "deadline_override, deadline_changed_at"
+_JD_DEADLINE_COLUMNS = "deadline_override, deadline_changed_at, requirements_edited, edited_at, created_at"
 
 
 def _jd_requirements(row: dict[str, Any]) -> dict[str, Any]:
-    """The JD's requirements as the app uses them: a changed deadline replaces the extracted one."""
-    requirements = dict(_json_value(row["requirements_json"]) or {})
+    """The JD's requirements as the app uses them: an admin's edit replaces the extracted
+    requirements, and a changed deadline replaces the deadline."""
+    edited = _json_value(row["requirements_edited"]) if row["requirements_edited"] else None
+    requirements = dict(edited or _json_value(row["requirements_json"]) or {})
     if row["deadline_override"]:
         requirements["deadline"] = row["deadline_override"]
     return requirements
@@ -579,6 +596,8 @@ def _jd_deadline_meta(row: dict[str, Any]) -> dict[str, Any]:
     return {
         "original_deadline": extracted if changed else None,
         "deadline_changed_at": _dt(row["deadline_changed_at"]) if changed else None,
+        "edited_at": _dt(row["edited_at"]),
+        "posted_at": _dt(row["created_at"]),
     }
 
 
@@ -595,7 +614,7 @@ def list_jds() -> list[dict]:
 def list_jd_rows() -> list[dict[str, Any]]:
     """Every JD with its requirements and when it was posted, newest first."""
     rows = _fetchall(
-        f"SELECT id, requirements_json, created_at, {_JD_DEADLINE_COLUMNS} FROM jds ORDER BY created_at DESC"
+        f"SELECT id, requirements_json, {_JD_DEADLINE_COLUMNS} FROM jds ORDER BY created_at DESC"
     )
     return [
         {"id": row["id"], "requirements": _jd_requirements(row), "created_at": _dt(row["created_at"]), **_jd_deadline_meta(row)}
@@ -617,6 +636,46 @@ def get_jd(jd_id: str) -> dict | None:
         "created_by": _str_or_none(row["created_by"]),
         **_jd_deadline_meta(row),
     }
+
+
+def get_jd_extracted_requirements(jd_id: str) -> dict[str, Any] | None:
+    """The requirements as extracted from the JD text, ignoring any edit or deadline change."""
+    row = _fetchone("SELECT requirements_json FROM jds WHERE id = ?", (jd_id,))
+    return _json_value(row["requirements_json"]) if row else None
+
+
+def set_jd_requirements_edited(jd_id: str, requirements_json: str, now: datetime, edited_by: str | None) -> bool:
+    """Save an admin's edit of a JD's requirements (the extracted ones stay as they were)."""
+    row = _fetchone(
+        "UPDATE jds SET requirements_edited = ?, edited_at = ?, edited_by = ? WHERE id = ? RETURNING id",
+        (_json_param(requirements_json), _ts(now), edited_by, jd_id),
+    )
+    return row is not None
+
+
+def delete_jd(jd_id: str, now: datetime, message: str) -> dict[str, Any] | None:
+    """Remove a job and everything that hangs off it, in one transaction.
+
+    Deletes are explicit (SQLite doesn't enforce the foreign keys' ON DELETE CASCADE):
+    the job's applications, their notifications, and its cached scores. Each student who
+    had a pending or sent application gets `message` (a notification with no application,
+    since that row is gone). None if there is no such job."""
+    with _atomic() as cur:
+        cur.execute(_sql("SELECT student_id, status FROM applications WHERE jd_id = ?"), (jd_id,))
+        applications = [dict(row) for row in cur.fetchall()]
+        cur.execute(
+            _sql("DELETE FROM notifications WHERE application_id IN (SELECT id FROM applications WHERE jd_id = ?)"),
+            (jd_id,),
+        )
+        cur.execute(_sql("DELETE FROM applications WHERE jd_id = ?"), (jd_id,))
+        cur.execute(_sql("DELETE FROM score_cache WHERE jd_id = ?"), (jd_id,))
+        cur.execute(_sql("DELETE FROM jds WHERE id = ? RETURNING id"), (jd_id,))
+        if cur.fetchone() is None:
+            return None
+        notified = sorted({a["student_id"] for a in applications if a["status"] in ("pending", "submitted")})
+        for student_id in notified:
+            _insert_notification(cur, student_id, None, "application_withdrawn", message, now)
+    return {"applications_removed": len(applications), "students_notified": len(notified)}
 
 
 def change_jd_deadline(

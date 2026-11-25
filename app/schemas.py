@@ -103,6 +103,8 @@ class JDSummary(BaseModel):
     original_deadline: str | None = Field(None, description="The JD's own deadline, when it was changed")
     deadline_changed_at: datetime | None = None
     can_edit_deadline: bool = False
+    posted_at: datetime | None = None
+    edited_at: datetime | None = Field(None, description="When an admin last edited the job's details")
 
 
 class DeadlineUpdate(BaseModel):
@@ -126,6 +128,28 @@ class JDDetail(BaseModel):
     source_text: str
     original_deadline: str | None = Field(None, description="The JD's own deadline, when it was changed")
     deadline_changed_at: datetime | None = None
+    edited_at: datetime | None = Field(None, description="When an admin last edited the job's details")
+
+
+class JDEdit(BaseModel):
+    """An admin's edit of a job. Replaces the details extracted from the JD text (which are
+    kept); the posted text itself is not changed."""
+    company: str | None = Field(None, max_length=200)
+    role: str | None = Field(None, max_length=200)
+    required_skills: list[str] = Field(default_factory=list, max_length=50)
+    preferred_skills: list[str] = Field(default_factory=list, max_length=50)
+    min_cgpa_override: float | None = Field(None, ge=0, le=10)
+    allowed_branches: list[str] = Field(default_factory=list, max_length=30)
+    allowed_batches: list[str] = Field(default_factory=list, max_length=10)
+    ctc: str | None = Field(None, max_length=200)
+    deadline: str | None = Field(None, max_length=40, description="Changing it reschedules pending applications")
+    experience_required: str | None = Field(None, max_length=200)
+
+
+class JDDeleted(BaseModel):
+    id: str
+    applications_removed: int
+    students_notified: int
 
 
 class StudentSummary(BaseModel):

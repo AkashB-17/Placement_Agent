@@ -279,7 +279,7 @@ Routers are thin: role check → validate → call services/db → shape the res
 #### `highlights.py`: "why they stand out"
 `build_highlights(student, policy, jd, breakdown)` returns short factual lines: required-skill coverage (from the verified breakdown), matched preferred skills, CGPA margin over the stricter of the policy/JD floor (same rule as eligibility), and "No active backlogs". No LLM. `_new_application` saves them inside the application's `match_json` snapshot (key `highlights`, no migration); `to_out` strips that key before building `ScoreBreakdown` and falls back to `skill_highlights(breakdown)` for older applications. Shown to staff and recruiters on `ApplicationCard`.
 
-`latest_release(deadline, now)` and `change_deadline(jd_id, text, actor)` (also in `auto_apply.py`): the latest a pending application may be sent for a deadline (buffer, else last call, else now), and the deadline change itself. The DB layer (`_jd_requirements`) applies `deadline_override` wherever a JD is read, so eligibility, release times, `/me/jobs` and auto-apply all use the changed deadline.
+`latest_release(deadline, now)` and `change_deadline(jd_id, text, actor)` (also in `auto_apply.py`): the latest a pending application may be sent for a deadline (buffer, else last call, else now), and the deadline change itself. The DB layer (`_jd_requirements`) applies `requirements_edited` (an admin's edit) and then `deadline_override` wherever a JD is read, so eligibility, release times, `/me/jobs` and auto-apply all use the changed deadline.
 
 #### `cv_tips.py`: CV improvement tips
 The gaps are the missing skills from the verified score breakdown (code); one LLM call writes a suggestion per gap and may cite a related resume line. That quote must pass `scoring.quote_in_resume`, else it is dropped and the tip is `build` (gain the skill) instead of `surface` (make existing work visible). Skills the LLM adds are ignored; skills it skips get a fallback suggestion. The prompt forbids advising students to claim skills they haven't used. Results are cached in `score_cache` under a separate key (`kind: cv-tips`, `TIPS_VERSION`, model, prompt, resume hash). The CV is never edited.
@@ -316,6 +316,7 @@ The Postgres schema lives in `supabase/migrations/` and is the source of truth. 
 | `20261117120000_score_cache.sql` | `score_cache` (backend-only: RLS on, no policies) |
 | `20261120000000_student_cv.sql` | Students without a CV (`parsed_json` default `{}`), `resume_updated_at` |
 | `20261126000000_jd_deadline.sql` | `jds.deadline_override`, `deadline_changed_at`, `deadline_changed_by`: a changed deadline, kept apart from `requirements_json` so the original survives and a re-upload of the same text can't undo it |
+| `20261127000000_jd_edits.sql` | `jds.requirements_edited`, `edited_at`, `edited_by`: an admin's edit of a job's details, kept apart from the extracted `requirements_json` (which re-uploads overwrite) |
 
 | Table | Key columns | Written by |
 |---|---|---|
@@ -342,6 +343,8 @@ Interactive docs at `/docs` when the API is running. "Staff" = officer + admin.
 | GET | `/policies`, `/policies/{id}` | any signed-in user | `policies.list_policies_endpoint`, `get_policy_endpoint` |
 | POST | `/jds` | officer, admin, recruiter (own JDs) | `jds.create_jd` |
 | PUT | `/jds/{id}/deadline` | officer, admin; recruiter (own JDs; others → 404) | `jds.change_deadline` → `auto_apply.change_deadline` → `db.change_jd_deadline` (one transaction: set override, move pending applications to `latest_release(deadline, now)` when later than that, notify each moved student) |
+| PUT | `/jds/{id}` | admin | `jds.edit_jd`: trims/de-duplicates skills, normalises branches and batches, keeps a required skill out of preferred; a changed deadline goes through `auto_apply.change_deadline` first (validated before anything is saved); then `db.set_jd_requirements_edited` |
+| DELETE | `/jds/{id}` | admin | `jds.delete_jd` → `db.delete_jd` (one transaction: the job's applications, their notifications and cached scores are deleted explicitly, since SQLite doesn't enforce ON DELETE CASCADE; students with pending/sent applications get a notification with no application) → vector index entry removed (best effort) |
 | GET | `/jds`, `/jds/{id}` | any signed-in user | `jds.list_jds_endpoint`, `get_jd_endpoint` |
 | POST | `/students` | staff | `students.create_student` |
 | GET | `/students`, `/students/{id}` | staff | `students.list_students_endpoint`, `get_student_endpoint` |
@@ -400,6 +403,7 @@ Next.js 16 (App Router), Tailwind 4, `lucide-react` icons, `@supabase/supabase-j
 | `StudentEditForm.tsx` | `StudentEditForm` | Staff form for a student's academic record (`PUT /students/{id}`); warns when the login email changes. |
 | `DeadlineEditor.tsx` | `DeadlineEditor` | Shows a job's deadline (and the original, if changed); date + optional time form for `PUT /jds/{id}/deadline` when `can_edit_deadline`. Used on `/jobs` (staff) and `/applications` (recruiter). |
 | `LogoMark.tsx` | `LogoMark` | The logo (briefcase with a check mark) in the lucide line style; used in both shells and the account pages. `app/icon.svg` is the same mark as the favicon. |
+| `JDEditForm.tsx` | `JDEditForm` | Admin edit of a job (`PUT /jds/{id}`). The deadline is shown as date + time in college time (IST); an untouched deadline is sent back exactly as stored, so it doesn't count as a change. |
 | `NotLinked.tsx` | `NotLinked` | Shown when a student account has no matching record (`/students/me` → 404). |
 | `ThemeToggle.tsx` | `ThemeToggle`, `THEME_INIT_SCRIPT` | Light/dark switch (student top bar beside the bell, staff sidebar and mobile header, top-right on account pages); saved in `localStorage`. |
 | `AuthCard.tsx` | `AuthCard`, `passwordProblem`, `MIN_PASSWORD_LENGTH` | Centered card for the account pages, and the shared password rule (8+ characters, both fields match). |
@@ -426,6 +430,7 @@ Next.js 16 (App Router), Tailwind 4, `lucide-react` icons, `@supabase/supabase-j
 | `/me/applications` | student | Own applications (`ApplicationCard`) with withdraw. |
 | `/me/profile` | student | Read-only academic record, CV skills, `StudentCvCard`. |
 | `/me/auto-apply` | student | `AutoApplySettings`; warns when no CV is uploaded. |
+| `/admin/jobs` | admin | Job list with deadline, posted date and application counts; inline `JDEditForm` and a remove confirmation that shows pending/sent counts. |
 | `/admin` | admin | Role counts, invite form, role changes. |
 
 ---
@@ -468,6 +473,7 @@ Next.js 16 (App Router), Tailwind 4, `lucide-react` icons, `@supabase/supabase-j
 | `test_auto_apply.py` | Preferences, the run, pinning, notifications, withdraw window, release, idempotency, deadlines and parsing, recruiter visibility, roles |
 | `test_student_edit.py` | Office edits: fields and normalisation, CV kept, eligibility uses new CGPA at once, email change moves the login link, duplicate email 409, email required without a CV, validation, roles |
 | `test_jd_deadline.py` | Deadline changes: extend reopens and moves nothing, shorten moves pending applications earlier with a notification (or sends at once), sent/withdrawn untouched, re-upload keeps the change, recruiter ownership, roles, bad input |
+| `test_jd_admin.py` | Admin edits (normalisation, eligibility follows, changed skills re-scored, extracted details kept across re-upload, deadline edit reschedules, a bad deadline saves nothing, validation) and removal (applications, notifications, cached scores gone; students notified), roles |
 | `test_student_cv.py` | Office records without a CV, student CV upload/replace, stable ids, no-CV scoring and auto-apply skip, storage failure leaves no record |
 | `test_my_jobs.py` | `GET /me/jobs`: eligibility per job, application status, closed deadlines, policy default/unknown, roles, no LLM calls |
 | `test_highlights.py` | Highlight lines (coverage, stricter CGPA floor, backlogs), snapshot on new applications, fallback for older ones |

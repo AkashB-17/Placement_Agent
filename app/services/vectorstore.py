@@ -123,3 +123,8 @@ def retrieve(
     for text, metadata, distance in zip(documents, metadatas, distances):
         hits.append({"text": text, "metadata": metadata, "distance": distance})
     return hits
+
+
+def delete_document(collection_name: str, doc_id: str) -> None:
+    """Remove every chunk of a document (e.g. a deleted JD) from a collection."""
+    get_collection(collection_name).delete(where={"doc_id": doc_id})
