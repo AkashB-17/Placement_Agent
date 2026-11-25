@@ -1,0 +1,48 @@
+Company Name: DBAssist Enterprise
+Website: www.dbassist.example.com
+Job Title: Technical Support Engineer (SQL)
+Job Type: Full-time
+Experience: Freshers
+
+About the Company:
+DBAssist Enterprise delivers managed database operations and high-availability support for retail, healthcare, and ERP platforms. Our support engineering center in Chennai ensures that mission-critical databases stay fast, consistent, and online round the clock. We train fresh graduates thoroughly in relational database internals and enterprise incident management.
+
+Role Overview & Responsibilities:
+As a Technical Support Engineer (SQL), you will investigate customer-reported data discrepancies, slow-running queries, and application timeouts. You will partner with client IT teams over calls and tickets to diagnose root causes and deliver timely fixes within agreed SLAs.
+
+* Triage and resolve incoming Level-1 and Level-2 database support tickets within SLA timelines.
+* Write and optimize SQL queries to inspect records, audit transactions, and fix data issues.
+* Monitor database health metrics, disk utilization, and replication lag on Linux servers.
+* Explain technical root causes and workarounds clearly to non-technical client teams.
+* Escalate complex software defects to product engineering with complete reproduction steps.
+* Maintain runbooks and update the customer-facing troubleshooting knowledge base.
+
+Required Skills:
+
+* SQL
+* PostgreSQL
+* Client communication
+* Linux
+* Incident management
+
+Preferred Skills:
+
+* Python
+* Shell scripting
+
+Eligibility Criteria:
+
+* Minimum CGPA: 6.0 and above.
+* Allowed Branches: ECE, CSE, IT.
+* Batch: Class of 2027.
+* Candidates should be comfortable working in rotational shifts.
+
+Compensation and Perks:
+
+* CTC: 5.2 LPA (plus night-shift allowance where applicable).
+* Location: Chennai, Tamil Nadu.
+* Free office meals, door-to-door cab drop for late shifts, and medical insurance.
+
+Application Details:
+Eligible students must register through the placement cell portal. The recruitment process comprises an online SQL and Linux fundamentals test, a simulated customer-support troubleshooting round, and an HR interview.
+Deadline: 30th Nov 2026.

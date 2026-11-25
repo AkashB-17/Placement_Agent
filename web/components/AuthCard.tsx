@@ -1,6 +1,6 @@
-import { Sparkles } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { LogoMark } from "./LogoMark";
 
 /** Centered card used by the sign-up, password and email-link pages. */
 export function AuthCard({ title, subtitle, children, footer }: { title: string; subtitle?: ReactNode; children: ReactNode; footer?: ReactNode }) {
@@ -9,7 +9,7 @@ export function AuthCard({ title, subtitle, children, footer }: { title: string;
       <div className="w-full max-w-sm">
         <Link href="/login" className="mb-8 flex items-center gap-2.5">
           <span className="flex size-9 items-center justify-center rounded-lg bg-brand-600 text-white">
-            <Sparkles className="size-5" aria-hidden />
+            <LogoMark className="size-5" />
           </span>
           <span className="text-lg font-semibold text-slate-900">Placement Portal</span>
         </Link>

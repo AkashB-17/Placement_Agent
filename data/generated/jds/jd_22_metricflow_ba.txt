@@ -1,0 +1,47 @@
+Company Name: MetricFlow Consulting
+Website: www.metricflow.example.com
+Job Title: Business Analyst
+Job Type: Full-time
+Experience: Freshers
+
+About the Company:
+MetricFlow Consulting advises consumer brands, logistics networks, and retail chains on pricing, inventory forecasting, and operational efficiency. Our analysts turn raw transactional data into clear executive dashboards and actionable recommendations. We offer freshers direct exposure to client leadership and structured mentorship from senior consultants.
+
+Role Overview & Responsibilities:
+As a Business Analyst, you will extract, clean, and model business data to answer strategic questions for our clients. You will build recurring KPI dashboards, identify revenue leakage or supply chain bottlenecks, and help present structured insights during client review meetings.
+
+* Query relational databases to pull sales, inventory, and customer retention datasets.
+* Build interactive executive dashboards and automated weekly reporting packs.
+* Perform variance analysis, cohort tracking, and pricing sensitivity studies in spreadsheets.
+* Document business requirements and translate client goals into clear analytical frameworks.
+* Collaborate with data engineers to validate data pipelines and metric definitions.
+* Assist senior consultants in preparing structured slide decks for client workshops.
+
+Required Skills:
+
+* SQL
+* Power BI
+* Excel
+* Data modeling
+
+Preferred Skills:
+
+* Python
+* Tableau
+* JIRA
+
+Eligibility Criteria:
+
+* Minimum CGPA: 7.5 and above.
+* Allowed Branches: all branches.
+* Strong quantitative aptitude and structured problem-solving skills are required.
+
+Compensation and Perks:
+
+* CTC: 7.8 LPA.
+* Location: Gurugram, Haryana.
+* Performance bonus, corporate health coverage, and sponsored analytics certifications.
+
+Application Details:
+Submit your application on the placement portal. The selection process includes an online aptitude and SQL assessment, a business case study interview, and a final discussion with a Consulting Manager.
+Deadline: Wednesday, 2 December 2026.

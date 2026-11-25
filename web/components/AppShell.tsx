@@ -1,6 +1,6 @@
 "use client";
 
-import { BarChart3, GraduationCap, LogOut, Menu, Send, ShieldCheck, Sparkles, Upload, Users, X, type LucideIcon } from "lucide-react";
+import { BarChart3, GraduationCap, LogOut, Menu, Send, ShieldCheck, Upload, Users, X, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, type ReactNode } from "react";
@@ -11,6 +11,7 @@ import type { Role } from "@/lib/types";
 import { StudentShell } from "./StudentShell";
 import { ThemeToggle } from "./ThemeToggle";
 import { Avatar } from "./ui";
+import { LogoMark } from "./LogoMark";
 
 const LINKS: { href: string; label: string; icon: LucideIcon; roles: Role[] }[] = [
   { href: "/jobs", label: "Rank candidates", icon: BarChart3, roles: ["officer", "admin"] },
@@ -34,7 +35,7 @@ function Brand() {
   return (
     <Link href="/" className="flex items-center gap-2.5 px-2">
       <span className="flex size-8 items-center justify-center rounded-lg bg-brand-600 text-white shadow-sm">
-        <Sparkles className="size-4" aria-hidden />
+        <LogoMark className="size-4" />
       </span>
       <span className="leading-tight">
         <span className="block text-sm font-semibold text-slate-900">Placement Portal</span>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Briefcase, FileText, LogOut, Menu, Rocket, Send, Sparkles, X, type LucideIcon } from "lucide-react";
+import { Briefcase, FileText, LogOut, Menu, Rocket, Send, X, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type ReactNode } from "react";
@@ -10,6 +10,7 @@ import { useAuth } from "@/lib/auth";
 import { NotificationBell } from "./NotificationBell";
 import { ThemeToggle } from "./ThemeToggle";
 import { Avatar } from "./ui";
+import { LogoMark } from "./LogoMark";
 
 const STUDENT_LINKS: { href: string; label: string; icon: LucideIcon }[] = [
   { href: "/me", label: "Jobs", icon: Briefcase },
@@ -73,7 +74,7 @@ export function StudentShell({ children }: { children: ReactNode }) {
         </button>
         <Link href="/me" className="flex items-center gap-2.5">
           <span className="flex size-8 items-center justify-center rounded-lg bg-brand-600 text-white shadow-sm">
-            <Sparkles className="size-4" aria-hidden />
+            <LogoMark className="size-4" />
           </span>
           <span className="text-base font-semibold text-slate-900">Placement Portal</span>
         </Link>

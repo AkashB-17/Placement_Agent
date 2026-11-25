@@ -1,0 +1,303 @@
+=== JD 17 | file: jd_17_veritasguard_cyber === Company Name: VeritasGuard Security Website: [www.veritasguard.example.com](https://www.veritasguard.example.com) Job Title: Cybersecurity Analyst Job Type: Full-time Experience: Freshers
+About the Company: VeritasGuard Security is an enterprise threat-defense firm protecting banking, insurance, and fintech networks across India and Southeast Asia. Our 24x7 Security Operations Center monitors millions of endpoints and cloud workloads to detect anomalies before they escalate into breaches. We encourage continuous hands-on learning, regular red-team versus blue-team drills, and open-source security contributions.
+Role Overview & Responsibilities: As a Cybersecurity Analyst, you will join our Level-1 SOC team to monitor network traffic, triage incoming alerts, and support incident response workflows. You will work directly with senior threat hunters to investigate suspicious logins, malware signatures, and firewall logs. This role is ideal for freshers who enjoy digging into packet captures and understanding how attacks unfold.
+
+* Monitor real-time security alerts across SIEM dashboards and endpoint detection tools.
+* Analyze network packet captures to identify unauthorized data exfiltration or lateral movement.
+* Perform scheduled vulnerability scans on internal servers and web applications.
+* Assist in drafting incident response reports and post-mortem documentation.
+* Automate routine log parsing and alert enrichment tasks using scripting languages.
+* Coordinate with IT administrators to apply critical security patches on time.
+
+Required Skills:
+
+* SIEM
+* Wireshark
+* Python
+* Network Security
+* Linux
+
+Preferred Skills:
+
+* Burp Suite
+* Splunk
+
+Eligibility Criteria:
+
+* Minimum CGPA: 7.0 and above.
+* Allowed Branches: B.Tech CSE/IT.
+* Batch: Class of 2027.
+* Candidates must have no active backlogs at the time of application.
+
+Compensation and Perks:
+
+* CTC: 8.5 LPA (Fixed: 7.5 LPA + Variable: 1.0 LPA).
+* Location: Bengaluru, Karnataka.
+* Sponsorship for industry certifications, medical insurance, and cab facility for late shifts.
+
+Application Details: Interested students must register on the campus placement portal before the deadline. The selection process includes an online networking and security aptitude test, a practical log-analysis round, a technical interview, and an HR discussion. Deadline: 14th Dec 2026. === END JD 17 ===
+=== JD 18 | file: jd_18_aetherml_genai === Company Name: AetherML Labs Website: labs.aetherml.example.com Job Title: ML/GenAI Engineer Job Type: Full-time Experience: Freshers
+About the Company: AetherML Labs builds domain-specific generative AI assistants for legal, healthcare, and enterprise knowledge management. Our engineering team focuses on retrieval-augmented generation, model quantization, and low-latency inference pipelines. We operate with a flat hierarchy where fresh graduates ship production models within their first quarter.
+Role Overview & Responsibilities: As an ML/GenAI Engineer, you will design, evaluate, and deploy LLM-powered applications that answer complex enterprise queries with high factual accuracy. You will work on document chunking strategies, embedding optimization, and automated evaluation suites to minimize hallucinations in production.
+
+* Build and maintain retrieval-augmented generation pipelines over large unstructured document stores.
+* Experiment with open-weight language models and fine-tuning techniques for domain adaptation.
+* Design automated evaluation benchmarks to track response quality, latency, and token cost.
+* Manage vector indexes and tune similarity search parameters for high recall.
+* Collaborate with backend engineers to expose AI workflows as scalable microservices.
+* Stay current with recent NLP and generative AI research and prototype promising approaches.
+
+Required Skills:
+
+* Python
+* PyTorch
+* LangChain
+* Vector Databases
+* RAG
+
+Preferred Skills:
+
+* Docker
+* FastAPI
+
+Eligibility Criteria:
+
+* Minimum CGPA: 8.5 and above.
+* Allowed Branches: AI-ML, CSE.
+* Batch: 2023-27 batch.
+* Strong academic or project track record in machine learning is expected.
+
+Compensation and Perks:
+
+* CTC: 15.0 LPA (plus ESOPs).
+* Location: Hyderabad, Telangana.
+* Dedicated GPU compute credits for experimentation, health coverage, and flexible work timings.
+
+Application Details: Apply through the university placement portal with your updated resume and GitHub or HuggingFace links. The hiring process consists of an online Python and ML fundamentals test, a practical GenAI system-building interview, and a final founder round. Deadline: 05/12/2026. === END JD 18 ===
+=== JD 19 | file: jd_19_growthpulse_bd === Company Name: GrowthPulse Media Website: [www.growthpulse.example.com](https://www.growthpulse.example.com) Job Title: Business Development Associate Job Type: Full-time Experience: Freshers
+About the Company: GrowthPulse Media is a B2B digital marketing and analytics agency helping mid-market SaaS and D2C brands scale their customer acquisition. With teams in Mumbai, Delhi NCR, and Bengaluru, we combine performance marketing with data-backed sales outreach. We are looking for energetic, target-driven freshers who want to build a fast-paced career in enterprise sales.
+Role Overview & Responsibilities: As a Business Development Associate, you will own the top-of-funnel sales pipeline by researching target accounts, pitching our services to decision-makers, and closing introductory discovery calls. You will work closely with account executives to craft tailored proposals and negotiate commercial terms with prospective clients.
+
+* Research prospective B2B accounts and identify key marketing and growth decision-makers.
+* Conduct outbound outreach via cold calls, personalized emails, and professional networks.
+* Lead initial discovery conversations to understand client pain points and budget constraints.
+* Negotiate service packages and follow up consistently to move deals through the funnel.
+* Maintain accurate records of all client interactions and pipeline stages in the CRM.
+* Prepare weekly conversion reports and share market feedback with the strategy team.
+
+Required Skills:
+
+* Negotiation
+* Client communication
+* Cold calling
+* Salesforce
+* Excel
+
+Preferred Skills:
+
+* HubSpot
+* Market research
+
+Eligibility Criteria:
+
+* Minimum CGPA: No CGPA cut-off.
+* Allowed Branches: all branches.
+* Batch: graduating in 2027.
+* Strong persuasion skills and comfort with target-driven roles are essential.
+
+Compensation and Perks:
+
+* CTC: 5.0 LPA Fixed + up to 2.5 LPA performance incentives.
+* Location: Mumbai, Maharashtra.
+* Mobile and travel reimbursements, quarterly sales offsites, and structured sales bootcamps.
+
+Application Details: Students can apply directly via the placement portal. Shortlisted candidates will participate in a group discussion, a mock cold-call and negotiation roleplay, and a final interview with the VP of Sales. Deadline: rolling basis. === END JD 19 ===
+=== JD 20 | file: jd_20_testmatrix_qa === Company Name: TestMatrix Solutions Website: qa.testmatrix.example.com Job Title: QA/Test Automation Engineer Job Type: Full-time Experience: Freshers
+About the Company: TestMatrix Solutions is a specialized quality engineering firm partnering with e-commerce, edtech, and logistics companies to accelerate their release cycles. We build resilient end-to-end test suites that run across browsers, devices, and cloud environments. Our engineers are deeply involved in shift-left testing and continuous delivery practices.
+Role Overview & Responsibilities: We are hiring a QA/Test Automation Engineer to write, maintain, and scale automated browser and API test suites for our client platforms. You will work embedded inside agile product squads, catching regressions early and ensuring every code push meets strict reliability benchmarks.
+
+* Write clean, maintainable end-to-end UI automation scripts for modern web applications.
+* Build and execute automated REST API test collections to validate backend contracts.
+* Reproduce, isolate, and log clear bug reports with screenshots, logs, and network traces.
+* Integrate automated test suites into continuous integration pipelines for nightly runs.
+* Review product specifications during sprint grooming to identify edge cases early.
+* Track flaky tests and optimize test execution times across parallel runners.
+
+Required Skills:
+
+* Cypress
+* JavaScript
+* Playwright
+* REST API testing
+* Git
+
+Preferred Skills:
+
+* Jenkins
+* Docker
+
+Eligibility Criteria:
+
+* Minimum CGPA: 6.5 and above.
+* Allowed Branches: Computer Science & Engineering, IT.
+* Batch: 2026 batch.
+* Applicants must have no active backlogs.
+
+Compensation and Perks:
+
+* CTC: 6.5 LPA.
+* Location: Pune, Maharashtra.
+* Hybrid work model (3 days in office), health insurance, and annual learning stipend.
+
+Application Details: Apply on the campus placement portal with your latest CV. The selection workflow includes an online JavaScript and logical reasoning assessment, a hands-on test automation debugging round, and a final technical-plus-HR interview. Deadline: 2026-12-11. === END JD 20 ===
+=== JD 21 | file: jd_21_dbassist_support === Company Name: DBAssist Enterprise Website: [www.dbassist.example.com](https://www.dbassist.example.com) Job Title: Technical Support Engineer (SQL) Job Type: Full-time Experience: Freshers
+About the Company: DBAssist Enterprise delivers managed database operations and high-availability support for retail, healthcare, and ERP platforms. Our support engineering center in Chennai ensures that mission-critical databases stay fast, consistent, and online round the clock. We train fresh graduates thoroughly in relational database internals and enterprise incident management.
+Role Overview & Responsibilities: As a Technical Support Engineer (SQL), you will investigate customer-reported data discrepancies, slow-running queries, and application timeouts. You will partner with client IT teams over calls and tickets to diagnose root causes and deliver timely fixes within agreed SLAs.
+
+* Triage and resolve incoming Level-1 and Level-2 database support tickets within SLA timelines.
+* Write and optimize SQL queries to inspect records, audit transactions, and fix data issues.
+* Monitor database health metrics, disk utilization, and replication lag on Linux servers.
+* Explain technical root causes and workarounds clearly to non-technical client teams.
+* Escalate complex software defects to product engineering with complete reproduction steps.
+* Maintain runbooks and update the customer-facing troubleshooting knowledge base.
+
+Required Skills:
+
+* SQL
+* PostgreSQL
+* Client communication
+* Linux
+* Incident management
+
+Preferred Skills:
+
+* Python
+* Shell scripting
+
+Eligibility Criteria:
+
+* Minimum CGPA: 6.0 and above.
+* Allowed Branches: ECE, CSE, IT.
+* Batch: Class of 2027.
+* Candidates should be comfortable working in rotational shifts.
+
+Compensation and Perks:
+
+* CTC: 5.2 LPA (plus night-shift allowance where applicable).
+* Location: Chennai, Tamil Nadu.
+* Free office meals, door-to-door cab drop for late shifts, and medical insurance.
+
+Application Details: Eligible students must register through the placement cell portal. The recruitment process comprises an online SQL and Linux fundamentals test, a simulated customer-support troubleshooting round, and an HR interview. Deadline: 30th Nov 2026. === END JD 21 ===
+=== JD 22 | file: jd_22_metricflow_ba === Company Name: MetricFlow Consulting Website: [www.metricflow.example.com](https://www.metricflow.example.com) Job Title: Business Analyst Job Type: Full-time Experience: Freshers
+About the Company: MetricFlow Consulting advises consumer brands, logistics networks, and retail chains on pricing, inventory forecasting, and operational efficiency. Our analysts turn raw transactional data into clear executive dashboards and actionable recommendations. We offer freshers direct exposure to client leadership and structured mentorship from senior consultants.
+Role Overview & Responsibilities: As a Business Analyst, you will extract, clean, and model business data to answer strategic questions for our clients. You will build recurring KPI dashboards, identify revenue leakage or supply chain bottlenecks, and help present structured insights during client review meetings.
+
+* Query relational databases to pull sales, inventory, and customer retention datasets.
+* Build interactive executive dashboards and automated weekly reporting packs.
+* Perform variance analysis, cohort tracking, and pricing sensitivity studies in spreadsheets.
+* Document business requirements and translate client goals into clear analytical frameworks.
+* Collaborate with data engineers to validate data pipelines and metric definitions.
+* Assist senior consultants in preparing structured slide decks for client workshops.
+
+Required Skills:
+
+* SQL
+* Power BI
+* Excel
+* Data modeling
+
+Preferred Skills:
+
+* Python
+* Tableau
+* JIRA
+
+Eligibility Criteria:
+
+* Minimum CGPA: 7.5 and above.
+* Allowed Branches: all branches.
+* Strong quantitative aptitude and structured problem-solving skills are required.
+
+Compensation and Perks:
+
+* CTC: 7.8 LPA.
+* Location: Gurugram, Haryana.
+* Performance bonus, corporate health coverage, and sponsored analytics certifications.
+
+Application Details: Submit your application on the placement portal. The selection process includes an online aptitude and SQL assessment, a business case study interview, and a final discussion with a Consulting Manager. Deadline: Wednesday, 2 December 2026. === END JD 22 ===
+=== JD 23 | file: jd_23_launchpad_pm === Company Name: LaunchPad Digital Website: [www.launchpad.example.com](https://www.launchpad.example.com) Job Title: Product Management Trainee Job Type: Full-time Experience: Freshers
+About the Company: LaunchPad Digital is a fast-growing fintech and personal wealth startup serving over three million young Indian investors. We design intuitive mobile-first tools for mutual fund tracking, goal-based saving, and automated tax harvesting. Our product team is deeply metrics-driven and obsessed with simplifying complex financial workflows.
+Role Overview & Responsibilities: As a Product Management Trainee, you will rotate across our onboarding, engagement, and payments squads during your first year. You will support Product Managers in conducting user interviews, analyzing funnel drop-offs, writing detailed user stories, and coordinating feature launches with engineering and design.
+
+* Analyze user funnel metrics and retention cohorts to uncover product friction points.
+* Conduct structured user research calls and usability tests with new and existing customers.
+* Draft clear product requirement documents, acceptance criteria, and release checklists.
+* Partner with product designers to review prototypes and iterate on user flows.
+* Track post-launch feature adoption and present sprint impact summaries to leadership.
+* Maintain the product backlog and assist in prioritizing bug fixes and enhancements.
+
+Required Skills:
+
+* Product roadmapping
+* SQL
+* Figma
+* Google Analytics
+* User research
+
+Preferred Skills:
+
+* Mixpanel
+* JIRA
+
+Eligibility Criteria:
+
+* Minimum CGPA: 8.0 and above.
+* Allowed Branches: B.Tech CSE/IT, Electronics and Communication.
+* Batch: 2023-27 batch.
+* Must have no active backlogs.
+
+Compensation and Perks:
+
+* CTC: 12.0 LPA.
+* Location: Bengaluru, Karnataka.
+* Stock options, comprehensive medical insurance, and annual wellness reimbursement.
+
+Application Details: Apply via the university placement portal and attach a link to any product case study or side project if available. Shortlisted candidates will go through a product sense and analytics assignment, two product interviews, and a leadership fit round. Deadline: 08/12/2026. === END JD 23 ===
+=== JD 24 | file: jd_24_talentbridge_hr === Company Name: TalentBridge HR Services Website: careers.talentbridge.example.com Job Title: HR Intern Job Type: Internship (6 months, PPO opportunity) Experience: Freshers
+About the Company: TalentBridge HR Services provides end-to-end recruitment, campus hiring, and employee engagement solutions to high-growth technology startups across India. Our team manages high-volume hiring drives, employer branding campaigns, and onboarding programs. We offer interns real ownership from week one in a friendly, collaborative office environment.
+Role Overview & Responsibilities: As an HR Intern, you will support our talent acquisition specialists in sourcing candidates, coordinating interview schedules, and ensuring a smooth onboarding experience for new hires. You will also assist in organizing internal engagement events and maintaining accurate candidate trackers.
+
+* Source and screen entry-level candidate profiles across job portals and campus networks.
+* Coordinate interview calendars between candidates and technical hiring panels.
+* Follow up with shortlisted applicants to collect onboarding documents and feedback.
+* Maintain daily hiring trackers, pipeline metrics, and attendance sheets in spreadsheets.
+* Support the people operations team in planning monthly town halls and team activities.
+* Draft clear, professional email communications for candidates and internal stakeholders.
+
+Required Skills:
+
+* Recruitment coordination
+* MS Excel
+* Communication
+* Onboarding support
+
+Preferred Skills:
+
+* LinkedIn Recruiter
+* Canva
+
+Eligibility Criteria:
+
+* Minimum CGPA: None.
+* Allowed Branches: all branches.
+* Batch: graduating in 2027.
+* Strong organizational skills and a people-first attitude are required.
+
+Compensation and Perks:
+
+* Stipend: ₹20,000 per month (PPO CTC of 4.5 LPA based on internship performance).
+* Location: Noida, Uttar Pradesh.
+* Five-day work week, mentorship from HR leads, and internship completion certificate.
+
+Application Details: Interested students should apply on the campus placement portal. The selection process consists of resume shortlisting, a group discussion on workplace scenarios, and a personal interview with the Talent Acquisition Lead. Deadline: December 14, 2026. === END JD 24 ===
+=== ANSWER KEY === [ { "file": "jd_17_veritasguard_cyber", "company": "VeritasGuard Security", "role": "Cybersecurity Analyst", "required_skills": [ "SIEM", "Wireshark", "Python", "Network Security", "Linux" ], "preferred_skills": [ "Burp Suite", "Splunk" ], "min_cgpa": 7.0, "allowed_branches": [ "B.Tech CSE/IT" ], "allowed_batches": [ "2027" ], "no_active_backlogs": true, "deadline_iso": "2026-12-14", "deadline_as_written": "14th Dec 2026", "notes": "deadline moved from 14 Nov to 14 Dec 2026 so it is open; no active backlogs required" }, { "file": "jd_18_aetherml_genai", "company": "AetherML Labs", "role": "ML/GenAI Engineer", "required_skills": [ "Python", "PyTorch", "LangChain", "Vector Databases", "RAG" ], "preferred_skills": [ "Docker", "FastAPI" ], "min_cgpa": 8.5, "allowed_branches": [ "AI-ML", "CSE" ], "allowed_batches": [ "2027" ], "no_active_backlogs": false, "deadline_iso": "2026-12-05", "deadline_as_written": "05/12/2026", "notes": "deadline moved from 19 Nov to 5 Dec 2026 (DD/MM/YYYY format)" }, { "file": "jd_19_growthpulse_bd", "company": "GrowthPulse Media", "role": "Business Development Associate", "required_skills": [ "Negotiation", "Client communication", "Cold calling", "Salesforce", "Excel" ], "preferred_skills": [ "HubSpot", "Market research" ], "min_cgpa": null, "allowed_branches": [], "allowed_batches": [ "2027" ], "no_active_backlogs": false, "deadline_iso": null, "deadline_as_written": "rolling basis", "notes": "no CGPA cut-off, all branches allowed, soft skills mixed in, rolling deadline" }, { "file": "jd_20_testmatrix_qa", "company": "TestMatrix Solutions", "role": "QA/Test Automation Engineer", "required_skills": [ "Cypress", "JavaScript", "Playwright", "REST API testing", "Git" ], "preferred_skills": [ "Jenkins", "Docker" ], "min_cgpa": 6.5, "allowed_branches": [ "Computer Science & Engineering", "IT" ], "allowed_batches": [ "2026" ], "no_active_backlogs": true, "deadline_iso": "2026-12-11", "deadline_as_written": "2026-12-11", "notes": "2026 batch edge case; deadline moved from 11 Nov to 11 Dec 2026; no active backlogs required" }, { "file": "jd_21_dbassist_support", "company": "DBAssist Enterprise", "role": "Technical Support Engineer (SQL)", "required_skills": [ "SQL", "PostgreSQL", "Client communication", "Linux", "Incident management" ], "preferred_skills": [ "Python", "Shell scripting" ], "min_cgpa": 6.0, "allowed_branches": [ "ECE", "CSE", "IT" ], "allowed_batches": [ "2027" ], "no_active_backlogs": false, "deadline_iso": "2026-11-30", "deadline_as_written": "30th Nov 2026", "notes": "soft skill mixed in; deadline moved from 20 Nov to 30 Nov 2026 (closes within days)" }, { "file": "jd_22_metricflow_ba", "company": "MetricFlow Consulting", "role": "Business Analyst", "required_skills": [ "SQL", "Power BI", "Excel", "Data modeling" ], "preferred_skills": [ "Python", "Tableau", "JIRA" ], "min_cgpa": 7.5, "allowed_branches": [], "allowed_batches": [], "no_active_backlogs": false, "deadline_iso": "2026-12-02", "deadline_as_written": "Wednesday, 2 December 2026", "notes": "all branches allowed, no batch stated, deadline 1-4 weeks out" }, { "file": "jd_23_launchpad_pm", "company": "LaunchPad Digital", "role": "Product Management Trainee", "required_skills": [ "Product roadmapping", "SQL", "Figma", "Google Analytics", "User research" ], "preferred_skills": [ "Mixpanel", "JIRA" ], "min_cgpa": 8.0, "allowed_branches": [ "B.Tech CSE/IT", "Electronics and Communication" ], "allowed_batches": [ "2027" ], "no_active_backlogs": true, "deadline_iso": "2026-12-08", "deadline_as_written": "08/12/2026", "notes": "no active backlogs required, deadline 1-4 weeks out (DD/MM/YYYY format)" }, { "file": "jd_24_talentbridge_hr", "company": "TalentBridge HR Services", "role": "HR Intern", "required_skills": [ "Recruitment coordination", "MS Excel", "Communication", "Onboarding support" ], "preferred_skills": [ "LinkedIn Recruiter", "Canva" ], "min_cgpa": null, "allowed_branches": [], "allowed_batches": [ "2027" ], "no_active_backlogs": false, "deadline_iso": "2026-12-14", "deadline_as_written": "December 14, 2026", "notes": "no CGPA cut-off, all branches allowed, internship with stipend and PPO, deadline 1-4 weeks out" } ] === END ANSWER KEY ===

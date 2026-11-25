@@ -1,0 +1,48 @@
+Company Name: AetherML Labs
+Website: labs.aetherml.example.com
+Job Title: ML/GenAI Engineer
+Job Type: Full-time
+Experience: Freshers
+
+About the Company:
+AetherML Labs builds domain-specific generative AI assistants for legal, healthcare, and enterprise knowledge management. Our engineering team focuses on retrieval-augmented generation, model quantization, and low-latency inference pipelines. We operate with a flat hierarchy where fresh graduates ship production models within their first quarter.
+
+Role Overview & Responsibilities:
+As an ML/GenAI Engineer, you will design, evaluate, and deploy LLM-powered applications that answer complex enterprise queries with high factual accuracy. You will work on document chunking strategies, embedding optimization, and automated evaluation suites to minimize hallucinations in production.
+
+* Build and maintain retrieval-augmented generation pipelines over large unstructured document stores.
+* Experiment with open-weight language models and fine-tuning techniques for domain adaptation.
+* Design automated evaluation benchmarks to track response quality, latency, and token cost.
+* Manage vector indexes and tune similarity search parameters for high recall.
+* Collaborate with backend engineers to expose AI workflows as scalable microservices.
+* Stay current with recent NLP and generative AI research and prototype promising approaches.
+
+Required Skills:
+
+* Python
+* PyTorch
+* LangChain
+* Vector Databases
+* RAG
+
+Preferred Skills:
+
+* Docker
+* FastAPI
+
+Eligibility Criteria:
+
+* Minimum CGPA: 8.5 and above.
+* Allowed Branches: AI-ML, CSE.
+* Batch: 2023-27 batch.
+* Strong academic or project track record in machine learning is expected.
+
+Compensation and Perks:
+
+* CTC: 15.0 LPA (plus ESOPs).
+* Location: Hyderabad, Telangana.
+* Dedicated GPU compute credits for experimentation, health coverage, and flexible work timings.
+
+Application Details:
+Apply through the university placement portal with your updated resume and GitHub or HuggingFace links. The hiring process consists of an online Python and ML fundamentals test, a practical GenAI system-building interview, and a final founder round.
+Deadline: 05/12/2026.

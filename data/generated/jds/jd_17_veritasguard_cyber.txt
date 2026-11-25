@@ -1,0 +1,48 @@
+Company Name: VeritasGuard Security
+Website: www.veritasguard.example.com
+Job Title: Cybersecurity Analyst
+Job Type: Full-time
+Experience: Freshers
+
+About the Company:
+VeritasGuard Security is an enterprise threat-defense firm protecting banking, insurance, and fintech networks across India and Southeast Asia. Our 24x7 Security Operations Center monitors millions of endpoints and cloud workloads to detect anomalies before they escalate into breaches. We encourage continuous hands-on learning, regular red-team versus blue-team drills, and open-source security contributions.
+
+Role Overview & Responsibilities:
+As a Cybersecurity Analyst, you will join our Level-1 SOC team to monitor network traffic, triage incoming alerts, and support incident response workflows. You will work directly with senior threat hunters to investigate suspicious logins, malware signatures, and firewall logs. This role is ideal for freshers who enjoy digging into packet captures and understanding how attacks unfold.
+
+* Monitor real-time security alerts across SIEM dashboards and endpoint detection tools.
+* Analyze network packet captures to identify unauthorized data exfiltration or lateral movement.
+* Perform scheduled vulnerability scans on internal servers and web applications.
+* Assist in drafting incident response reports and post-mortem documentation.
+* Automate routine log parsing and alert enrichment tasks using scripting languages.
+* Coordinate with IT administrators to apply critical security patches on time.
+
+Required Skills:
+
+* SIEM
+* Wireshark
+* Python
+* Network Security
+* Linux
+
+Preferred Skills:
+
+* Burp Suite
+* Splunk
+
+Eligibility Criteria:
+
+* Minimum CGPA: 7.0 and above.
+* Allowed Branches: B.Tech CSE/IT.
+* Batch: Class of 2027.
+* Candidates must have no active backlogs at the time of application.
+
+Compensation and Perks:
+
+* CTC: 8.5 LPA (Fixed: 7.5 LPA + Variable: 1.0 LPA).
+* Location: Bengaluru, Karnataka.
+* Sponsorship for industry certifications, medical insurance, and cab facility for late shifts.
+
+Application Details:
+Interested students must register on the campus placement portal before the deadline. The selection process includes an online networking and security aptitude test, a practical log-analysis round, a technical interview, and an HR discussion.
+Deadline: 14th Dec 2026.

@@ -399,6 +399,7 @@ Next.js 16 (App Router), Tailwind 4, `lucide-react` icons, `@supabase/supabase-j
 | `StudentCvCard.tsx` | `StudentCvCard` | Upload/replace/open the student's own CV. |
 | `StudentEditForm.tsx` | `StudentEditForm` | Staff form for a student's academic record (`PUT /students/{id}`); warns when the login email changes. |
 | `DeadlineEditor.tsx` | `DeadlineEditor` | Shows a job's deadline (and the original, if changed); date + optional time form for `PUT /jds/{id}/deadline` when `can_edit_deadline`. Used on `/jobs` (staff) and `/applications` (recruiter). |
+| `LogoMark.tsx` | `LogoMark` | The logo (briefcase with a check mark) in the lucide line style; used in both shells and the account pages. `app/icon.svg` is the same mark as the favicon. |
 | `NotLinked.tsx` | `NotLinked` | Shown when a student account has no matching record (`/students/me` → 404). |
 | `ThemeToggle.tsx` | `ThemeToggle`, `THEME_INIT_SCRIPT` | Light/dark switch (student top bar beside the bell, staff sidebar and mobile header, top-right on account pages); saved in `localStorage`. |
 | `AuthCard.tsx` | `AuthCard`, `passwordProblem`, `MIN_PASSWORD_LENGTH` | Centered card for the account pages, and the shared password rule (8+ characters, both fields match). |

@@ -1,0 +1,48 @@
+Company Name: TestMatrix Solutions
+Website: qa.testmatrix.example.com
+Job Title: QA/Test Automation Engineer
+Job Type: Full-time
+Experience: Freshers
+
+About the Company:
+TestMatrix Solutions is a specialized quality engineering firm partnering with e-commerce, edtech, and logistics companies to accelerate their release cycles. We build resilient end-to-end test suites that run across browsers, devices, and cloud environments. Our engineers are deeply involved in shift-left testing and continuous delivery practices.
+
+Role Overview & Responsibilities:
+We are hiring a QA/Test Automation Engineer to write, maintain, and scale automated browser and API test suites for our client platforms. You will work embedded inside agile product squads, catching regressions early and ensuring every code push meets strict reliability benchmarks.
+
+* Write clean, maintainable end-to-end UI automation scripts for modern web applications.
+* Build and execute automated REST API test collections to validate backend contracts.
+* Reproduce, isolate, and log clear bug reports with screenshots, logs, and network traces.
+* Integrate automated test suites into continuous integration pipelines for nightly runs.
+* Review product specifications during sprint grooming to identify edge cases early.
+* Track flaky tests and optimize test execution times across parallel runners.
+
+Required Skills:
+
+* Cypress
+* JavaScript
+* Playwright
+* REST API testing
+* Git
+
+Preferred Skills:
+
+* Jenkins
+* Docker
+
+Eligibility Criteria:
+
+* Minimum CGPA: 6.5 and above.
+* Allowed Branches: Computer Science & Engineering, IT.
+* Batch: 2026 batch.
+* Applicants must have no active backlogs.
+
+Compensation and Perks:
+
+* CTC: 6.5 LPA.
+* Location: Pune, Maharashtra.
+* Hybrid work model (3 days in office), health insurance, and annual learning stipend.
+
+Application Details:
+Apply on the campus placement portal with your latest CV. The selection workflow includes an online JavaScript and logical reasoning assessment, a hands-on test automation debugging round, and a final technical-plus-HR interview.
+Deadline: 2026-12-11.

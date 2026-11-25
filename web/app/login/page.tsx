@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckCircle2, FileSearch, Scale, Sparkles } from "lucide-react";
+import { CheckCircle2, FileSearch, Scale } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, type FormEvent } from "react";
@@ -8,6 +8,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { ErrorBox, Spinner } from "@/components/ui";
 import { homeFor, useAuth } from "@/lib/auth";
 import { friendlyAuthError, supabaseConfigured } from "@/lib/supabase";
+import { LogoMark } from "@/components/LogoMark";
 
 const POINTS = [
   { icon: Scale, title: "Rule-based eligibility", text: "CGPA, backlogs, branch and batch are checked by fixed rules, never guessed." },
@@ -45,7 +46,7 @@ export default function LoginPage() {
         <div className="absolute -bottom-32 -left-16 size-96 rounded-full bg-violet-500/20 blur-3xl" aria-hidden />
         <div className="relative flex items-center gap-2.5">
           <span className="flex size-9 items-center justify-center rounded-lg bg-white/10 ring-1 ring-white/20">
-            <Sparkles className="size-5" aria-hidden />
+            <LogoMark className="size-5" />
           </span>
           <span className="text-lg font-semibold">Placement Portal</span>
         </div>
@@ -75,7 +76,7 @@ export default function LoginPage() {
         <div className="w-full max-w-sm">
           <div className="mb-8 flex items-center gap-2.5 lg:hidden">
             <span className="flex size-9 items-center justify-center rounded-lg bg-brand-600 text-white">
-              <Sparkles className="size-5" aria-hidden />
+              <LogoMark className="size-5" />
             </span>
             <span className="text-lg font-semibold">Placement Portal</span>
           </div>

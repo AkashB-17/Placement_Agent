@@ -425,5 +425,217 @@
     "deadline_iso": null,
     "deadline_as_written": "rolling basis",
     "notes": "rolling deadline, no specific date"
+  },
+  {
+    "file": "jd_17_veritasguard_cyber",
+    "company": "VeritasGuard Security",
+    "role": "Cybersecurity Analyst",
+    "required_skills": [
+      "SIEM",
+      "Wireshark",
+      "Python",
+      "Network Security",
+      "Linux"
+    ],
+    "preferred_skills": [
+      "Burp Suite",
+      "Splunk"
+    ],
+    "min_cgpa": 7.0,
+    "allowed_branches": [
+      "B.Tech CSE/IT"
+    ],
+    "allowed_batches": [
+      "2027"
+    ],
+    "no_active_backlogs": true,
+    "deadline_iso": "2026-12-14",
+    "deadline_as_written": "14th Dec 2026",
+    "notes": "deadline moved from 14 Nov to 14 Dec 2026 so it is open; no active backlogs required"
+  },
+  {
+    "file": "jd_18_aetherml_genai",
+    "company": "AetherML Labs",
+    "role": "ML/GenAI Engineer",
+    "required_skills": [
+      "Python",
+      "PyTorch",
+      "LangChain",
+      "Vector Databases",
+      "RAG"
+    ],
+    "preferred_skills": [
+      "Docker",
+      "FastAPI"
+    ],
+    "min_cgpa": 8.5,
+    "allowed_branches": [
+      "AI-ML",
+      "CSE"
+    ],
+    "allowed_batches": [
+      "2027"
+    ],
+    "no_active_backlogs": false,
+    "deadline_iso": "2026-12-05",
+    "deadline_as_written": "05/12/2026",
+    "notes": "deadline moved from 19 Nov to 5 Dec 2026 (DD/MM/YYYY format)"
+  },
+  {
+    "file": "jd_19_growthpulse_bd",
+    "company": "GrowthPulse Media",
+    "role": "Business Development Associate",
+    "required_skills": [
+      "Negotiation",
+      "Client communication",
+      "Cold calling",
+      "Salesforce",
+      "Excel"
+    ],
+    "preferred_skills": [
+      "HubSpot",
+      "Market research"
+    ],
+    "min_cgpa": null,
+    "allowed_branches": [],
+    "allowed_batches": [
+      "2027"
+    ],
+    "no_active_backlogs": false,
+    "deadline_iso": null,
+    "deadline_as_written": "rolling basis",
+    "notes": "no CGPA cut-off, all branches allowed, soft skills mixed in, rolling deadline"
+  },
+  {
+    "file": "jd_20_testmatrix_qa",
+    "company": "TestMatrix Solutions",
+    "role": "QA/Test Automation Engineer",
+    "required_skills": [
+      "Cypress",
+      "JavaScript",
+      "Playwright",
+      "REST API testing",
+      "Git"
+    ],
+    "preferred_skills": [
+      "Jenkins",
+      "Docker"
+    ],
+    "min_cgpa": 6.5,
+    "allowed_branches": [
+      "Computer Science & Engineering",
+      "IT"
+    ],
+    "allowed_batches": [
+      "2026"
+    ],
+    "no_active_backlogs": true,
+    "deadline_iso": "2026-12-11",
+    "deadline_as_written": "2026-12-11",
+    "notes": "2026 batch edge case; deadline moved from 11 Nov to 11 Dec 2026; no active backlogs required"
+  },
+  {
+    "file": "jd_21_dbassist_support",
+    "company": "DBAssist Enterprise",
+    "role": "Technical Support Engineer (SQL)",
+    "required_skills": [
+      "SQL",
+      "PostgreSQL",
+      "Client communication",
+      "Linux",
+      "Incident management"
+    ],
+    "preferred_skills": [
+      "Python",
+      "Shell scripting"
+    ],
+    "min_cgpa": 6.0,
+    "allowed_branches": [
+      "ECE",
+      "CSE",
+      "IT"
+    ],
+    "allowed_batches": [
+      "2027"
+    ],
+    "no_active_backlogs": false,
+    "deadline_iso": "2026-11-30",
+    "deadline_as_written": "30th Nov 2026",
+    "notes": "soft skill mixed in; deadline moved from 20 Nov to 30 Nov 2026 (closes within days)"
+  },
+  {
+    "file": "jd_22_metricflow_ba",
+    "company": "MetricFlow Consulting",
+    "role": "Business Analyst",
+    "required_skills": [
+      "SQL",
+      "Power BI",
+      "Excel",
+      "Data modeling"
+    ],
+    "preferred_skills": [
+      "Python",
+      "Tableau",
+      "JIRA"
+    ],
+    "min_cgpa": 7.5,
+    "allowed_branches": [],
+    "allowed_batches": [],
+    "no_active_backlogs": false,
+    "deadline_iso": "2026-12-02",
+    "deadline_as_written": "Wednesday, 2 December 2026",
+    "notes": "all branches allowed, no batch stated, deadline 1-4 weeks out"
+  },
+  {
+    "file": "jd_23_launchpad_pm",
+    "company": "LaunchPad Digital",
+    "role": "Product Management Trainee",
+    "required_skills": [
+      "Product roadmapping",
+      "SQL",
+      "Figma",
+      "Google Analytics",
+      "User research"
+    ],
+    "preferred_skills": [
+      "Mixpanel",
+      "JIRA"
+    ],
+    "min_cgpa": 8.0,
+    "allowed_branches": [
+      "B.Tech CSE/IT",
+      "Electronics and Communication"
+    ],
+    "allowed_batches": [
+      "2027"
+    ],
+    "no_active_backlogs": true,
+    "deadline_iso": "2026-12-08",
+    "deadline_as_written": "08/12/2026",
+    "notes": "no active backlogs required, deadline 1-4 weeks out (DD/MM/YYYY format)"
+  },
+  {
+    "file": "jd_24_talentbridge_hr",
+    "company": "TalentBridge HR Services",
+    "role": "HR Intern",
+    "required_skills": [
+      "Recruitment coordination",
+      "MS Excel",
+      "Communication",
+      "Onboarding support"
+    ],
+    "preferred_skills": [
+      "LinkedIn Recruiter",
+      "Canva"
+    ],
+    "min_cgpa": null,
+    "allowed_branches": [],
+    "allowed_batches": [
+      "2027"
+    ],
+    "no_active_backlogs": false,
+    "deadline_iso": "2026-12-14",
+    "deadline_as_written": "December 14, 2026",
+    "notes": "no CGPA cut-off, all branches allowed, internship with stipend and PPO, deadline 1-4 weeks out"
   }
 ]
