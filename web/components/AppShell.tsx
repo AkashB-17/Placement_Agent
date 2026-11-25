@@ -19,7 +19,7 @@ const LINKS: { href: string; label: string; icon: LucideIcon; roles: Role[] }[] 
   { href: "/applications", label: "Applications", icon: Send, roles: ["officer", "admin", "recruiter"] },
   { href: "/upload", label: "Upload", icon: Upload, roles: ["officer", "admin", "recruiter"] },
   { href: "/admin/jobs", label: "Jobs", icon: Briefcase, roles: ["admin"] },
-  { href: "/admin", label: "Users & roles", icon: Users, roles: ["admin"] },
+  { href: "/admin", label: "Users & settings", icon: Users, roles: ["admin"] },
 ];
 
 // Full-screen sign-in / account pages: never wrapped in the sidebar layout.

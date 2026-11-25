@@ -3,6 +3,7 @@
 import { Mail, ShieldCheck, Users } from "lucide-react";
 import { useMemo, useState, type FormEvent } from "react";
 
+import { ThresholdSettings } from "@/components/ThresholdSettings";
 import { Avatar, Chip, ErrorBox, PageHeader, Skeleton, Spinner, StatCard, SuccessBox, errorText, type Tone } from "@/components/ui";
 import { api } from "@/lib/api";
 import { RequireRole, useAuth } from "@/lib/auth";
@@ -62,13 +63,17 @@ function AdminPage() {
 
   return (
     <>
-      <PageHeader title="Users & roles" subtitle="Everyone who signs up starts as a student. Officers, recruiters and admins are granted here." />
+      <PageHeader title="Users & settings" subtitle="Everyone who signs up starts as a student. Officers, recruiters and admins are granted here, along with college-wide settings." />
 
       <div className="mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard label="Admins" value={counts.admin} icon={ShieldCheck} tone="brand" />
         <StatCard label="Officers" value={counts.officer} icon={Users} tone="green" />
         <StatCard label="Recruiters" value={counts.recruiter} icon={Users} tone="amber" />
         <StatCard label="Students" value={counts.student} icon={Users} tone="slate" />
+      </div>
+
+      <div className="mb-6">
+        <ThresholdSettings />
       </div>
 
       <div className="mb-6 space-y-3">

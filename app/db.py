@@ -124,6 +124,13 @@ CREATE TABLE IF NOT EXISTS score_cache (
     breakdown_json TEXT NOT NULL,
     created_at TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS app_settings (
+    key TEXT PRIMARY KEY,
+    value TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    updated_by TEXT
+);
 """
 
 # Columns added after the first SQLite schema; added in place for existing local DBs.
@@ -333,6 +340,13 @@ def init_db() -> None:
             raise RuntimeError(
                 "The student CV migration is missing. Apply supabase/migrations/20261120000000_student_cv.sql "
                 "(npx supabase@latest db push --linked)."
+            ) from exc
+        try:
+            _fetchone("SELECT 1 AS ok FROM app_settings LIMIT 1")
+        except psycopg.errors.UndefinedTable as exc:
+            raise RuntimeError(
+                "The app settings table is missing. Apply supabase/migrations/20261128000000_app_settings.sql "
+                "(npx supabase@latest db push --remote)."
             ) from exc
         try:
             _fetchone("SELECT requirements_edited FROM jds LIMIT 1")
@@ -1083,6 +1097,27 @@ def mark_notifications_read(student_id: str, now: datetime) -> None:
 
 
 # ── Score cache ─────────────────────────────────────────────────────────────
+
+# ── College-wide settings ──────────────────────────────────────────────────
+
+def get_app_setting(key: str) -> dict[str, Any] | None:
+    """{value, updated_at} for a setting an admin has changed, or None (use the default)."""
+    row = _fetchone("SELECT value, updated_at FROM app_settings WHERE key = ?", (key,))
+    if row is None:
+        return None
+    return {"value": _json_value(row["value"]), "updated_at": _dt(row["updated_at"])}
+
+
+def set_app_setting(key: str, value: Any, now: datetime, updated_by: str | None) -> None:
+    _execute(
+        """
+        INSERT INTO app_settings (key, value, updated_at, updated_by) VALUES (?, ?, ?, ?)
+        ON CONFLICT (key) DO UPDATE SET
+            value = excluded.value, updated_at = excluded.updated_at, updated_by = excluded.updated_by
+        """,
+        (key, _json_param(json.dumps(value)), _ts(now), updated_by),
+    )
+
 
 def get_cached_score(cache_key: str) -> dict[str, Any] | None:
     row = _fetchone("SELECT breakdown_json FROM score_cache WHERE cache_key = ?", (cache_key,))

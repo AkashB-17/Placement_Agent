@@ -29,6 +29,7 @@ from app.schemas import (
     ResumeLink,
 )
 from app.services import auto_apply
+from app.services.app_settings import auto_apply_threshold
 from app.services.cv_tips import cv_tips
 from app.services.eligibility import check_eligibility
 from app.services.matching import evaluate_student, load_jd, load_policy
@@ -50,11 +51,12 @@ def _my_student(user: CurrentUser) -> dict:
 
 def _preferences_out(prefs: dict | None) -> PreferencesOut:
     settings = get_settings()
+    threshold = auto_apply_threshold()
     return PreferencesOut(
         enabled=bool(prefs and prefs["enabled"]),
-        min_score=prefs["min_score"] if prefs else settings.auto_apply_threshold,
+        min_score=prefs["min_score"] if prefs else threshold,
         excluded_companies=prefs["excluded_companies"] if prefs else [],
-        threshold=settings.auto_apply_threshold,
+        threshold=threshold,
         withdraw_hours=settings.auto_apply_withdraw_hours,
     )
 
@@ -66,7 +68,7 @@ def get_my_preferences(user: CurrentUser = Depends(student_only)) -> Preferences
 
 @router.put("/me/auto-apply", response_model=PreferencesOut)
 def set_my_preferences(body: AutoApplyPreferences, user: CurrentUser = Depends(student_only)) -> PreferencesOut:
-    threshold = get_settings().auto_apply_threshold
+    threshold = auto_apply_threshold()
     if body.min_score < threshold:
         raise HTTPException(
             status_code=422,

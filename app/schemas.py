@@ -193,6 +193,16 @@ class RoleUpdate(BaseModel):
     role: Role
 
 
+class AppSettingsOut(BaseModel):
+    auto_apply_threshold: float = Field(description="Minimum score for auto-apply and the recommended flag")
+    default_auto_apply_threshold: float = Field(description="Used until an admin sets one (AUTO_APPLY_THRESHOLD)")
+    updated_at: datetime | None = None
+
+
+class AppSettingsUpdate(BaseModel):
+    auto_apply_threshold: float = Field(ge=0, le=100)
+
+
 class ProfileOut(BaseModel):
     id: str
     email: str | None

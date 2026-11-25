@@ -92,6 +92,7 @@ A student only ever sees their own record. Their account is linked to their reco
 ### 4.4 Admin
 
 - **Users & roles**: see every account and its role; change a role; invite someone by email with a role. Admins cannot remove their own admin role, which prevents an accidental lock-out.
+- **Minimum auto-apply score** (on the same page, now called *Users & settings*): the college-wide bar, 0–100 (default 80). Auto-apply only applies for students whose score reaches it (or their own higher bar), and rankings mark "auto-apply recommended" against it. A change takes effect at once for rankings and the next auto-apply runs; applications already made are not affected. Students can set their own bar only at or above it.
 
 **Jobs** (left menu → Jobs, admins only)
 - Every job in the portal with its deadline, when it was posted and how many applications it has; search by company or role.

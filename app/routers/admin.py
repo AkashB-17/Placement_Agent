@@ -3,7 +3,8 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from app.auth import CurrentUser, require_role
 from app.config import get_settings
 from app.db import get_profile, list_profiles, set_profile_role
-from app.schemas import InviteRequest, ProfileOut, RoleUpdate
+from app.schemas import AppSettingsOut, AppSettingsUpdate, InviteRequest, ProfileOut, RoleUpdate
+from app.services import app_settings
 from app.services.supabase_admin import invite_user
 
 router = APIRouter(prefix="/admin", tags=["admin"])
@@ -51,3 +52,17 @@ def change_role(user_id: str, body: RoleUpdate, admin: CurrentUser = Depends(adm
 def whoami(user: CurrentUser = Depends(require_role("student", "officer", "recruiter", "admin"))) -> ProfileOut:
     """Any signed-in user: shows who the token belongs to and their role."""
     return ProfileOut(id=user.id, email=user.email, role=user.role)
+
+
+@router.get("/settings", response_model=AppSettingsOut)
+def get_settings_endpoint(_: CurrentUser = Depends(admin_only)) -> AppSettingsOut:
+    return AppSettingsOut(**app_settings.threshold_info())
+
+
+@router.put("/settings", response_model=AppSettingsOut)
+def update_settings(body: AppSettingsUpdate, user: CurrentUser = Depends(admin_only)) -> AppSettingsOut:
+    """Change the college-wide auto-apply threshold. It applies at once to rankings, the
+    recommended flag and auto-apply runs. Students' own bars stay as they are; the bar used
+    is always the higher of theirs and this. Applications already made are not affected."""
+    app_settings.set_auto_apply_threshold(body.auto_apply_threshold, None if user.id == "dev-admin" else user.id)
+    return AppSettingsOut(**app_settings.threshold_info())

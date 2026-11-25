@@ -39,6 +39,7 @@ from app.schemas import (
     SkippedStudent,
 )
 from app.services.highlights import build_highlights, skill_highlights
+from app.services.app_settings import auto_apply_threshold
 from app.services.eligibility import check_eligibility
 from app.services.matching import evaluate_many, evaluate_student, load_jd, load_policy
 
@@ -342,6 +343,7 @@ def run_auto_apply(jd_id: str, policy_id: str, actor_id: str | None) -> AutoAppl
     now = utcnow()
     deadline, release_at, cutoff = application_window(jd, now)
 
+    threshold = auto_apply_threshold()  # read once for the whole run
     opted_in = db.list_opted_in_students()
     total_students = len(db.list_students())
     existing = db.application_statuses_for_jd(jd_id)
@@ -373,7 +375,7 @@ def run_auto_apply(jd_id: str, policy_id: str, actor_id: str | None) -> AutoAppl
     created: list[ApplicationOut] = []
     for (student, prefs), result in zip(candidates, results):
         breakdown = result.score_breakdown
-        bar = max(settings.auto_apply_threshold, prefs["min_score"])
+        bar = max(threshold, prefs["min_score"])
         reason = None
         if not result.eligibility.eligible:
             failed = "; ".join(rule.description for rule in result.eligibility.failed_rules)

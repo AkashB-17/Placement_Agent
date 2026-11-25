@@ -280,3 +280,12 @@ export interface CvTipsResponse {
   tips: CvTip[];
   source: "cache" | "fresh" | "none";
 }
+
+// ── College-wide settings (GET/PUT /admin/settings) ──────────────────────────
+
+export interface AppSettings {
+  auto_apply_threshold: number;
+  /** Used until an admin sets one (AUTO_APPLY_THRESHOLD on the API). */
+  default_auto_apply_threshold: number;
+  updated_at: string | null;
+}

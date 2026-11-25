@@ -11,9 +11,9 @@ from typing import Any
 
 from fastapi import HTTPException
 
-from app.config import get_settings
 from app.db import get_jd, get_policy, get_student
 from app.schemas import Citation, CitationChunk, FailedRule, JDRequirements, MatchResult, PolicyRules, ScoreBreakdown
+from app.services.app_settings import auto_apply_threshold
 from app.services.eligibility import check_eligibility
 from app.services.scoring import score_student_cached
 from app.services.vectorstore import COLLECTION_JDS, COLLECTION_POLICIES, retrieve
@@ -93,7 +93,7 @@ def evaluate_student(
     breakdown, result.score_source = score_student_cached(student, jd, jd_id, refresh=refresh)
     result.score_breakdown = breakdown
     result.auto_apply_recommended = (
-        breakdown.score is not None and breakdown.score >= get_settings().auto_apply_threshold
+        breakdown.score is not None and breakdown.score >= auto_apply_threshold()
     )
     return result
 

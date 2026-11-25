@@ -7,10 +7,10 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, HTTPException, Query
 
 from app.auth import CurrentUser, require_role, staff_only
-from app.config import get_settings
 from app.db import get_all_students
 from app.routers.students import owns_student_record
 from app.schemas import MatchRequest, MatchResult, RankedResponse
+from app.services.app_settings import auto_apply_threshold
 from app.services.matching import evaluate_many, evaluate_student, load_jd, load_policy, load_student
 
 router = APIRouter(tags=["match"])
@@ -56,7 +56,7 @@ def ranked(
     return RankedResponse(
         jd_id=jd_id,
         policy_id=policy_id,
-        auto_apply_threshold=get_settings().auto_apply_threshold,
+        auto_apply_threshold=auto_apply_threshold(),
         eligible=eligible,
         ineligible=ineligible,
         ai_calls=sum(r.score_source == "fresh" for r in results),
