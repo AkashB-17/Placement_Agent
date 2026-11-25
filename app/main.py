@@ -99,7 +99,7 @@ class SettingsCORSMiddleware(CORSMiddleware):
         super().__init__(
             app,
             allow_origins=get_settings().cors_origins,
-            allow_methods=["GET", "POST", "PUT"],
+            allow_methods=["GET", "POST", "PUT", "DELETE"],  # every method a router uses (DELETE: admin removes a job)
             allow_headers=["Authorization", "Content-Type"],
         )
 

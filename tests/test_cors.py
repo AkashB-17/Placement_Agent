@@ -21,6 +21,25 @@ def test_frontend_origin_allowed(client: TestClient) -> None:
     assert "access-control-allow-credentials" not in response.headers
 
 
+def test_every_method_the_api_uses_passes_preflight(client: TestClient) -> None:
+    """A method missing from allow_methods fails in the browser as 'no response' (the
+    preflight is refused), while the same call works from scripts. DELETE /jds/{id} hit this."""
+    # The OpenAPI schema lists every path and method, however routers are nested.
+    used = {method.upper() for path in client.app.openapi()["paths"].values() for method in path}
+    assert {"GET", "POST", "PUT", "DELETE"} <= used
+    for method in sorted(used):
+        response = client.options(
+            "/jds/some-id",
+            headers={
+                "Origin": "http://localhost:3000",
+                "Access-Control-Request-Method": method,
+                "Access-Control-Request-Headers": "authorization,content-type",
+            },
+        )
+        assert response.status_code == 200, f"{method} preflight refused"
+        assert method in response.headers["access-control-allow-methods"]
+
+
 def test_unknown_origin_refused(client: TestClient) -> None:
     response = _preflight(client, "https://evil.example")
     assert response.status_code == 400
