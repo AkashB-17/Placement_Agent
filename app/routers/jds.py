@@ -3,7 +3,8 @@ from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from app.auth import CurrentUser, any_user, require_role
 
 from app.db import get_jd, list_jds, make_document_id, upsert_jd
-from app.schemas import JDDetail, JDIngestResponse, JDRequirements, JDSummary
+from app.schemas import DeadlineChange, DeadlineUpdate, JDDetail, JDIngestResponse, JDRequirements, JDSummary
+from app.services import auto_apply
 from app.services.chunking import CLAUSE_CHUNK_OVERLAP, CLAUSE_CHUNK_SIZE
 from app.services.grounding import ground_jd
 from app.services.llm import extract_structured
@@ -52,8 +53,13 @@ async def create_jd(
     return JDIngestResponse(id=jd_id, requirements=requirements, warnings=warnings)
 
 
+def can_edit_deadline(user: CurrentUser, created_by: str | None) -> bool:
+    """Officers and admins may change any job's deadline; a recruiter only their own jobs'."""
+    return user.role in ("officer", "admin") or (user.role == "recruiter" and created_by == user.id)
+
+
 @router.get("", response_model=list[JDSummary])
-def list_jds_endpoint(_: CurrentUser = Depends(any_user)) -> list[JDSummary]:
+def list_jds_endpoint(user: CurrentUser = Depends(any_user)) -> list[JDSummary]:
     rows = list_jds()
     return [
         JDSummary(
@@ -62,9 +68,30 @@ def list_jds_endpoint(_: CurrentUser = Depends(any_user)) -> list[JDSummary]:
             role=row.get("role"),
             required_skills=row.get("required_skills") or [],
             allowed_branches=row.get("allowed_branches") or [],
+            deadline=row.get("deadline"),
+            deadline_at=auto_apply.parse_deadline(row.get("deadline")),
+            original_deadline=row["original_deadline"],
+            deadline_changed_at=row["deadline_changed_at"],
+            can_edit_deadline=can_edit_deadline(user, row["created_by"]),
         )
         for row in rows
     ]
+
+
+@router.put("/{jd_id}/deadline", response_model=DeadlineChange)
+def change_deadline(
+    jd_id: str,
+    body: DeadlineUpdate,
+    user: CurrentUser = Depends(require_role("officer", "admin", "recruiter")),
+) -> DeadlineChange:
+    """Extend or shorten a job's deadline. Shortening moves pending applications earlier
+    (never past the new deadline) and notifies those students."""
+    row = get_jd(jd_id)
+    if row is None or (user.role == "recruiter" and not can_edit_deadline(user, row["created_by"])):
+        # A recruiter can't tell another recruiter's job from a missing one.
+        raise HTTPException(status_code=404, detail="JD not found.")
+    actor = None if user.id == "dev-admin" else user.id
+    return auto_apply.change_deadline(jd_id, body.deadline, actor)
 
 
 @router.get("/{jd_id}", response_model=JDDetail)
@@ -76,4 +103,6 @@ def get_jd_endpoint(jd_id: str, _: CurrentUser = Depends(any_user)) -> JDDetail:
         id=row["id"],
         requirements=JDRequirements(**row["requirements"]),
         source_text=row["source_text"],
+        original_deadline=row["original_deadline"],
+        deadline_changed_at=row["deadline_changed_at"],
     )

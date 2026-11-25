@@ -4,6 +4,7 @@ import { Clock3, Inbox, Send, Undo2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 import { ApplicationCard } from "@/components/ApplicationCard";
+import { DeadlineEditor } from "@/components/DeadlineEditor";
 import { CardSkeletons, EmptyState, ErrorBox, PageHeader, StatCard } from "@/components/ui";
 import { RequireRole, useAuth } from "@/lib/auth";
 import type { Application, ApplicationStatus, JDSummary } from "@/lib/types";
@@ -39,6 +40,7 @@ function ApplicationsPage() {
     return c;
   }, [forJd]);
   const jobsWithApplications = (jds.data ?? []).filter((jd) => all.some((a) => a.jd_id === jd.id));
+  const myJobs = recruiter ? (jds.data ?? []).filter((jd) => jd.can_edit_deadline) : [];
 
   return (
     <>
@@ -63,6 +65,20 @@ function ApplicationsPage() {
         }
       />
       <ErrorBox message={applications.error?.message} />
+
+      {recruiter && myJobs.length > 0 && (
+        <section className="card mb-6 space-y-3">
+          <p className="font-semibold text-slate-900">Your jobs</p>
+          <ul className="divide-y divide-slate-100">
+            {myJobs.map((jd) => (
+              <li key={jd.id} className="space-y-1 py-3 first:pt-0 last:pb-0">
+                <p className="font-medium text-slate-800">{[jd.company, jd.role].filter(Boolean).join(" · ") || "Untitled job"}</p>
+                <DeadlineEditor jd={jd} onChanged={() => { void jds.refresh(); void applications.refresh(); }} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {!recruiter && (
         <div className="mb-6 grid gap-3 sm:grid-cols-3">

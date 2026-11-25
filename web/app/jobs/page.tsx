@@ -7,11 +7,12 @@ import { useEffect, useMemo, useState } from "react";
 import { AutoApplyPanel } from "@/components/AutoApplyPanel";
 import { MatchResultCard } from "@/components/MatchResultCard";
 import { PolicyPicker } from "@/components/PolicyPicker";
+import { DeadlineEditor } from "@/components/DeadlineEditor";
 import { CardSkeletons, Chip, EmptyState, ErrorBox, PageHeader, Spinner, StatCard, errorText } from "@/components/ui";
 import { api } from "@/lib/api";
 import { RequireRole } from "@/lib/auth";
 import type { JDSummary, PolicySummary, RankedResponse } from "@/lib/types";
-import { useApi } from "@/lib/useApi";
+import { invalidate, useApi } from "@/lib/useApi";
 
 type Filter = "all" | "eligible" | "ineligible";
 
@@ -228,6 +229,18 @@ function RankPage() {
       )}
 
       <div className="mt-10">
+        {selectedJd && (
+          <div className="card mb-6 p-4">
+            <DeadlineEditor
+              key={selectedJd.id}
+              jd={jds.data?.find((j) => j.id === selectedJd.id) ?? selectedJd}
+              onChanged={() => {
+                invalidate("/me/jobs", "/applications");
+                void jds.refresh();
+              }}
+            />
+          </div>
+        )}
         {selectedJd && policyId ? (
           <Results key={`${selectedJd.id}-${policyId}`} jd={selectedJd} policyId={policyId} />
         ) : (

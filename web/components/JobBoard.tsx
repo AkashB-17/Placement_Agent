@@ -382,7 +382,13 @@ function JobDetail({
             <span className="text-slate-300">|</span>
             <Deadline job={job} now={now} />
           </p>
-          {job.deadline && <p className="mt-0.5 text-xs text-slate-400">Deadline as posted: {job.deadline}</p>}
+          {job.deadline && (
+            <p className="mt-0.5 text-xs text-slate-400">
+              {job.deadline_changed_at
+                ? `Deadline changed to ${job.deadline} on ${formatDateTime(job.deadline_changed_at)}`
+                : `Deadline as posted: ${job.deadline}`}
+            </p>
+          )}
         </div>
         <div className="flex flex-col items-end gap-2">
           <Chip tone={status.tone}>{status.label}</Chip>

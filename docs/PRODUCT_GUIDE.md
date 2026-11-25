@@ -85,6 +85,7 @@ A student only ever sees their own record. Their account is linked to their reco
 ### 4.3 Recruiter
 
 - **Upload** JDs for their company (they cannot edit another recruiter's JD).
+- **Change a deadline** of their own jobs (Applications page → *Your jobs* → *Change*). Officers and admins can change any job's deadline from the Rank candidates page. Extending it changes nothing else (a closed job reopens). Shortening it moves pending applications earlier so they still arrive in time (6 hours before the new deadline; if that has passed, 10 minutes before; if that has passed too, at once), and each of those students is notified. Sent and withdrawn applications are never touched. The job's original deadline is kept and shown, and students see "Deadline changed to … on …".
 - **Applications**: only applications to *their own* jobs, and only once the student's withdraw window has closed and the application has been sent. Pending or withdrawn applications are never visible to recruiters. They can open the resume *as it was when the student applied*.
 - Each application shows the match score, the required skills the CV shows (green) and lacks (red), and **Why they stand out**: short factual lines such as "Shows 3 of 4 required skills in their CV: Python, SQL, FastAPI", "CGPA 8.6, 1.6 above the required 7" and "No active backlogs". These are written by code, not AI, from the verified score and the academic record the eligibility rules used, and saved when the application is made.
 

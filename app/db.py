@@ -129,7 +129,7 @@ CREATE TABLE IF NOT EXISTS score_cache (
 # Columns added after the first SQLite schema; added in place for existing local DBs.
 _SQLITE_ADDED_COLUMNS = {
     "policies": ["created_by TEXT"],
-    "jds": ["created_by TEXT"],
+    "jds": ["created_by TEXT", "deadline_override TEXT", "deadline_changed_at TEXT", "deadline_changed_by TEXT"],
     "students": [
         "is_placed INTEGER NOT NULL DEFAULT 0",
         "email TEXT",
@@ -324,6 +324,13 @@ def init_db() -> None:
         except psycopg.errors.UndefinedColumn as exc:
             raise RuntimeError(
                 "The student CV migration is missing. Apply supabase/migrations/20261120000000_student_cv.sql "
+                "(npx supabase@latest db push --linked)."
+            ) from exc
+        try:
+            _fetchone("SELECT deadline_override FROM jds LIMIT 1")
+        except psycopg.errors.UndefinedColumn as exc:
+            raise RuntimeError(
+                "The JD deadline migration is missing. Apply supabase/migrations/20261126000000_jd_deadline.sql "
                 "(npx supabase@latest db push --linked)."
             ) from exc
         try:
@@ -555,35 +562,100 @@ def get_policy(policy_id: str) -> dict | None:
     return {"id": row["id"], "source_text": row["source_text"], "rules": _json_value(row["rules_json"])}
 
 
+_JD_DEADLINE_COLUMNS = "deadline_override, deadline_changed_at"
+
+
+def _jd_requirements(row: dict[str, Any]) -> dict[str, Any]:
+    """The JD's requirements as the app uses them: a changed deadline replaces the extracted one."""
+    requirements = dict(_json_value(row["requirements_json"]) or {})
+    if row["deadline_override"]:
+        requirements["deadline"] = row["deadline_override"]
+    return requirements
+
+
+def _jd_deadline_meta(row: dict[str, Any]) -> dict[str, Any]:
+    extracted = (_json_value(row["requirements_json"]) or {}).get("deadline")
+    changed = bool(row["deadline_override"])
+    return {
+        "original_deadline": extracted if changed else None,
+        "deadline_changed_at": _dt(row["deadline_changed_at"]) if changed else None,
+    }
+
+
 def list_jds() -> list[dict]:
-    rows = _fetchall("SELECT id, requirements_json, created_by FROM jds ORDER BY created_at DESC")
+    rows = _fetchall(
+        f"SELECT id, requirements_json, created_by, {_JD_DEADLINE_COLUMNS} FROM jds ORDER BY created_at DESC"
+    )
     return [
-        {"id": row["id"], "created_by": _str_or_none(row["created_by"]), **_json_value(row["requirements_json"])}
+        {"id": row["id"], "created_by": _str_or_none(row["created_by"]), **_jd_requirements(row), **_jd_deadline_meta(row)}
         for row in rows
     ]
 
 
 def list_jd_rows() -> list[dict[str, Any]]:
     """Every JD with its requirements and when it was posted, newest first."""
-    rows = _fetchall("SELECT id, requirements_json, created_at FROM jds ORDER BY created_at DESC")
+    rows = _fetchall(
+        f"SELECT id, requirements_json, created_at, {_JD_DEADLINE_COLUMNS} FROM jds ORDER BY created_at DESC"
+    )
     return [
-        {"id": row["id"], "requirements": _json_value(row["requirements_json"]), "created_at": _dt(row["created_at"])}
+        {"id": row["id"], "requirements": _jd_requirements(row), "created_at": _dt(row["created_at"]), **_jd_deadline_meta(row)}
         for row in rows
     ]
 
 
 def get_jd(jd_id: str) -> dict | None:
     row = _fetchone(
-        "SELECT id, source_text, requirements_json, created_by FROM jds WHERE id = ?", (jd_id,)
+        f"SELECT id, source_text, requirements_json, created_by, {_JD_DEADLINE_COLUMNS} FROM jds WHERE id = ?",
+        (jd_id,),
     )
     if row is None:
         return None
     return {
         "id": row["id"],
         "source_text": row["source_text"],
-        "requirements": _json_value(row["requirements_json"]),
+        "requirements": _jd_requirements(row),
         "created_by": _str_or_none(row["created_by"]),
+        **_jd_deadline_meta(row),
     }
+
+
+def change_jd_deadline(
+    jd_id: str,
+    deadline: str,
+    changed_at: datetime,
+    changed_by: str | None,
+    moves: list[dict[str, Any]],
+) -> list[str]:
+    """Set a JD's deadline and move pending applications earlier, in one transaction.
+
+    Each move is {id, student_id, release_at, message}. A move only applies if the
+    application is still pending and would be released later than the new time (a
+    withdrawal or release that commits first wins). Returns the ids actually moved;
+    each of those students gets the move's notification."""
+    moved: list[str] = []
+    with _atomic() as cur:
+        cur.execute(
+            _sql(
+                "UPDATE jds SET deadline_override = ?, deadline_changed_at = ?, deadline_changed_by = ? "
+                "WHERE id = ? RETURNING id"
+            ),
+            (deadline, _ts(changed_at), changed_by, jd_id),
+        )
+        if cur.fetchone() is None:
+            return moved
+        for move in moves:
+            cur.execute(
+                _sql(
+                    "UPDATE applications SET release_at = ? "
+                    "WHERE id = ? AND status = 'pending' AND release_at > ? RETURNING id"
+                ),
+                (_ts(move["release_at"]), move["id"], _ts(move["release_at"])),
+            )
+            if cur.fetchone() is None:
+                continue
+            _insert_notification(cur, move["student_id"], move["id"], "application_pending", move["message"], changed_at)
+            moved.append(move["id"])
+    return moved
 
 
 def list_students() -> list[dict]:

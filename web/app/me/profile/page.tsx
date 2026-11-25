@@ -1,11 +1,12 @@
 "use client";
 
-import { GraduationCap, Lock } from "lucide-react";
+import { GraduationCap, Lock, Mail, Phone } from "lucide-react";
 
 import { NotLinked } from "@/components/NotLinked";
 import { StudentCvCard } from "@/components/StudentCvCard";
 import { Avatar, CardSkeletons, Chip, Chips, ErrorBox, PageHeader } from "@/components/ui";
 import { RequireRole } from "@/lib/auth";
+import { PLACEMENT_CONTACT, placementPhoneHref } from "@/lib/contact";
 import type { StudentDetail } from "@/lib/types";
 import { invalidate, useApi } from "@/lib/useApi";
 
@@ -42,7 +43,15 @@ function ProfilePage() {
                   <Chip tone={profile.active_backlogs > 0 ? "red" : "slate"}>{profile.active_backlogs} active backlogs</Chip>
                   {profile.is_placed && <Chip tone="green">Placed</Chip>}
                 </div>
-                <p className="mt-2 text-xs text-slate-400">Something wrong here? Contact the placement office to correct it.</p>
+                <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500">
+                  <span>Something wrong here? Contact the placement office to correct it:</span>
+                  <a href={`mailto:${PLACEMENT_CONTACT.email}`} className="inline-flex items-center gap-1 font-medium text-brand-700 hover:underline">
+                    <Mail className="size-3.5" aria-hidden /> {PLACEMENT_CONTACT.email}
+                  </a>
+                  <a href={placementPhoneHref} className="inline-flex items-center gap-1 font-medium text-brand-700 hover:underline">
+                    <Phone className="size-3.5" aria-hidden /> {PLACEMENT_CONTACT.phone}
+                  </a>
+                </p>
               </div>
               <div>
                 <p className="eyebrow mb-2">Skills found in your CV</p>

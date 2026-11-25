@@ -148,6 +148,7 @@ def my_jobs(
                 deadline_at=deadline_at,
                 posted_at=row["created_at"],
                 closed=deadline_at is not None and deadline_at <= now,
+                deadline_changed_at=row["deadline_changed_at"],
                 eligibility=check_eligibility(student, rules, jd),
                 application=MyJobApplication(
                     id=app["id"],

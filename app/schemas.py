@@ -98,12 +98,34 @@ class JDSummary(BaseModel):
     role: str | None
     required_skills: list[str]
     allowed_branches: list[str]
+    deadline: str | None = None
+    deadline_at: datetime | None = None
+    original_deadline: str | None = Field(None, description="The JD's own deadline, when it was changed")
+    deadline_changed_at: datetime | None = None
+    can_edit_deadline: bool = False
+
+
+class DeadlineUpdate(BaseModel):
+    deadline: str = Field(
+        min_length=8, max_length=40,
+        description="A date (2026-12-05: the end of that day, college time) or date and time (2026-12-05T17:00)",
+    )
+
+
+class DeadlineChange(BaseModel):
+    jd_id: str
+    deadline: str
+    deadline_at: datetime
+    previous_deadline: str | None
+    rescheduled: int = Field(description="Pending applications moved earlier to fit the new deadline")
 
 
 class JDDetail(BaseModel):
     id: str
     requirements: JDRequirements
     source_text: str
+    original_deadline: str | None = Field(None, description="The JD's own deadline, when it was changed")
+    deadline_changed_at: datetime | None = None
 
 
 class StudentSummary(BaseModel):
@@ -311,6 +333,7 @@ class MyJob(BaseModel):
     deadline_at: datetime | None = Field(description="Parsed by code; null if unrecognised (e.g. rolling)")
     posted_at: datetime | None
     closed: bool
+    deadline_changed_at: datetime | None = None
     eligibility: EligibilityResult
     application: MyJobApplication | None
 

@@ -29,7 +29,15 @@ from fastapi import HTTPException
 
 from app import db
 from app.config import get_settings
-from app.schemas import ApplicationOut, AutoApplyRun, JDRequirements, PolicyRules, ScoreBreakdown, SkippedStudent
+from app.schemas import (
+    ApplicationOut,
+    AutoApplyRun,
+    DeadlineChange,
+    JDRequirements,
+    PolicyRules,
+    ScoreBreakdown,
+    SkippedStudent,
+)
 from app.services.highlights import build_highlights, skill_highlights
 from app.services.eligibility import check_eligibility
 from app.services.matching import evaluate_many, evaluate_student, load_jd, load_policy
@@ -151,6 +159,65 @@ def to_out(application: dict[str, Any], now: datetime | None = None) -> Applicat
         can_withdraw=application["status"] == "pending" and application["release_at"] > now,
         has_resume_file=bool(application["resume_path"]),
         source=application["source"],
+    )
+
+
+# ── Deadline changes ────────────────────────────────────────────────────────
+
+def latest_release(deadline: datetime, now: datetime) -> datetime:
+    """The latest a pending application may now be sent, for a job closing at `deadline`:
+    the usual buffer before it; if that has passed, the last call; if that has passed too,
+    straight away (the next release sweep or read sends it)."""
+    settings = get_settings()
+    for candidate in (
+        deadline - timedelta(hours=settings.auto_apply_deadline_buffer_hours),
+        deadline - timedelta(minutes=settings.manual_apply_last_call_minutes),
+    ):
+        if candidate > now:
+            return candidate
+    return now
+
+
+def change_deadline(jd_id: str, new_deadline: str, actor_id: str | None) -> DeadlineChange:
+    """Change a job's deadline. Extending changes no application. Shortening moves each
+    pending application whose release is now too late to latest_release() and notifies its
+    student; sent and withdrawn applications are never touched."""
+    release_due()
+    row = db.get_jd(jd_id)
+    if row is None:
+        raise HTTPException(status_code=404, detail="JD not found.")
+    text = new_deadline.strip()
+    deadline = parse_deadline(text)
+    if deadline is None:
+        raise HTTPException(
+            status_code=422, detail="Use a date like 2026-12-05, or a date and time like 2026-12-05T17:00."
+        )
+    now = utcnow()
+    previous = row["requirements"].get("deadline")
+    label = _job_label(row["requirements"].get("company"), row["requirements"].get("role"))
+    cap = latest_release(deadline, now)
+
+    moves = []
+    for application in db.list_applications(jd_id=jd_id, status="pending"):
+        if application["release_at"] <= cap:
+            continue
+        # The database requires release_at > created_at; an earlier one is released at once.
+        release_at = max(cap, application["created_at"] + timedelta(microseconds=1))
+        when = "now" if release_at <= now else f"on {format_local(release_at)}"
+        moves.append({
+            "id": application["id"],
+            "student_id": application["student_id"],
+            "release_at": release_at,
+            "message": (
+                f"{label} moved its deadline to {format_local(deadline)}. Your application will be sent "
+                f"{when}" + (". Withdraw before then if you don't want it." if release_at > now else ".")
+            ),
+        })
+
+    moved = db.change_jd_deadline(jd_id, text, now, actor_id, moves)
+    release_due()  # send anything that is now due straight away
+    return DeadlineChange(
+        jd_id=jd_id, deadline=text, deadline_at=deadline, previous_deadline=previous, rescheduled=len(moved)
     )
 
 

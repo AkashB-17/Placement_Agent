@@ -53,12 +53,29 @@ export interface JDSummary {
   role: string | null;
   required_skills: string[];
   allowed_branches: string[];
+  deadline: string | null;
+  deadline_at: string | null;
+  /** The JD's own deadline, when it has been changed. */
+  original_deadline: string | null;
+  deadline_changed_at: string | null;
+  can_edit_deadline: boolean;
+}
+
+export interface DeadlineChange {
+  jd_id: string;
+  deadline: string;
+  deadline_at: string;
+  previous_deadline: string | null;
+  /** Pending applications moved earlier to fit the new deadline. */
+  rescheduled: number;
 }
 
 export interface JDDetail {
   id: string;
   requirements: JDRequirements;
   source_text: string;
+  original_deadline: string | null;
+  deadline_changed_at: string | null;
 }
 
 export interface StudentSummary {
@@ -232,6 +249,7 @@ export interface MyJob {
   deadline_at: string | null;
   posted_at: string | null;
   closed: boolean;
+  deadline_changed_at: string | null;
   eligibility: { eligible: boolean; failed_rules: FailedRule[] };
   application: MyJobApplication | null;
 }
