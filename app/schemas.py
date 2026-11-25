@@ -249,6 +249,10 @@ class ApplicationOut(BaseModel):
     can_withdraw: bool
     has_resume_file: bool
     source: ApplicationSource = Field(description="manual: the student applied; auto: an auto-apply run")
+    highlights: list[str] = Field(
+        default_factory=list,
+        description="Why this candidate stands out: built by code from the verified score and academic record",
+    )
 
 
 class SkippedStudent(BaseModel):

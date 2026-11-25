@@ -183,6 +183,8 @@ export interface Application {
   can_withdraw: boolean;
   has_resume_file: boolean;
   source: ApplicationSource;
+  /** Why this candidate stands out: built by code from the verified score and academic record. */
+  highlights: string[];
 }
 
 export interface SkippedStudent {

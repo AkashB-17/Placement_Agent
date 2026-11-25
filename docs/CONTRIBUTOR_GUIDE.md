@@ -276,6 +276,9 @@ Routers are thin: role check → validate → call services/db → shape the res
 | `apply_manually(student, jd_id, policy_id, actor_id)` | A student applies from the job board: already applied (withdrawn is final) → window → CV present → policy limit → `check_eligibility` (before any AI call) → score snapshot → same pending application + notification. No score bar or excluded-companies check: the student chose the job. |
 | `run_auto_apply(jd_id, policy_id, actor_id)` | The whole run (see [§3.3](#33-auto-apply-post-jdsidauto-applypolicy_id)); returns created + skipped-with-reason + not-opted-in count. |
 
+#### `highlights.py`: "why they stand out"
+`build_highlights(student, policy, jd, breakdown)` returns short factual lines: required-skill coverage (from the verified breakdown), matched preferred skills, CGPA margin over the stricter of the policy/JD floor (same rule as eligibility), and "No active backlogs". No LLM. `_new_application` saves them inside the application's `match_json` snapshot (key `highlights`, no migration); `to_out` strips that key before building `ScoreBreakdown` and falls back to `skill_highlights(breakdown)` for older applications. Shown to staff and recruiters on `ApplicationCard`.
+
 #### `cv_tips.py`: CV improvement tips
 The gaps are the missing skills from the verified score breakdown (code); one LLM call writes a suggestion per gap and may cite a related resume line. That quote must pass `scoring.quote_in_resume`, else it is dropped and the tip is `build` (gain the skill) instead of `surface` (make existing work visible). Skills the LLM adds are ignored; skills it skips get a fallback suggestion. The prompt forbids advising students to claim skills they haven't used. Results are cached in `score_cache` under a separate key (`kind: cv-tips`, `TIPS_VERSION`, model, prompt, resume hash). The CV is never edited.
 
@@ -392,7 +395,7 @@ Next.js 16 (App Router), Tailwind 4, `lucide-react` icons, `@supabase/supabase-j
 | `MatchResultCard.tsx` | `MatchResultCard`, `ScoreRing` | One student × one JD: eligibility chips, failed rules (keyed by rule+source), skills, evidence quotes, citations. |
 | `PolicyPicker.tsx` | `PolicyPicker`, `policyLabel` | Policy selector. |
 | `AutoApplyPanel.tsx` | `AutoApplyPanel` | Officer's "Run auto-apply" with confirm + created/skipped summary. |
-| `ApplicationCard.tsx` | `ApplicationCard`, `StatusChip` | One application for a student/staff/recruiter viewer: status, countdown bar, matched skills, pinned-resume link, withdraw with confirm. |
+| `ApplicationCard.tsx` | `ApplicationCard`, `StatusChip` | One application for a student/staff/recruiter viewer: status, countdown bar, "Why they stand out" (`highlights`, staff/recruiter only), matched/missing required skills, pinned-resume link, withdraw with confirm. |
 
 ### 9.3 `web/app/` (pages)
 | Route | Roles | What it does |
@@ -453,6 +456,7 @@ Next.js 16 (App Router), Tailwind 4, `lucide-react` icons, `@supabase/supabase-j
 | `test_auto_apply.py` | Preferences, the run, pinning, notifications, withdraw window, release, idempotency, deadlines and parsing, recruiter visibility, roles |
 | `test_student_cv.py` | Office records without a CV, student CV upload/replace, stable ids, no-CV scoring and auto-apply skip, storage failure leaves no record |
 | `test_my_jobs.py` | `GET /me/jobs`: eligibility per job, application status, closed deadlines, policy default/unknown, roles, no LLM calls |
+| `test_highlights.py` | Highlight lines (coverage, stricter CGPA floor, backlogs), snapshot on new applications, fallback for older ones |
 | `test_apply_and_tips.py` | Manual apply (staged, `source`, twice/after withdrawal, ineligible without AI calls, closed, no CV, roles) and CV tips (only missing skills, quote verification, cache, nothing missing, ineligible) |
 | `test_index_sync.py` | Rebuilding a wiped index, idempotency, non-fatal failure |
 | `test_performance.py` | Profile cache, Chroma client race, citation query cache |

@@ -18,6 +18,7 @@ decided by code from the score, the rules and the student's preferences.
 from __future__ import annotations
 
 import hashlib
+import json
 import logging
 import re
 import uuid
@@ -28,7 +29,8 @@ from fastapi import HTTPException
 
 from app import db
 from app.config import get_settings
-from app.schemas import ApplicationOut, AutoApplyRun, JDRequirements, ScoreBreakdown, SkippedStudent
+from app.schemas import ApplicationOut, AutoApplyRun, JDRequirements, PolicyRules, ScoreBreakdown, SkippedStudent
+from app.services.highlights import build_highlights, skill_highlights
 from app.services.eligibility import check_eligibility
 from app.services.matching import evaluate_many, evaluate_student, load_jd, load_policy
 
@@ -128,6 +130,7 @@ def release_due_quietly() -> None:
 
 def to_out(application: dict[str, Any], now: datetime | None = None) -> ApplicationOut:
     now = now or utcnow()
+    breakdown = ScoreBreakdown(**{k: v for k, v in application["match"].items() if k != "highlights"})
     return ApplicationOut(
         id=application["id"],
         student_id=application["student_id"],
@@ -138,7 +141,9 @@ def to_out(application: dict[str, Any], now: datetime | None = None) -> Applicat
         policy_id=application["policy_id"],
         status=application["status"],
         score=application["score"],
-        score_breakdown=ScoreBreakdown(**application["match"]),
+        score_breakdown=breakdown,
+        # Older applications predate the snapshot: fall back to the skill lines.
+        highlights=application["match"].get("highlights") or skill_highlights(breakdown),
         created_at=application["created_at"],
         release_at=application["release_at"],
         decided_at=application["decided_at"],
@@ -173,16 +178,18 @@ def application_window(jd: JDRequirements, now: datetime) -> tuple[datetime | No
 
 
 def _new_application(
-    student: dict[str, Any], jd_id: str, policy_id: str, breakdown: ScoreBreakdown,
-    now: datetime, release_at: datetime, actor_id: str | None,
+    student: dict[str, Any], jd_id: str, policy_id: str, policy: PolicyRules, jd: JDRequirements,
+    breakdown: ScoreBreakdown, now: datetime, release_at: datetime, actor_id: str | None,
 ) -> dict[str, Any]:
+    # The snapshot: score evidence plus the code-built "why they stand out" lines.
+    snapshot = {**breakdown.model_dump(mode="json"), "highlights": build_highlights(student, policy, jd, breakdown)}
     return {
         "id": uuid.uuid4().hex,
         "student_id": student["id"],
         "jd_id": jd_id,
         "policy_id": policy_id,
         "score": breakdown.score,
-        "match_json": breakdown.model_dump_json(),
+        "match_json": json.dumps(snapshot),
         # The resume as scored: content-addressed file path (never overwritten) and text hash.
         "resume_path": student["resume_path"],
         "resume_sha": hashlib.sha256(student["resume_text"].encode("utf-8")).hexdigest(),
@@ -225,7 +232,7 @@ def apply_manually(student: dict[str, Any], jd_id: str, policy_id: str, actor_id
             detail="This job lists no required skills, so it can't be scored. Contact the placement office.",
         )
 
-    application = _new_application(student, jd_id, policy_id, breakdown, now, release_at, actor_id)
+    application = _new_application(student, jd_id, policy_id, policy, jd, breakdown, now, release_at, actor_id)
     message = (
         f"You applied to {_job_label(jd.company, jd.role)} (score {breakdown.score:.1f}). "
         f"It will be sent on {format_local(release_at)}. Withdraw before then if you change your mind."
@@ -288,7 +295,7 @@ def run_auto_apply(jd_id: str, policy_id: str, actor_id: str | None) -> AutoAppl
             skipped.append(SkippedStudent(student_id=student["id"], student_name=student["name"], reason=reason))
             continue
 
-        application = _new_application(student, jd_id, policy_id, breakdown, now, release_at, actor_id)
+        application = _new_application(student, jd_id, policy_id, policy, jd, breakdown, now, release_at, actor_id)
         message = (
             f"We applied to {_job_label(jd.company, jd.role)} for you (score {breakdown.score:.1f}). "
             f"It will be sent on {format_local(release_at)}. Withdraw before then if you don't want to apply."

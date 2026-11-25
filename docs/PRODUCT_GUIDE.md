@@ -83,6 +83,7 @@ A student only ever sees their own record. Their account is linked to their reco
 
 - **Upload** JDs for their company (they cannot edit another recruiter's JD).
 - **Applications**: only applications to *their own* jobs, and only once the student's withdraw window has closed and the application has been sent. Pending or withdrawn applications are never visible to recruiters. They can open the resume *as it was when the student applied*.
+- Each application shows the match score, the required skills the CV shows (green) and lacks (red), and **Why they stand out**: short factual lines such as "Shows 3 of 4 required skills in their CV: Python, SQL, FastAPI", "CGPA 8.6, 1.6 above the required 7" and "No active backlogs". These are written by code, not AI, from the verified score and the academic record the eligibility rules used, and saved when the application is made.
 
 ### 4.4 Admin
 

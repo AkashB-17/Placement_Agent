@@ -1,6 +1,6 @@
 "use client";
 
-import { CircleCheck, CircleX, Clock3, ExternalLink, Send, Undo2 } from "lucide-react";
+import { CircleCheck, CircleX, Clock3, ExternalLink, Send, Star, Undo2 } from "lucide-react";
 import { useState } from "react";
 
 import { api } from "@/lib/api";
@@ -122,6 +122,22 @@ export function ApplicationCard({
             <CircleX className="size-4" aria-hidden />
             Withdrawn {app.decided_at ? formatDateTime(app.decided_at) : ""}
           </p>
+        )}
+
+        {viewer !== "student" && app.highlights.length > 0 && (
+          <div>
+            <p className="eyebrow mb-1.5 flex items-center gap-1.5">
+              <Star className="size-3" aria-hidden /> Why they stand out
+            </p>
+            <ul className="space-y-1">
+              {app.highlights.map((line) => (
+                <li key={line} className="flex items-start gap-2 text-slate-700">
+                  <CircleCheck className="mt-0.5 size-4 shrink-0 text-emerald-600" aria-hidden />
+                  {line}
+                </li>
+              ))}
+            </ul>
+          </div>
         )}
 
         <div className="flex flex-wrap gap-1.5">
