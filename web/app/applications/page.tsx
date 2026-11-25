@@ -109,8 +109,8 @@ function ApplicationsPage() {
       ) : shown.length === 0 ? (
         <EmptyState icon={Inbox} title={recruiter ? "No applications sent to you yet" : "No applications here"}>
           {recruiter
-            ? "Applications appear once the placement office runs auto-apply and the students' withdraw window closes."
-            : "Run auto-apply from the Rank candidates page for a job."}
+            ? "Applications appear once students apply (or auto-apply applies for them when a job is posted) and their withdraw window closes."
+            : "Auto-apply runs by itself when a job is uploaded; you can also run it again from the Rank candidates page."}
         </EmptyState>
       ) : (
         <div className="grid gap-4 md:grid-cols-2">

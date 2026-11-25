@@ -118,6 +118,8 @@ export interface StudentDetail {
 export interface IngestResponse {
   id: string;
   warnings?: string[];
+  /** JD uploads: auto-apply started in the background (null when switched off). */
+  auto_apply?: string | null;
 }
 
 export interface FailedRule {

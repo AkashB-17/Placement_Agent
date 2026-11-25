@@ -20,6 +20,8 @@ class Settings(BaseSettings):
     sqlite_path: Path = Path("./data/placement.db")
     chroma_path: Path = Path("./.chroma")
     auto_apply_threshold: float = 80.0
+    # Run auto-apply in the background whenever a JD is uploaded (against the newest policy).
+    auto_apply_on_upload: bool = True
 
     # Staged auto-apply: a pending application is sent at the earlier of
     # (created + withdraw window) and (JD deadline - buffer).

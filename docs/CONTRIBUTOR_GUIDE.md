@@ -79,7 +79,8 @@ These are design decisions, not accidents. A change that breaks one needs a stro
    - if **eligible**: `scoring.py::score_student_cached` returns the stored score or calls `score_student` (one LLM call) and stores it.
 3. Results are sorted (score desc, unscored last, name), with counts of fresh AI calls vs cache hits.
 
-### 3.3 Auto-apply (`POST /jds/{id}/auto-apply?policy_id=`)
+### 3.3 Auto-apply (`POST /jds/{id}/auto-apply?policy_id=`, and automatically after `POST /jds`)
+0. After a JD upload, `jds.create_jd` schedules `auto_apply.run_on_upload(jd_id)` as a FastAPI background task (runs after the response; `AUTO_APPLY_ON_UPLOAD`, default on, off in tests). It runs the same `run_auto_apply` against the newest policy with no actor, and never raises: no policy, a passed deadline or too little time to withdraw are logged and skipped. Re-uploading the same JD is safe (existing applications are skipped).
 1. `routers/applications.py::run_auto_apply` (staff only) calls `services/auto_apply.py::run_auto_apply`.
 2. It first runs `release_due()`, so statuses and counts are current.
 3. Deadline: `parse_deadline` reads the JD's deadline text deterministically; `release_time` computes `release_at = min(now + 24 h, deadline − 6 h)`. Deadline passed, or less than 60 min left to withdraw → 409.
@@ -274,6 +275,7 @@ Routers are thin: role check → validate → call services/db → shape the res
 | `to_out(application, now)` | DB row → `ApplicationOut` (computes `can_withdraw`; `source` is `manual` when the creator's profile role is `student`, else `auto`). |
 | `application_window(jd, now, manual=False)` | `(deadline, release_at, cutoff)` or 409. Auto-apply: 409 when the deadline passed or less than `auto_apply_min_window_minutes` would be left to withdraw. Manual (`manual=True`): when the normal window doesn't fit, `release_at = min(max(deadline − manual_apply_last_call_minutes, now + 1 s), deadline)`: the last call (10 min before), or at once inside it, never after the deadline. Manual applies 409 only once the deadline has passed. SQLite timestamps keep microseconds (`_ts`), like Postgres, so `release_at > created_at` holds even in the last second. |
 | `apply_manually(student, jd_id, policy_id, actor_id)` | A student applies from the job board: already pending/submitted → 409 (withdrawn → re-apply: `db.reapply_application` flips the same row back to pending with a fresh snapshot and window) → window → CV present → policy limit → `check_eligibility` (before any AI call) → score snapshot → same pending application + notification. No score bar or excluded-companies check: the student chose the job. |
+| `run_on_upload(jd_id)` | Background run after a JD upload (newest policy, no actor); logs the outcome, never raises. |
 | `run_auto_apply(jd_id, policy_id, actor_id)` | The whole run (see [§3.3](#33-auto-apply-post-jdsidauto-applypolicy_id)); returns created + skipped-with-reason + not-opted-in count. |
 
 #### `highlights.py`: "why they stand out"
@@ -481,6 +483,7 @@ Next.js 16 (App Router), Tailwind 4, `lucide-react` icons, `@supabase/supabase-j
 | `test_jd_deadline.py` | Deadline changes: extend reopens and moves nothing, shorten moves pending applications earlier with a notification (or sends at once), sent/withdrawn untouched, re-upload keeps the change, recruiter ownership, roles, bad input |
 | `test_jd_admin.py` | Admin edits (normalisation, eligibility follows, changed skills re-scored, extracted details kept across re-upload, deadline edit reschedules, a bad deadline saves nothing, validation) and removal (applications, notifications, cached scores gone; students notified), roles |
 | `test_app_settings.py` | Threshold default from config, admin change applies to `/match`, `/ranked`, students' limit and auto-apply runs, a student's higher bar still wins, validation, admin-only |
+| `test_auto_apply_on_upload.py` | Upload triggers auto-apply for qualifying opted-in students (pending, notified), not for low scores or opted-out students, never twice on re-upload; no policy / passed deadline still uploads; switch off |
 | `test_student_cv.py` | Office records without a CV, student CV upload/replace, stable ids, no-CV scoring and auto-apply skip, storage failure leaves no record |
 | `test_my_jobs.py` | `GET /me/jobs`: eligibility per job, application status, closed deadlines, policy default/unknown, roles, no LLM calls |
 | `test_highlights.py` | Highlight lines (coverage, stricter CGPA floor, backlogs), snapshot on new applications, fallback for older ones |

@@ -60,7 +60,9 @@ After an upload you see what was read. If the AI "found" a rule the document nev
 4. Ineligible students show each failed rule, and under **Details** the policy or JD clause it comes from.
 5. **Re-run** re-checks eligibility instantly using stored scores. **Re-score with AI** asks the AI again (only needed if you suspect a stale score; results are normally identical).
 
-**Run auto-apply** (on the Rank page, under the summary tiles)
+**Auto-apply runs by itself** whenever a JD is uploaded (by an officer, admin or recruiter): right after the upload, in the background, against the newest policy. The upload page says it has started; the results show up under Applications and in the students' notifications.
+
+**Run auto-apply** (on the Rank page, under the summary tiles), to run it again by hand, e.g. after students opted in or uploaded a CV
 - One click, then **Confirm**. The system applies for every student who opted in and qualifies (see §6), and lists who was applied and *why each other student was not*.
 
 **Students** (left menu → Students)
@@ -151,7 +153,7 @@ Auto-apply saves students from missing deadlines, while making sure nothing is s
 **What happens next**
 
 ```
-Officer runs auto-apply
+A JD is uploaded (runs by itself) / officer clicks Run auto-apply
         │
         ▼
  PENDING ── student notified: "We applied to X for you; it will be sent on <date>"

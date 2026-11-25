@@ -29,7 +29,7 @@ function ApplicationsPage() {
         <EmptyState icon={Rocket} title="No applications yet">
           Apply from the <Link href="/me" className="font-medium text-brand-700 hover:underline">Jobs</Link> page, or turn on{" "}
           <Link href="/me/auto-apply" className="font-medium text-brand-700 hover:underline">auto-apply</Link> and you&apos;ll
-          appear here when the placement office runs it for a job you qualify for.
+          appear here when a job you qualify for is posted.
         </EmptyState>
       ) : (
         <div className="grid gap-4 lg:grid-cols-2">

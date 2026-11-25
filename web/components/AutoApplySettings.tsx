@@ -80,8 +80,8 @@ export function AutoApplySettings() {
         <div className="flex-1">
           <p className="font-semibold">Auto-apply</p>
           <p className="text-sm text-slate-500">
-            When the placement office runs auto-apply for a job, we apply for you if you&apos;re eligible and score at least
-            your minimum. You&apos;re notified and get {form.withdraw_hours} hours to withdraw before it&apos;s sent.
+            Whenever a new job is posted (or the placement office runs auto-apply for a job), we apply for you if you&apos;re
+            eligible and score at least your minimum. You&apos;re notified and get {form.withdraw_hours} hours to withdraw before it&apos;s sent.
           </p>
         </div>
         <Toggle checked={form.enabled} onChange={(enabled) => setForm({ ...form, enabled })} label="Auto-apply on or off" />

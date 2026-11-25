@@ -67,6 +67,9 @@ class JDIngestResponse(BaseModel):
     id: str
     requirements: JDRequirements
     warnings: list[str] = Field(default_factory=list)
+    auto_apply: str | None = Field(
+        None, description="What happens next with auto-apply for this JD (runs in the background after upload)"
+    )
 
 
 class StudentIngestResponse(BaseModel):

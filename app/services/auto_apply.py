@@ -334,6 +334,31 @@ def apply_manually(student: dict[str, Any], jd_id: str, policy_id: str, actor_id
     return to_out(db.get_application(application_id), now)
 
 
+def run_on_upload(jd_id: str) -> AutoApplyRun | None:
+    """Auto-apply for a newly uploaded JD, run in the background after the upload returns.
+
+    Same run as the officer's button, against the newest policy, with no actor (the system
+    applied). Never raises: a JD too close to its deadline, or a missing policy, is logged
+    and skipped. Re-uploading the same JD is safe: students who already have an application
+    to it are skipped."""
+    try:
+        policies = db.list_policies()
+        if not policies:
+            logger.info("Auto-apply on upload skipped for JD %s: no placement policy yet", jd_id)
+            return None
+        run = run_auto_apply(jd_id, policies[0]["id"], actor_id=None)
+        logger.info(
+            "Auto-apply on upload for JD %s: %d applied, %d skipped, %d not opted in",
+            jd_id, len(run.created), len(run.skipped), run.not_opted_in,
+        )
+        return run
+    except HTTPException as exc:
+        logger.info("Auto-apply on upload skipped for JD %s: %s", jd_id, exc.detail)
+    except Exception:
+        logger.exception("Auto-apply on upload failed for JD %s", jd_id)
+    return None
+
+
 def run_auto_apply(jd_id: str, policy_id: str, actor_id: str | None) -> AutoApplyRun:
     settings = get_settings()
     release_due()  # statuses and application counts must be current before deciding

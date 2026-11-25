@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
+from fastapi import APIRouter, BackgroundTasks, Depends, File, Form, HTTPException, UploadFile
 
 from app.auth import CurrentUser, any_user, require_role
 
@@ -7,6 +7,7 @@ import logging
 from datetime import UTC, datetime
 
 from app import db
+from app.config import get_settings
 from app.schemas import (
     DeadlineChange,
     DeadlineUpdate,
@@ -43,6 +44,7 @@ JD_INSTRUCTIONS = (
 
 @router.post("", response_model=JDIngestResponse)
 async def create_jd(
+    background: BackgroundTasks,
     text: str | None = Form(None),
     file: UploadFile | None = File(None),
     user: CurrentUser = Depends(require_role("officer", "admin", "recruiter")),
@@ -66,7 +68,15 @@ async def create_jd(
         chunk_size=CLAUSE_CHUNK_SIZE,
         chunk_overlap=CLAUSE_CHUNK_OVERLAP,
     )
-    return JDIngestResponse(id=jd_id, requirements=requirements, warnings=warnings)
+    auto_apply_note = None
+    if get_settings().auto_apply_on_upload:
+        # After the response: scoring every opted-in student can take a while.
+        background.add_task(auto_apply.run_on_upload, jd_id)
+        auto_apply_note = (
+            "Auto-apply is running in the background: opted-in students who are eligible and score "
+            "high enough get a pending application, which is sent after their withdraw window."
+        )
+    return JDIngestResponse(id=jd_id, requirements=requirements, warnings=warnings, auto_apply=auto_apply_note)
 
 
 def can_edit_deadline(user: CurrentUser, created_by: str | None) -> bool:

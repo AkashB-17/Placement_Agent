@@ -1,6 +1,6 @@
 "use client";
 
-import { Briefcase, FileUp, GraduationCap, ScrollText, X, type LucideIcon } from "lucide-react";
+import { Briefcase, FileUp, GraduationCap, Rocket, ScrollText, X, type LucideIcon } from "lucide-react";
 import { useEffect, useRef, useState, type DragEvent, type FormEvent, type InputHTMLAttributes } from "react";
 
 import { ErrorBox, PageHeader, Spinner, SuccessBox, Warnings, errorText } from "@/components/ui";
@@ -38,6 +38,12 @@ function Result({ status, noun }: { status: Status; noun: string }) {
         <SuccessBox>
           {noun} saved <span className="text-emerald-600">(id {status.result.id.slice(0, 8)})</span>.
         </SuccessBox>
+      )}
+      {status.result?.auto_apply && (
+        <p className="flex items-start gap-2 rounded-lg border border-brand-200 bg-brand-50 p-3 text-sm text-brand-700">
+          <Rocket className="mt-0.5 size-4 shrink-0" aria-hidden />
+          <span>{status.result.auto_apply} Results appear under Applications.</span>
+        </p>
       )}
       <Warnings items={status.result?.warnings} />
     </div>

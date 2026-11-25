@@ -32,6 +32,7 @@ def make_test_settings(tmp_path, **overrides) -> Settings:
         dev_auth_bypass=False,
         release_sweep_seconds=0,  # tests drive releases explicitly with a fake clock
         index_sync_on_startup=False,  # tests call index_sync directly
+        auto_apply_on_upload=False,  # tests that want it turn it on; others run auto-apply explicitly
     )
     values.update(overrides)
     return Settings(_env_file=None, **values)
