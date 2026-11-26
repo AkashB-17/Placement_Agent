@@ -139,6 +139,21 @@ CREATE TABLE IF NOT EXISTS auto_apply_runs (
     actor TEXT
 );
 
+CREATE TABLE IF NOT EXISTS registration_requests (
+    user_id TEXT PRIMARY KEY,
+    email TEXT NOT NULL,
+    name TEXT NOT NULL,
+    branch TEXT NOT NULL,
+    batch TEXT NOT NULL,
+    cgpa REAL NOT NULL,
+    active_backlogs INTEGER NOT NULL,
+    status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected')),
+    submitted_at TEXT NOT NULL,
+    decided_at TEXT,
+    decided_by TEXT,
+    note TEXT
+);
+
 CREATE TABLE IF NOT EXISTS app_settings (
     key TEXT PRIMARY KEY,
     value TEXT NOT NULL,
@@ -354,6 +369,13 @@ def init_db() -> None:
             raise RuntimeError(
                 "The student CV migration is missing. Apply supabase/migrations/20261120000000_student_cv.sql "
                 "(npx supabase@latest db push --linked)."
+            ) from exc
+        try:
+            _fetchone("SELECT 1 AS ok FROM registration_requests LIMIT 1")
+        except psycopg.errors.UndefinedTable as exc:
+            raise RuntimeError(
+                "The registration requests table is missing. Apply supabase/migrations/20261130000000_registration_requests.sql "
+                "(npx supabase@latest db push --remote)."
             ) from exc
         try:
             _fetchone("SELECT 1 AS ok FROM auto_apply_runs LIMIT 1")
@@ -1119,6 +1141,75 @@ def mark_notifications_read(student_id: str, now: datetime) -> None:
 
 
 # ── Score cache ─────────────────────────────────────────────────────────────
+
+# ── Self sign-up: registration requests ───────────────────────────────────
+
+_REGISTRATION_COLUMNS = (
+    "user_id, email, name, branch, batch, cgpa, active_backlogs, status, submitted_at, decided_at, note"
+)
+
+
+def _registration(row: dict[str, Any]) -> dict[str, Any]:
+    return {
+        **row,
+        "user_id": str(row["user_id"]),
+        "cgpa": float(row["cgpa"]),
+        "submitted_at": _dt(row["submitted_at"]),
+        "decided_at": _dt(row["decided_at"]),
+    }
+
+
+def submit_registration_request(request: dict[str, Any], now: datetime) -> None:
+    """Create or resubmit a student's request; resubmitting puts it back to pending.
+    An approved request is never reopened (the caller checks the student isn't linked)."""
+    _execute(
+        """
+        INSERT INTO registration_requests (
+            user_id, email, name, branch, batch, cgpa, active_backlogs, status, submitted_at
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', ?)
+        ON CONFLICT (user_id) DO UPDATE SET
+            email = excluded.email, name = excluded.name, branch = excluded.branch,
+            batch = excluded.batch, cgpa = excluded.cgpa, active_backlogs = excluded.active_backlogs,
+            status = 'pending', submitted_at = excluded.submitted_at,
+            decided_at = NULL, decided_by = NULL, note = NULL
+        WHERE registration_requests.status <> 'approved'
+        """,
+        (
+            request["user_id"], request["email"], request["name"], request["branch"], request["batch"],
+            request["cgpa"], request["active_backlogs"], _ts(now),
+        ),
+    )
+
+
+def get_registration_request(user_id: str) -> dict[str, Any] | None:
+    row = _fetchone(f"SELECT {_REGISTRATION_COLUMNS} FROM registration_requests WHERE user_id = ?", (user_id,))
+    return _registration(row) if row else None
+
+
+def list_registration_requests(status: str | None = None) -> list[dict[str, Any]]:
+    """Oldest pending first (first come, first served); decided ones newest first."""
+    if status:
+        order = "submitted_at ASC" if status == "pending" else "decided_at DESC"
+        rows = _fetchall(
+            f"SELECT {_REGISTRATION_COLUMNS} FROM registration_requests WHERE status = ? ORDER BY {order}", (status,)
+        )
+    else:
+        rows = _fetchall(f"SELECT {_REGISTRATION_COLUMNS} FROM registration_requests ORDER BY submitted_at DESC")
+    return [_registration(row) for row in rows]
+
+
+def decide_registration_request(
+    user_id: str, status: str, now: datetime, decided_by: str | None, note: str | None
+) -> bool:
+    """Approve or reject a request that is still pending. False if it isn't (anymore)."""
+    row = _fetchone(
+        "UPDATE registration_requests SET status = ?, decided_at = ?, decided_by = ?, note = ? "
+        "WHERE user_id = ? AND status = 'pending' RETURNING user_id",
+        (status, _ts(now), decided_by, note, user_id),
+    )
+    return row is not None
+
 
 # ── Auto-apply run history ─────────────────────────────────────────────────
 

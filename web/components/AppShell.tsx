@@ -1,12 +1,13 @@
 "use client";
 
-import { BarChart3, Briefcase, GraduationCap, LogOut, Menu, Send, ShieldCheck, Upload, Users, X, type LucideIcon } from "lucide-react";
+import { BarChart3, Briefcase, GraduationCap, LogOut, Menu, Send, ShieldCheck, Upload, Users, X, UserCheck, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, type ReactNode } from "react";
 
 import { useAuth } from "@/lib/auth";
-import type { Role } from "@/lib/types";
+import { useApi } from "@/lib/useApi";
+import type { RegistrationOut, Role } from "@/lib/types";
 
 import { StudentShell } from "./StudentShell";
 import { ThemeToggle } from "./ThemeToggle";
@@ -18,6 +19,7 @@ const LINKS: { href: string; label: string; icon: LucideIcon; roles: Role[] }[] 
   { href: "/students", label: "Students", icon: GraduationCap, roles: ["officer", "admin"] },
   { href: "/applications", label: "Applications", icon: Send, roles: ["officer", "admin", "recruiter"] },
   { href: "/upload", label: "Upload", icon: Upload, roles: ["officer", "admin", "recruiter"] },
+  { href: "/admin/approvals", label: "Approvals", icon: UserCheck, roles: ["officer", "admin"] },
   { href: "/admin/jobs", label: "Jobs", icon: Briefcase, roles: ["admin"] },
   { href: "/admin", label: "Users & settings", icon: Users, roles: ["admin"] },
 ];
@@ -50,6 +52,9 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   const { profile, signOut } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
+  // Students waiting for approval: a badge on the Approvals link (staff only).
+  const staff = profile?.role === "officer" || profile?.role === "admin";
+  const waiting = useApi<RegistrationOut[]>(staff ? "/registrations?status=pending" : null).data?.length ?? 0;
   if (!profile) return null;
   // The longest matching link wins, so /admin/jobs highlights "Jobs", not "Users & roles".
   const activeHref = LINKS.map((l) => l.href)
@@ -77,6 +82,11 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
             >
               <Icon className={`size-4 ${active ? "text-brand-600" : "text-slate-400"}`} aria-hidden />
               {label}
+              {href === "/admin/approvals" && waiting > 0 && (
+                <span className="ml-auto rounded-full bg-amber-500 px-1.5 text-[11px] font-semibold text-white" aria-label={`${waiting} waiting`}>
+                  {waiting}
+                </span>
+              )}
             </Link>
           );
         })}

@@ -306,3 +306,28 @@ export interface AppSettings {
   default_auto_apply_threshold: number;
   updated_at: string | null;
 }
+
+// ── Self sign-up (POST /me/registration, /registrations) ────────────────────
+
+export interface RegistrationIn {
+  name: string;
+  branch: string;
+  batch: string;
+  cgpa: number;
+  active_backlogs: number;
+}
+
+export interface RegistrationOut extends RegistrationIn {
+  user_id: string;
+  email: string;
+  status: "pending" | "approved" | "rejected";
+  submitted_at: string;
+  decided_at: string | null;
+  /** Staff's reason when rejected. */
+  note: string | null;
+}
+
+export interface MyRegistration {
+  linked: boolean;
+  request: RegistrationOut | null;
+}

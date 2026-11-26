@@ -9,7 +9,7 @@ from fastapi.responses import JSONResponse
 
 from app.config import get_settings
 from app.db import close_pool, init_db, open_pool
-from app.routers import admin, applications, jds, match, policies, students
+from app.routers import admin, applications, jds, match, policies, registrations, students
 from app.services import auto_apply, index_sync
 
 logger = logging.getLogger("uvicorn.error")
@@ -121,3 +121,4 @@ app.include_router(jds.router)
 app.include_router(students.router)
 app.include_router(match.router)
 app.include_router(applications.router)
+app.include_router(registrations.router)

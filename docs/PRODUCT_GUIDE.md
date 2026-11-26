@@ -68,6 +68,7 @@ After an upload you see what was read. If the AI "found" a rule the document nev
 - One click, then **Confirm**. The system applies for every student who opted in and qualifies (see §6), and lists who was applied and *why each other student was not*.
 
 **Students** (left menu → Students)
+- **Approvals** (left menu, officers and admins; a badge shows how many are waiting): students who signed up themselves. Each request shows what they entered; correct anything against your records, then **Approve** (creates their student record and links their account) or **Reject** with a reason they'll see. If you had already added that student, approving keeps your record as it is.
 - Searchable list of all students. Click a row for their parsed skills, projects and a link to open their resume file (the link works for 60 seconds).
 - **Edit details** corrects a student's academic record: name, login email, branch, batch, CGPA, active backlogs and whether they are placed. The new values apply to eligibility at once (the job board, rankings and auto-apply all read the current record). Applications already made keep the snapshot from when they were made. The student's CV is not part of this form; it stays theirs. Changing the login email moves the record to whoever signs in with the new email, and two students can't share one email.
 
@@ -75,6 +76,8 @@ After an upload you see what was read. If the AI "found" a rule the document nev
 - Every auto-apply application with its status: **Pending** (with a countdown to when it is sent), **Sent to company**, or **Withdrawn**. Filter by job.
 
 ### 4.2 Student
+
+**Joining.** A student can sign up themselves. If the placement office hasn't added them yet, the portal asks for their name, branch, batch, CGPA and active backlogs and sends that to the office as a request (*Waiting for approval*). Once approved, their account is linked and the portal opens. If the office rejects it, the student sees the reason, corrects the details and sends it again. Students the office added directly don't see any of this.
 
 Students get their own layout: a top bar with a **notification bell** (unread count; "We applied to X for you, it will be sent on…", "Your application has been sent", "You withdrew…") and an icon rail with four pages (a slide-out menu on phones).
 - **Jobs** (home page): a job board. The list shows every job with its company, CTC, when it was posted, how long until it closes (red in the last 24 hours) and a status: *Eligible*, *Not eligible*, *Applied*, *Sent to company*, *Withdrawn* or *Applications closed*. Filter by status, sort by newest or closing soon, search, and switch between *All jobs* and *Applied jobs*. Selecting a job opens its detail: the application (with countdown and **Withdraw**) if one exists, and three tabs: **Job description**, **Eligibility criteria** (each rule the student fails, with their value against the requirement and whether the rule came from the policy or the job), and **My match** (score, matched/missing skills and evidence; needs a CV). Eligibility on the board is the fixed rule check, so the board loads without any AI call.

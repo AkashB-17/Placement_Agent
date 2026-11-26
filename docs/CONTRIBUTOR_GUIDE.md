@@ -327,6 +327,7 @@ The Postgres schema lives in `supabase/migrations/` and is the source of truth. 
 | `20261127000000_jd_edits.sql` | `jds.requirements_edited`, `edited_at`, `edited_by`: an admin's edit of a job's details, kept apart from the extracted `requirements_json` (which re-uploads overwrite) |
 | `20261128000000_app_settings.sql` | `app_settings` (key, jsonb value, updated_at/by): college-wide settings admins change in the app; backend-only (RLS on, no policies). First key: `auto_apply_threshold` |
 | `20261129000000_auto_apply_runs.sql` | `auto_apply_runs`: one row per run (trigger upload/manual, status completed/skipped/failed, applied count, skipped students with reasons as jsonb, not_opted_in, message); backend-only |
+| `20261130000000_registration_requests.sql` | `registration_requests` (one per account: self-reported academic details, status pending/approved/rejected, note); backend-only |
 
 | Table | Key columns | Written by |
 |---|---|---|
@@ -361,6 +362,9 @@ Interactive docs at `/docs` when the API is running. "Staff" = officer + admin.
 | PUT | `/students/{id}` | staff | `students.update_student_endpoint` → `db.update_student_record` (academic fields only; branch/batch normalised; email unique across students, required while there's no CV; id and CV unchanged) |
 | GET | `/students/me` | student | `students.get_my_record` |
 | PUT | `/students/me/resume` | student (own linked record) | `students.upload_my_resume` |
+| GET / POST | `/me/registration` | student | `registrations.my_registration` / `submit_registration`: linked? + own request; submit or resubmit (409 once linked or approved) |
+| GET | `/registrations?status=` | staff | `registrations.list_registrations` (pending oldest first) |
+| POST | `/registrations/{user_id}/approve` / `reject` | staff | approve creates the record (`find_student_id`, `upsert_student_record`, optional corrected values; an existing record with that email is kept) then marks approved; reject needs a note |
 | GET | `/students/{id}/resume` | staff, owning student | `students.get_resume_link` |
 | POST | `/match` | staff, student (self only) | `match.match` |
 | GET | `/jds/{id}/ranked?policy_id=&refresh=` | staff | `match.ranked` |
@@ -418,7 +422,7 @@ Next.js 16 (App Router), Tailwind 4, `lucide-react` icons, `@supabase/supabase-j
 | `JDEditForm.tsx` | `JDEditForm` | Admin edit of a job (`PUT /jds/{id}`). The deadline is shown as date + time in college time (IST); an untouched deadline is sent back exactly as stored, so it doesn't count as a change. |
 | `ThresholdSettings.tsx` | `ThresholdSettings` | Admin card (slider + number) for the minimum auto-apply score; on `/admin`. |
 | `AutoApplyHistory.tsx` | `AutoApplyHistory`, `runSummary`, `triggerLabel` | Run history card for one job on `/jobs` (reloads after a manual run via `AutoApplyPanel`'s `onRan`); the helpers also give the one-line latest run on `/admin/jobs`. |
-| `NotLinked.tsx` | `NotLinked` | Shown when a student account has no matching record (`/students/me` → 404). |
+| `NotLinked.tsx` | `NotLinked` | Shown when a student account has no matching record (`/students/me` → 404): the registration form, the *Waiting for approval* state, or the rejection reason with a resubmit form (`/me/registration`). Reloads into the portal once linked. |
 | `ThemeToggle.tsx` | `ThemeToggle`, `THEME_INIT_SCRIPT` | Light/dark switch (student top bar beside the bell, staff sidebar and mobile header, top-right on account pages); saved in `localStorage`. |
 | `AuthCard.tsx` | `AuthCard`, `passwordProblem`, `MIN_PASSWORD_LENGTH` | Centered card for the account pages, and the shared password rule (8+ characters, both fields match). |
 | `ui.tsx` | `ErrorBox`, `SuccessBox`, `Warnings`, `Chip`, `Chips`, `PageHeader`, `StatCard`, `EmptyState`, `Spinner`, `Skeleton`, `CardSkeletons`, `Avatar`, `display`, `errorText`, `Tone` | Shared UI primitives. |
@@ -445,6 +449,7 @@ Next.js 16 (App Router), Tailwind 4, `lucide-react` icons, `@supabase/supabase-j
 | `/me/profile` | student | Read-only academic record, CV skills, `StudentCvCard`. |
 | `/me/auto-apply` | student | `AutoApplySettings`; warns when no CV is uploaded. |
 | `/admin/jobs` | admin | Job list with deadline, posted date and application counts; inline `JDEditForm` and a remove confirmation that shows pending/sent counts. |
+| `/admin/approvals` | officer, admin | Self sign-up requests: Waiting (editable, Approve / Reject with reason), Approved, Rejected tabs. The sidebar link shows the waiting count. |
 | `/admin` | admin | Role counts, invite form, role changes. |
 
 ---
@@ -486,6 +491,7 @@ Next.js 16 (App Router), Tailwind 4, `lucide-react` icons, `@supabase/supabase-j
 | `test_match.py` | `/match` and `/ranked`: scoring, citations, sorting |
 | `test_auto_apply.py` | Preferences, the run, pinning, notifications, withdraw window, release, idempotency, deadlines and parsing, recruiter visibility, roles |
 | `test_student_edit.py` | Office edits: fields and normalisation, CV kept, eligibility uses new CGPA at once, email change moves the login link, duplicate email 409, email required without a CV, validation, roles |
+| `test_registrations.py` | Self sign-up: queue, approval creates and links the record, corrections on approval, rejection reason and resubmit, an existing office record wins, decided once, validation, roles |
 | `test_jd_deadline.py` | Deadline changes: extend reopens and moves nothing, shorten moves pending applications earlier with a notification (or sends at once), sent/withdrawn untouched, re-upload keeps the change, recruiter ownership, roles, bad input |
 | `test_jd_admin.py` | Admin edits (normalisation, eligibility follows, changed skills re-scored, extracted details kept across re-upload, deadline edit reschedules, a bad deadline saves nothing, validation) and removal (applications, notifications, cached scores gone; students notified), roles |
 | `test_app_settings.py` | Threshold default from config, admin change applies to `/match`, `/ranked`, students' limit and auto-apply runs, a student's higher bar still wins, validation, admin-only |

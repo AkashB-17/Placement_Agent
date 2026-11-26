@@ -196,6 +196,42 @@ class RoleUpdate(BaseModel):
     role: Role
 
 
+class RegistrationIn(BaseModel):
+    """A student's self-reported academic details, asking to be added (staff verify)."""
+    name: str = Field(min_length=1, max_length=200)
+    branch: str = Field(min_length=1, max_length=100)
+    batch: str = Field(min_length=1, max_length=20)
+    cgpa: float = Field(ge=0, le=10)
+    active_backlogs: int = Field(ge=0, le=100)
+
+
+class ApproveRegistration(RegistrationIn):
+    """Staff's corrected values; the record is created from these."""
+
+
+class RejectRegistration(BaseModel):
+    note: str = Field(min_length=1, max_length=500, description="Shown to the student")
+
+
+class RegistrationOut(BaseModel):
+    user_id: str
+    email: str
+    name: str
+    branch: str
+    batch: str
+    cgpa: float
+    active_backlogs: int
+    status: Literal["pending", "approved", "rejected"]
+    submitted_at: datetime
+    decided_at: datetime | None = None
+    note: str | None = None
+
+
+class MyRegistration(BaseModel):
+    linked: bool = Field(description="A student record with this account's email exists")
+    request: RegistrationOut | None = None
+
+
 class AppSettingsOut(BaseModel):
     auto_apply_threshold: float = Field(description="Minimum score for auto-apply and the recommended flag")
     default_auto_apply_threshold: float = Field(description="Used until an admin sets one (AUTO_APPLY_THRESHOLD)")

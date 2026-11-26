@@ -107,6 +107,7 @@ Open http://127.0.0.1:8000/docs.
 | `POST /students` | Form fields `name`, `email`, `branch`, `batch`, `cgpa` (0–10), `active_backlogs`, `is_placed`, plus a `.pdf`/`.txt` `resume` |
 | `GET /policies`, `/jds`, `/students` and `GET /{resource}/{id}` | Discover ids, inspect extracted JSON |
 | `PUT /students/{id}` | Staff edit a student's academic record (JSON: name, email, branch, batch, cgpa, active_backlogs, is_placed); the CV and id never change |
+| `POST /me/registration`; `GET /registrations`, `POST /registrations/{user_id}/approve`, `…/reject` | Self sign-up: a student asks to be added; staff approve (creates the record) or reject with a reason |
 | `GET /students/me`, `GET /students/{id}/resume` | A student's own record; a short-lived signed link to the resume file |
 | `POST /match` | `{jd_id, student_id, policy_id}` → eligibility, score breakdown, citations |
 | `GET /jds/{jd_id}/ranked?policy_id=...` | Eligible students by score, then ineligible students with failed rules and citations |
