@@ -12,7 +12,17 @@ import { invalidate } from "@/lib/useApi";
 import { Avatar, ErrorBox, Spinner, SuccessBox, errorText } from "./ui";
 
 /** Officer action: create pending applications for opted-in students who qualify. */
-export function AutoApplyPanel({ jd, policyId, threshold }: { jd: JDSummary; policyId: string; threshold: number }) {
+export function AutoApplyPanel({
+  jd,
+  policyId,
+  threshold,
+  onRan,
+}: {
+  jd: JDSummary;
+  policyId: string;
+  threshold: number;
+  onRan?: () => void;
+}) {
   const [confirming, setConfirming] = useState(false);
   const [busy, setBusy] = useState(false);
   const [run, setRun] = useState<AutoApplyRun | null>(null);
@@ -25,8 +35,9 @@ export function AutoApplyPanel({ jd, policyId, threshold }: { jd: JDSummary; pol
       const result = await api<AutoApplyRun>(`/jds/${jd.id}/auto-apply?policy_id=${encodeURIComponent(policyId)}`, {
         method: "POST",
       });
-      invalidate("/applications");
+      invalidate("/applications", "/auto-apply/runs");
       setRun(result);
+      onRan?.();
     } catch (e) {
       setError(errorText(e));
     } finally {

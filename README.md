@@ -103,6 +103,7 @@ Open http://127.0.0.1:8000/docs.
 | `PUT /jds/{id}/deadline` | Extend or shorten a job's deadline (recruiter: own jobs; officer/admin: any). Shortening moves pending applications earlier and notifies the students |
 | `PUT /jds/{id}`, `DELETE /jds/{id}` | Admin: edit a job's details (JSON, same fields as the extracted requirements) or remove the job with its applications |
 | `GET` / `PUT /admin/settings` | Admin: read or change the college-wide minimum auto-apply score (`auto_apply_threshold`, 0–100; default from `AUTO_APPLY_THRESHOLD`) |
+| `GET /auto-apply/runs?jd_id=` | Staff: recorded auto-apply runs (automatic and manual) with who was applied and why others were skipped |
 | `POST /students` | Form fields `name`, `email`, `branch`, `batch`, `cgpa` (0–10), `active_backlogs`, `is_placed`, plus a `.pdf`/`.txt` `resume` |
 | `GET /policies`, `/jds`, `/students` and `GET /{resource}/{id}` | Discover ids, inspect extracted JSON |
 | `PUT /students/{id}` | Staff edit a student's academic record (JSON: name, email, branch, batch, cgpa, active_backlogs, is_placed); the CV and id never change |

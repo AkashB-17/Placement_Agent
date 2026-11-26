@@ -4,12 +4,13 @@ import { Briefcase, Pencil, Search, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
+import { runSummary, triggerLabel } from "@/components/AutoApplyHistory";
 import { JDEditForm } from "@/components/JDEditForm";
 import { Chip, EmptyState, ErrorBox, PageHeader, Skeleton, Spinner, SuccessBox, errorText } from "@/components/ui";
 import { api } from "@/lib/api";
 import { RequireRole } from "@/lib/auth";
 import { formatDateTime } from "@/lib/time";
-import type { Application, JDDetail, JDSummary } from "@/lib/types";
+import type { Application, AutoApplyRunRecord, JDDetail, JDSummary } from "@/lib/types";
 import { invalidate, useApi } from "@/lib/useApi";
 
 type Counts = { total: number; pending: number; submitted: number };
@@ -60,6 +61,12 @@ function RemovePanel({ jd, counts, onDone }: { jd: JDSummary; counts: Counts; on
 function JobsAdminPage() {
   const jds = useApi<JDSummary[]>("/jds");
   const applications = useApi<Application[]>("/applications");
+  const runs = useApi<AutoApplyRunRecord[]>("/auto-apply/runs?limit=500");
+  const latestRun = useMemo(() => {
+    const byJd = new Map<string, AutoApplyRunRecord>();
+    for (const run of runs.data ?? []) if (!byJd.has(run.jd_id)) byJd.set(run.jd_id, run); // newest first
+    return byJd;
+  }, [runs.data]);
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState<{ id: string; mode: "edit" | "remove" } | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
@@ -134,6 +141,12 @@ function JobsAdminPage() {
                         {jd.posted_at && <span>Posted {formatDateTime(jd.posted_at)}</span>}
                         <span>{c.total} application{c.total === 1 ? "" : "s"}</span>
                       </p>
+                      {latestRun.get(jd.id) && (
+                        <p className="mt-1 text-xs text-slate-500">
+                          Last auto-apply ({triggerLabel(latestRun.get(jd.id)!).toLowerCase()}, {formatDateTime(latestRun.get(jd.id)!.ran_at)}):{" "}
+                          <span className="text-slate-700">{runSummary(latestRun.get(jd.id)!)}</span>
+                        </p>
+                      )}
                     </div>
                     <div className="flex flex-wrap items-center gap-2">
                       {jd.edited_at && <Chip tone="brand">Edited</Chip>}

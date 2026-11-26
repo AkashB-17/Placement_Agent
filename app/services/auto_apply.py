@@ -334,6 +334,23 @@ def apply_manually(student: dict[str, Any], jd_id: str, policy_id: str, actor_id
     return to_out(db.get_application(application_id), now)
 
 
+def _record_run(
+    jd_id: str, policy_id: str | None, trigger: str, status: str, *, applied: int = 0,
+    skipped: list[SkippedStudent] | None = None, not_opted_in: int = 0,
+    message: str | None = None, actor_id: str | None = None,
+) -> None:
+    """Keep the run's outcome for staff. A failed history write is logged, never raised."""
+    try:
+        db.record_auto_apply_run({
+            "id": uuid.uuid4().hex, "jd_id": jd_id, "policy_id": policy_id, "trigger": trigger,
+            "status": status, "ran_at": utcnow(), "applied": applied,
+            "skipped": [s.model_dump() for s in (skipped or [])], "not_opted_in": not_opted_in,
+            "message": message, "actor": actor_id,
+        })
+    except Exception:
+        logger.exception("Could not record the auto-apply run for JD %s", jd_id)
+
+
 def run_on_upload(jd_id: str) -> AutoApplyRun | None:
     """Auto-apply for a newly uploaded JD, run in the background after the upload returns.
 
@@ -341,12 +358,15 @@ def run_on_upload(jd_id: str) -> AutoApplyRun | None:
     applied). Never raises: a JD too close to its deadline, or a missing policy, is logged
     and skipped. Re-uploading the same JD is safe: students who already have an application
     to it are skipped."""
+    policy_id: str | None = None
     try:
         policies = db.list_policies()
         if not policies:
             logger.info("Auto-apply on upload skipped for JD %s: no placement policy yet", jd_id)
+            _record_run(jd_id, None, "upload", "skipped", message="No placement policy has been uploaded yet.")
             return None
-        run = run_auto_apply(jd_id, policies[0]["id"], actor_id=None)
+        policy_id = policies[0]["id"]
+        run = run_auto_apply(jd_id, policy_id, actor_id=None, trigger="upload")
         logger.info(
             "Auto-apply on upload for JD %s: %d applied, %d skipped, %d not opted in",
             jd_id, len(run.created), len(run.skipped), run.not_opted_in,
@@ -354,12 +374,14 @@ def run_on_upload(jd_id: str) -> AutoApplyRun | None:
         return run
     except HTTPException as exc:
         logger.info("Auto-apply on upload skipped for JD %s: %s", jd_id, exc.detail)
+        _record_run(jd_id, policy_id, "upload", "skipped", message=str(exc.detail))
     except Exception:
         logger.exception("Auto-apply on upload failed for JD %s", jd_id)
+        _record_run(jd_id, policy_id, "upload", "failed", message="Unexpected error; see the API log.")
     return None
 
 
-def run_auto_apply(jd_id: str, policy_id: str, actor_id: str | None) -> AutoApplyRun:
+def run_auto_apply(jd_id: str, policy_id: str, actor_id: str | None, trigger: str = "manual") -> AutoApplyRun:
     settings = get_settings()
     release_due()  # statuses and application counts must be current before deciding
     policy = load_policy(policy_id)
@@ -427,7 +449,7 @@ def run_auto_apply(jd_id: str, policy_id: str, actor_id: str | None) -> AutoAppl
         if stored is not None:
             created.append(to_out(stored, now))
 
-    return AutoApplyRun(
+    result = AutoApplyRun(
         jd_id=jd_id,
         policy_id=policy_id,
         deadline=deadline,
@@ -437,3 +459,8 @@ def run_auto_apply(jd_id: str, policy_id: str, actor_id: str | None) -> AutoAppl
         skipped=sorted(skipped, key=lambda s: s.student_name),
         not_opted_in=max(total_students - len(opted_in), 0),
     )
+    _record_run(
+        jd_id, policy_id, trigger, "completed", applied=len(created), skipped=result.skipped,
+        not_opted_in=result.not_opted_in, actor_id=actor_id,
+    )
+    return result

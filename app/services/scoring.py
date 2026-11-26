@@ -34,6 +34,9 @@ PREFERRED_WEIGHT = 0.25
 _FRAGMENT_SPLIT = re.compile(r"\.{3}|\u2026|(?<=[.!?])\s+")
 _EDGE_PUNCTUATION = re.compile(r"^[\s\"'.,;:!?\-]+|[\s\"'.,;:!?\-]+$")
 _STOPWORDS = {"a", "an", "and", "or", "of", "the", "in", "with", "for", "to", "on"}
+# Spacing next to list/label punctuation is unreliable on both sides: PDF extraction often
+# drops it ("Languages:Python, SQL") and LLMs often add it back ("Languages: Python, SQL").
+_SPACE_AROUND_PUNCT = re.compile(r"\s*([:;,/|()\[\]•·])\s*")
 
 
 class SkillEvidence(BaseModel):
@@ -71,14 +74,15 @@ def _skill_tokens(skill: str) -> list[str]:
 def quote_in_resume(quote: str, resume_text: str) -> bool:
     """True if the quote is a verbatim span of the resume.
 
-    Tolerated: case, whitespace, surrounding quote marks and edge punctuation (LLMs often
+    Tolerated: case, whitespace, spacing next to list/label punctuation (": , ; / | •" and
+    brackets, on either side), surrounding quote marks and edge punctuation (LLMs often
     end a truncated sentence with a period), and several verbatim sentences or
     "..."-joined fragments glued together, each of which must appear in order.
-    Reworded text still fails.
+    The words themselves must match: reworded text still fails.
     """
-    resume = _normalize_text(resume_text)
+    resume = _SPACE_AROUND_PUNCT.sub(r"\1", _normalize_text(resume_text))
     fragments = [_EDGE_PUNCTUATION.sub("", f) for f in _FRAGMENT_SPLIT.split(_normalize_text(quote))]
-    fragments = [f for f in fragments if f]
+    fragments = [_SPACE_AROUND_PUNCT.sub(r"\1", f) for f in fragments if f]
     if not fragments:
         return False
     position = 0
@@ -90,20 +94,75 @@ def quote_in_resume(quote: str, resume_text: str) -> bool:
     return True
 
 
+def _lowercase_word_before(text: str, start: int) -> bool:
+    """A lowercase word ends right before `start`: "with" in "withPython", "onGCPwithDocker".
+
+    The lowercase run must begin a word (after a non-letter) or follow an acronym
+    ("GCPwith"); a run that is the tail of a capitalised word ("Postgre" + "SQL",
+    "My" + "SQL") doesn't count."""
+    i = start
+    while i > 0 and text[i - 1].islower():
+        i -= 1
+    if i == start:
+        return False
+    if i == 0 or not text[i - 1].isalpha():
+        return True
+    return text[i - 1].isupper() and i >= 2 and text[i - 2].isupper()
+
+
+def _lowercase_word_after(text: str, end: int) -> bool:
+    """A lowercase word starts right at `end`: "to" in "SQLto", "with" in "GCPwithDocker"."""
+    return end < len(text) and text[end].islower()
+
+
+def _glued_mention(quote: str, token: str, prefix_ok: bool) -> bool:
+    """The token appears glued to a neighbouring word at a case change.
+
+    PDF extraction often loses the spaces around styled (bold) words, giving "withPython",
+    "theOpenAI", "onGCPwith", "SQLto", "twoMCPservers". A case change from a plain lowercase
+    word is a reliable sign of a lost space; a capitalised neighbour is not, so "PostgreSQL"
+    and "MySQL" still don't count as mentioning "SQL". Known limit: an acronym followed by
+    lowercase letters inside one real word ("SQLite") also counts, since code can't tell it
+    from "SQLto" without a dictionary; the LLM must still have claimed the skill."""
+    target = token.rstrip("s") if prefix_ok else token
+    lowered = quote.casefold()
+    start = lowered.find(target)
+    while start >= 0:
+        end = start + len(target)
+        segment = quote[start:end]
+        before = quote[start - 1] if start > 0 else ""
+        after = quote[end] if end < len(quote) else ""
+        left_ok = not before.isalnum() or (segment[:1].isupper() and _lowercase_word_before(quote, start))
+        right_ok = (
+            prefix_ok
+            or not (after.isalnum() or after in "+#")
+            or (segment[-1:].isupper() and _lowercase_word_after(quote, end))
+        )
+        if left_ok and right_ok:
+            return True
+        start = lowered.find(target, start + 1)
+    return False
+
+
 def quote_mentions_skill(quote: str, skill: str) -> bool:
     """True if any token of the skill appears as a word in the quote.
 
     Tokens longer than 3 characters may match as a prefix with a trailing "s" dropped
     ("APIs" matches "API", "Docker" matches "Dockerized"); short tokens ("C", "Go", "R")
-    must match a whole word.
+    must match a whole word. A word glued to its neighbour by PDF extraction counts when
+    the join is a case change from a lowercase word ("withPython", "SQLto"); see
+    _glued_mention.
     """
     normalized_quote = _normalize_text(quote)
+    original = re.sub(r"\s+", " ", unicodedata.normalize("NFKC", quote)).strip()
     for token in _skill_tokens(skill):
         if len(token) > 3:
             pattern = rf"(?<![a-z0-9]){re.escape(token.rstrip('s'))}"
         else:
             pattern = rf"(?<![a-z0-9]){re.escape(token)}(?![a-z0-9+#])"
         if re.search(pattern, normalized_quote):
+            return True
+        if _glued_mention(original, token, prefix_ok=len(token) > 3):
             return True
     return False
 
@@ -178,7 +237,7 @@ def score_student(student: dict[str, Any], jd: JDRequirements) -> ScoreBreakdown
 
 # Bump when the validation or score code above changes in a way that changes results.
 # (Prompt and model changes are already part of the key.)
-SCORING_VERSION = "1"
+SCORING_VERSION = "2"  # 2: spacing next to punctuation tolerated; words glued by PDF extraction ("withPython") recognised
 
 
 def score_cache_key(resume_text: str, jd: JDRequirements) -> str | None:

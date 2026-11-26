@@ -98,7 +98,7 @@ def test_model_change_misses_the_cache(client, ranked_world, llm_calls) -> None:
 
 def test_scoring_version_is_part_of_the_key(monkeypatch) -> None:
     before = scoring.score_cache_key("resume", JD)
-    monkeypatch.setattr(scoring, "SCORING_VERSION", "2")
+    monkeypatch.setattr(scoring, "SCORING_VERSION", scoring.SCORING_VERSION + "-next")
     assert scoring.score_cache_key("resume", JD) != before
 
 

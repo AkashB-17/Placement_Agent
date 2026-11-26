@@ -178,3 +178,73 @@ def test_glued_separate_sentences_accepted():
     resume = "I wrote the core logic in C. I used an RTOS. I wrote test scripts in C."
     assert quote_in_resume("I wrote the core logic in C. I wrote test scripts in C.", resume)
     assert not quote_in_resume("I wrote test scripts in C. I wrote the core logic in C.", resume)
+
+
+# PDF extraction drops the space after a label ("Languages:Python"); LLMs add it back when
+# quoting. Before scoring v2 these genuine quotes were rejected, so listed skills counted as
+# missing, and each fresh scoring call could reject a different set (the score moved).
+SKILLS_SECTION = (
+    "Technical Skills\nLanguages:Python, SQL, C++, Java.\n"
+    "GenAI & Agents:MCP, LLM Evals, Tool Calling, LangChain, LangGraph, OpenAI API, ChromaDB\n"
+    "Cloud & DevOps:GCP, Docker, Docker Compose, Caddy, Git, Linux, pytest"
+)
+
+
+@pytest.mark.parametrize(
+    "quote",
+    [
+        "Languages: Python, SQL",
+        "Languages:Python, SQL",
+        "GenAI & Agents: MCP, LLM Evals",
+        "Cloud & DevOps: GCP, Docker , Docker Compose",
+        "LangGraph, OpenAI API",
+    ],
+)
+def test_spacing_next_to_punctuation_is_tolerated(quote) -> None:
+    assert quote_in_resume(quote, SKILLS_SECTION)
+
+
+@pytest.mark.parametrize(
+    "quote",
+    ["Languages: Python, Rust", "Cloud and DevOps: GCP", "GenAI Agents: MCP", "Languages: SQL, Python"],
+)
+def test_words_must_still_match_in_order(quote) -> None:
+    assert not quote_in_resume(quote, SKILLS_SECTION)
+
+
+def test_label_line_quotes_count_as_evidence() -> None:
+    item = scoring.SkillEvidence(skill="Docker", evidenced=True, evidence_quote="Cloud & DevOps: GCP, Docker, Docker Compose")
+    assert scoring.validate_evidence(item, SKILLS_SECTION) is not None
+
+
+# PDF extraction loses the spaces around bold words ("withPython", "onGCPwithDocker"). The
+# quote is verbatim, so the skill must still count, but only at a case change from a
+# lowercase word, never inside a capitalised word ("PostgreSQL" is not evidence for "SQL").
+@pytest.mark.parametrize(
+    ("quote", "skill"),
+    [
+        ("Analyzed structured datasets withPython, Pandas and SQLto surface trends", "Python"),
+        ("Analyzed structured datasets withPython, Pandas and SQLto surface trends", "SQL"),
+        ("built on theOpenAI APIand grounded only in my profile", "OpenAI API"),
+        ("Built twoMCPservers (citizen, officer)", "MCP (Model Context Protocol)"),
+        ("shipped onGradioandHugging F ace Spaces.", "Gradio"),
+        ("Deployed onGCPwithDocker Compose, Caddyand nightly backups", "GCP"),
+        ("Deployed onGCPwithDocker Compose, Caddyand nightly backups", "Docker"),
+    ],
+)
+def test_words_glued_by_pdf_extraction_still_count(quote, skill) -> None:
+    assert quote_mentions_skill(quote, skill)
+
+
+@pytest.mark.parametrize(
+    ("quote", "skill"),
+    [
+        ("Databases:PostgreSQL, MySQL, MongoDB", "SQL"),
+        ("Used MySQL daily", "SQL"),
+        ("NoSQL stores", "SQL"),
+        ("I love Golang", "Go"),
+        ("JavaScript only", "Rust"),
+    ],
+)
+def test_capitalised_words_are_not_split(quote, skill) -> None:
+    assert not quote_mentions_skill(quote, skill)

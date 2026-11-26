@@ -257,6 +257,8 @@ Routers are thin: role check → validate → call services/db → shape the res
 | `SCORING_VERSION`, `score_cache_key(resume_text, jd)` | Cache key = sha256 of (version, model, evidence prompt incl. skill lists, resume sha256). |
 | `score_student_cached(student, jd, jd_id, refresh)` | Cache read/write around `score_student`; returns `(breakdown, "cache" | "fresh" | "none")`. |
 
+Quote checks (`SCORING_VERSION` 2): `quote_in_resume` ignores spacing next to `: , ; / | •` and brackets (PDFs drop it: "Languages:Python"; LLMs add it back); `quote_mentions_skill` also accepts a skill glued to a neighbour by PDF extraction at a case change from a lowercase word (`_glued_mention`: "withPython", "onGCPwithDocker", "SQLto"), never inside a capitalised word ("PostgreSQL", "MySQL" aren't evidence for SQL). Known limit: "SQLite" counts for SQL.
+
 #### `matching.py`: shared evaluation (used by `/match`, `/ranked`, auto-apply)
 - `load_policy`, `load_jd`, `load_student`: load or 404.
 - `_cite(rule, policy_id, jd_id)`: retrieves the top `CITATION_K` (2) chunks from the document the rule came from.
@@ -275,7 +277,8 @@ Routers are thin: role check → validate → call services/db → shape the res
 | `to_out(application, now)` | DB row → `ApplicationOut` (computes `can_withdraw`; `source` is `manual` when the creator's profile role is `student`, else `auto`). |
 | `application_window(jd, now, manual=False)` | `(deadline, release_at, cutoff)` or 409. Auto-apply: 409 when the deadline passed or less than `auto_apply_min_window_minutes` would be left to withdraw. Manual (`manual=True`): when the normal window doesn't fit, `release_at = min(max(deadline − manual_apply_last_call_minutes, now + 1 s), deadline)`: the last call (10 min before), or at once inside it, never after the deadline. Manual applies 409 only once the deadline has passed. SQLite timestamps keep microseconds (`_ts`), like Postgres, so `release_at > created_at` holds even in the last second. |
 | `apply_manually(student, jd_id, policy_id, actor_id)` | A student applies from the job board: already pending/submitted → 409 (withdrawn → re-apply: `db.reapply_application` flips the same row back to pending with a fresh snapshot and window) → window → CV present → policy limit → `check_eligibility` (before any AI call) → score snapshot → same pending application + notification. No score bar or excluded-companies check: the student chose the job. |
-| `run_on_upload(jd_id)` | Background run after a JD upload (newest policy, no actor); logs the outcome, never raises. |
+| `run_on_upload(jd_id)` | Background run after a JD upload (newest policy, no actor); records the outcome (completed, or skipped/failed with the reason), never raises. |
+| `_record_run(...)` | Writes one `auto_apply_runs` row; a failed write is logged, never breaks the run. `run_auto_apply(..., trigger)` records every completed run (manual 409s aren't recorded: the officer sees them). |
 | `run_auto_apply(jd_id, policy_id, actor_id)` | The whole run (see [§3.3](#33-auto-apply-post-jdsidauto-applypolicy_id)); returns created + skipped-with-reason + not-opted-in count. |
 
 #### `highlights.py`: "why they stand out"
@@ -323,6 +326,7 @@ The Postgres schema lives in `supabase/migrations/` and is the source of truth. 
 | `20261126000000_jd_deadline.sql` | `jds.deadline_override`, `deadline_changed_at`, `deadline_changed_by`: a changed deadline, kept apart from `requirements_json` so the original survives and a re-upload of the same text can't undo it |
 | `20261127000000_jd_edits.sql` | `jds.requirements_edited`, `edited_at`, `edited_by`: an admin's edit of a job's details, kept apart from the extracted `requirements_json` (which re-uploads overwrite) |
 | `20261128000000_app_settings.sql` | `app_settings` (key, jsonb value, updated_at/by): college-wide settings admins change in the app; backend-only (RLS on, no policies). First key: `auto_apply_threshold` |
+| `20261129000000_auto_apply_runs.sql` | `auto_apply_runs`: one row per run (trigger upload/manual, status completed/skipped/failed, applied count, skipped students with reasons as jsonb, not_opted_in, message); backend-only |
 
 | Table | Key columns | Written by |
 |---|---|---|
@@ -369,6 +373,7 @@ Interactive docs at `/docs` when the API is running. "Staff" = officer + admin.
 | GET | `/me/notifications` | student | `applications.my_notifications` |
 | POST | `/me/notifications/read` | student | `applications.mark_read` |
 | POST | `/jds/{id}/auto-apply?policy_id=` | staff | `applications.run_auto_apply` |
+| GET | `/auto-apply/runs?jd_id=&limit=` | staff | `applications.auto_apply_runs`: recorded runs newest first |
 | GET | `/applications?jd_id=&status=` | staff; recruiter (submitted, own JDs) | `applications.list_applications` |
 | GET | `/applications/{id}/resume` | staff, owner, recruiter once submitted | `applications.application_resume` |
 | GET | `/admin/users` | admin | `admin.list_users` |
@@ -412,6 +417,7 @@ Next.js 16 (App Router), Tailwind 4, `lucide-react` icons, `@supabase/supabase-j
 | `LogoMark.tsx` | `LogoMark` | The logo (briefcase with a check mark) in the lucide line style; used in both shells and the account pages. `app/icon.svg` is the same mark as the favicon. |
 | `JDEditForm.tsx` | `JDEditForm` | Admin edit of a job (`PUT /jds/{id}`). The deadline is shown as date + time in college time (IST); an untouched deadline is sent back exactly as stored, so it doesn't count as a change. |
 | `ThresholdSettings.tsx` | `ThresholdSettings` | Admin card (slider + number) for the minimum auto-apply score; on `/admin`. |
+| `AutoApplyHistory.tsx` | `AutoApplyHistory`, `runSummary`, `triggerLabel` | Run history card for one job on `/jobs` (reloads after a manual run via `AutoApplyPanel`'s `onRan`); the helpers also give the one-line latest run on `/admin/jobs`. |
 | `NotLinked.tsx` | `NotLinked` | Shown when a student account has no matching record (`/students/me` → 404). |
 | `ThemeToggle.tsx` | `ThemeToggle`, `THEME_INIT_SCRIPT` | Light/dark switch (student top bar beside the bell, staff sidebar and mobile header, top-right on account pages); saved in `localStorage`. |
 | `AuthCard.tsx` | `AuthCard`, `passwordProblem`, `MIN_PASSWORD_LENGTH` | Centered card for the account pages, and the shared password rule (8+ characters, both fields match). |
@@ -484,6 +490,7 @@ Next.js 16 (App Router), Tailwind 4, `lucide-react` icons, `@supabase/supabase-j
 | `test_jd_admin.py` | Admin edits (normalisation, eligibility follows, changed skills re-scored, extracted details kept across re-upload, deadline edit reschedules, a bad deadline saves nothing, validation) and removal (applications, notifications, cached scores gone; students notified), roles |
 | `test_app_settings.py` | Threshold default from config, admin change applies to `/match`, `/ranked`, students' limit and auto-apply runs, a student's higher bar still wins, validation, admin-only |
 | `test_auto_apply_on_upload.py` | Upload triggers auto-apply for qualifying opted-in students (pending, notified), not for low scores or opted-out students, never twice on re-upload; no policy / passed deadline still uploads; switch off |
+| (same file) | Run history: automatic run recorded with applied/skipped, near misses with the reason, skipped runs say why (no policy, deadline), manual runs too, removed with the job, staff-only |
 | `test_student_cv.py` | Office records without a CV, student CV upload/replace, stable ids, no-CV scoring and auto-apply skip, storage failure leaves no record |
 | `test_my_jobs.py` | `GET /me/jobs`: eligibility per job, application status, closed deadlines, policy default/unknown, roles, no LLM calls |
 | `test_highlights.py` | Highlight lines (coverage, stricter CGPA floor, backlogs), snapshot on new applications, fallback for older ones |

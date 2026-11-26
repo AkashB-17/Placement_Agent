@@ -216,6 +216,21 @@ export interface SkippedStudent {
   reason: string;
 }
 
+/** A recorded auto-apply run (GET /auto-apply/runs). */
+export interface AutoApplyRunRecord {
+  id: string;
+  jd_id: string;
+  policy_id: string | null;
+  trigger: "upload" | "manual";
+  status: "completed" | "skipped" | "failed";
+  ran_at: string;
+  applied: number;
+  skipped: SkippedStudent[];
+  not_opted_in: number;
+  /** Why a run was skipped or failed. */
+  message: string | null;
+}
+
 export interface AutoApplyRun {
   jd_id: string;
   policy_id: string;

@@ -4,6 +4,7 @@ import { Briefcase, CircleCheck, CircleX, Database, RefreshCw, Rocket, Sparkles,
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
+import { AutoApplyHistory } from "@/components/AutoApplyHistory";
 import { AutoApplyPanel } from "@/components/AutoApplyPanel";
 import { MatchResultCard } from "@/components/MatchResultCard";
 import { PolicyPicker } from "@/components/PolicyPicker";
@@ -46,6 +47,7 @@ function JobCard({ jd, selected, onSelect }: { jd: JDSummary; selected: boolean;
 
 function Results({ jd, policyId }: { jd: JDSummary; policyId: string }) {
   const [filter, setFilter] = useState<Filter>("all");
+  const [runsVersion, setRunsVersion] = useState(0); // bumped after a manual run: reloads the history
   const path = `/jds/${jd.id}/ranked?policy_id=${encodeURIComponent(policyId)}`;
   const { data, error, loading, refresh } = useApi<RankedResponse>(path, { revalidate: false });
   const [rescoring, setRescoring] = useState(false);
@@ -140,7 +142,8 @@ function Results({ jd, policyId }: { jd: JDSummary; policyId: string }) {
         <StatCard label="Top score" value={stats.top !== null ? stats.top.toFixed(1) : "—"} icon={Trophy} tone="amber" />
       </div>
       <ErrorBox message={error?.message} />
-      <AutoApplyPanel jd={jd} policyId={policyId} threshold={data.auto_apply_threshold} />
+      <AutoApplyPanel jd={jd} policyId={policyId} threshold={data.auto_apply_threshold} onRan={() => setRunsVersion((v) => v + 1)} />
+      <AutoApplyHistory key={runsVersion} jdId={jd.id} />
 
       <div className="inline-flex rounded-lg border border-slate-200 bg-surface p-1 text-sm shadow-sm" role="tablist">
         {(

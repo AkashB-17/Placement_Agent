@@ -62,6 +62,8 @@ After an upload you see what was read. If the AI "found" a rule the document nev
 
 **Auto-apply runs by itself** whenever a JD is uploaded (by an officer, admin or recruiter): right after the upload, in the background, against the newest policy. The upload page says it has started; the results show up under Applications and in the students' notifications.
 
+**Auto-apply history** (on the Rank page, under Run auto-apply): every run for that job, automatic or by staff, with when it ran and its outcome ("1 applied · 2 skipped · 25 not opted in"). **Why skipped** lists each skipped student with the reason, e.g. "Score 69.6 is below their bar of 70". A run that couldn't happen says why (no policy yet, deadline passed). Admin → Jobs shows the latest run for every job.
+
 **Run auto-apply** (on the Rank page, under the summary tiles), to run it again by hand, e.g. after students opted in or uploaded a CV
 - One click, then **Confirm**. The system applies for every student who opted in and qualifies (see §6), and lists who was applied and *why each other student was not*.
 
@@ -133,6 +135,8 @@ Only then is the score computed:
 > If the JD lists no preferred skills, required skills count for 100%. If it lists no required skills, there is no score.
 
 Because the formula is fixed and every matched skill comes with its sentence, anyone can recompute and audit a score by hand.
+
+**Robust to how PDFs come out.** A CV's text often loses spaces when extracted from a PDF ("Languages:Python", or bold words glued to their neighbours: "withPython", "onGCPwithDocker"). The quote check tolerates both, so a skill the CV really lists isn't counted as missing; it still rejects quotes whose words differ, and a capitalised word is never split ("PostgreSQL" is not evidence for "SQL").
 
 ### 5.3 Citations: the reason behind a rejection
 

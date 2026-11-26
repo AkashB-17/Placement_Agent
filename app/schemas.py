@@ -342,6 +342,20 @@ class AutoApplyRun(BaseModel):
     not_opted_in: int
 
 
+class AutoApplyRunRecord(BaseModel):
+    """One auto-apply run as recorded: automatic after a JD upload, or run by staff."""
+    id: str
+    jd_id: str
+    policy_id: str | None
+    trigger: Literal["upload", "manual"]
+    status: Literal["completed", "skipped", "failed"]
+    ran_at: datetime
+    applied: int
+    skipped: list[SkippedStudent]
+    not_opted_in: int
+    message: str | None = Field(None, description="Why a run was skipped or failed")
+
+
 class NotificationOut(BaseModel):
     id: str
     application_id: str | None

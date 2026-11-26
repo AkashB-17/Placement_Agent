@@ -24,6 +24,7 @@ from app.schemas import (
     ApplicationStatus,
     AutoApplyPreferences,
     AutoApplyRun,
+    AutoApplyRunRecord,
     NotificationOut,
     PreferencesOut,
     ResumeLink,
@@ -238,6 +239,17 @@ def run_auto_apply(
     user: CurrentUser = Depends(staff_only),
 ) -> AutoApplyRun:
     return auto_apply.run_auto_apply(jd_id, policy_id, actor_id=user.id if user.id != "dev-admin" else None)
+
+
+@router.get("/auto-apply/runs", response_model=list[AutoApplyRunRecord])
+def auto_apply_runs(
+    jd_id: str | None = Query(None, description="Only runs for this JD"),
+    limit: int = Query(20, ge=1, le=500),
+    _: CurrentUser = Depends(staff_only),
+) -> list[AutoApplyRunRecord]:
+    """Recorded auto-apply runs, newest first: automatic ones after each JD upload and the
+    ones staff ran, with who was applied and why each other student was skipped."""
+    return [AutoApplyRunRecord(**run) for run in db.list_auto_apply_runs(jd_id=jd_id, limit=limit)]
 
 
 # ── Staff and recruiters: list ──────────────────────────────────────────────

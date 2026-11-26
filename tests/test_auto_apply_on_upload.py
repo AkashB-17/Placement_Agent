@@ -82,3 +82,66 @@ def test_switched_off(client, board, login_as, monkeypatch) -> None:
     assert response.json()["auto_apply"] is None
     _login_student(login_as)
     assert client.get("/me/applications").json() == []
+
+
+# ── Run history (GET /auto-apply/runs) ──────────────────────────────────────
+
+def _runs(client, login_as, jd_id=None):
+    login_as("officer", email="tpo@uni.edu")
+    return client.get("/auto-apply/runs", params={"jd_id": jd_id} if jd_id else {}).json()
+
+
+def test_automatic_run_is_recorded_with_its_outcome(client, on_upload, login_as, monkeypatch) -> None:
+    client.put("/me/auto-apply", json=on_upload)
+    login_as("officer", email="tpo@uni.edu")
+    jd_id = _post_jd(client, monkeypatch, STRONG)
+    [run] = _runs(client, login_as, jd_id)
+    assert run["trigger"] == "upload" and run["status"] == "completed"
+    assert run["applied"] == 1 and run["skipped"] == [] and run["message"] is None
+
+
+def test_near_misses_are_visible_with_the_reason(client, on_upload, login_as, monkeypatch) -> None:
+    client.put("/me/auto-apply", json={"enabled": True, "min_score": 90})
+    login_as("officer", email="tpo@uni.edu")
+    jd_id = _post_jd(client, monkeypatch, JDRequirements(company="Halfway", role="SRE", required_skills=["Python", "Kubernetes"], deadline="2026-12-20"))
+    [run] = _runs(client, login_as, jd_id)
+    assert run["applied"] == 0
+    [skip] = run["skipped"]
+    assert skip["student_name"] == "Riya Sen" and skip["reason"] == "Score 50.0 is below their bar of 90."
+
+
+def test_skipped_runs_say_why(client, tmp_path, login_as, monkeypatch) -> None:
+    set_settings(make_test_settings(tmp_path, auto_apply_on_upload=True))
+    login_as("officer", email="tpo@uni.edu")
+    monkeypatch.setattr("app.routers.jds.extract_structured", lambda *a: STRONG)
+    client.post("/jds", data={"text": "first"})
+    [run] = client.get("/auto-apply/runs").json()
+    assert run["status"] == "skipped" and run["message"] == "No placement policy has been uploaded yet."
+
+    _post_policy(client, monkeypatch, PolicyRules(min_cgpa=7.0))
+    late = _post_jd(client, monkeypatch, JDRequirements(company="Late", role="Dev", required_skills=["Python"], deadline="2026-11-01"))
+    [run] = client.get("/auto-apply/runs", params={"jd_id": late}).json()
+    assert run["status"] == "skipped" and "has passed" in run["message"]
+
+
+def test_staff_runs_are_recorded_too_newest_first(client, board, login_as) -> None:
+    login_as("officer", email="tpo@uni.edu")
+    for _ in range(2):
+        client.post(f"/jds/{board['open']}/auto-apply", params={"policy_id": board["policy"]})
+    runs = client.get("/auto-apply/runs", params={"jd_id": board["open"]}).json()
+    assert [r["trigger"] for r in runs] == ["manual", "manual"]
+    assert runs[0]["ran_at"] >= runs[1]["ran_at"]
+
+
+def test_removing_a_job_removes_its_runs(client, board, login_as) -> None:
+    login_as("officer", email="tpo@uni.edu")
+    client.post(f"/jds/{board['open']}/auto-apply", params={"policy_id": board["policy"]})
+    login_as("admin")
+    client.delete(f"/jds/{board['open']}")
+    assert client.get("/auto-apply/runs", params={"jd_id": board["open"]}).json() == []
+
+
+@pytest.mark.parametrize("role", ["recruiter", "student"])
+def test_run_history_is_staff_only(client, board, login_as, role) -> None:
+    login_as(role, email=f"{role}@uni.edu")
+    assert client.get("/auto-apply/runs").status_code == 403

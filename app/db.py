@@ -125,6 +125,20 @@ CREATE TABLE IF NOT EXISTS score_cache (
     created_at TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS auto_apply_runs (
+    id TEXT PRIMARY KEY,
+    jd_id TEXT NOT NULL REFERENCES jds (id) ON DELETE CASCADE,
+    policy_id TEXT,
+    trigger TEXT NOT NULL CHECK (trigger IN ('upload', 'manual')),
+    status TEXT NOT NULL CHECK (status IN ('completed', 'skipped', 'failed')),
+    ran_at TEXT NOT NULL,
+    applied INTEGER NOT NULL DEFAULT 0,
+    skipped TEXT NOT NULL DEFAULT '[]',
+    not_opted_in INTEGER NOT NULL DEFAULT 0,
+    message TEXT,
+    actor TEXT
+);
+
 CREATE TABLE IF NOT EXISTS app_settings (
     key TEXT PRIMARY KEY,
     value TEXT NOT NULL,
@@ -340,6 +354,13 @@ def init_db() -> None:
             raise RuntimeError(
                 "The student CV migration is missing. Apply supabase/migrations/20261120000000_student_cv.sql "
                 "(npx supabase@latest db push --linked)."
+            ) from exc
+        try:
+            _fetchone("SELECT 1 AS ok FROM auto_apply_runs LIMIT 1")
+        except psycopg.errors.UndefinedTable as exc:
+            raise RuntimeError(
+                "The auto-apply runs table is missing. Apply supabase/migrations/20261129000000_auto_apply_runs.sql "
+                "(npx supabase@latest db push --remote)."
             ) from exc
         try:
             _fetchone("SELECT 1 AS ok FROM app_settings LIMIT 1")
@@ -683,6 +704,7 @@ def delete_jd(jd_id: str, now: datetime, message: str) -> dict[str, Any] | None:
         )
         cur.execute(_sql("DELETE FROM applications WHERE jd_id = ?"), (jd_id,))
         cur.execute(_sql("DELETE FROM score_cache WHERE jd_id = ?"), (jd_id,))
+        cur.execute(_sql("DELETE FROM auto_apply_runs WHERE jd_id = ?"), (jd_id,))
         cur.execute(_sql("DELETE FROM jds WHERE id = ? RETURNING id"), (jd_id,))
         if cur.fetchone() is None:
             return None
@@ -1097,6 +1119,38 @@ def mark_notifications_read(student_id: str, now: datetime) -> None:
 
 
 # ── Score cache ─────────────────────────────────────────────────────────────
+
+# ── Auto-apply run history ─────────────────────────────────────────────────
+
+def record_auto_apply_run(run: dict[str, Any]) -> None:
+    """Keep the outcome of one auto-apply run (see migration 20261129000000_auto_apply_runs)."""
+    _execute(
+        """
+        INSERT INTO auto_apply_runs (
+            id, jd_id, policy_id, trigger, status, ran_at, applied, skipped, not_opted_in, message, actor
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+        (
+            run["id"], run["jd_id"], run["policy_id"], run["trigger"], run["status"], _ts(run["ran_at"]),
+            run["applied"], _json_param(json.dumps(run["skipped"])), run["not_opted_in"], run["message"], run["actor"],
+        ),
+    )
+
+
+def list_auto_apply_runs(jd_id: str | None = None, limit: int = 20) -> list[dict[str, Any]]:
+    """Runs newest first, for one JD or all of them."""
+    where, params = ("WHERE jd_id = ?", (jd_id,)) if jd_id else ("", ())
+    rows = _fetchall(
+        f"SELECT id, jd_id, policy_id, trigger, status, ran_at, applied, skipped, not_opted_in, message "
+        f"FROM auto_apply_runs {where} ORDER BY ran_at DESC LIMIT ?",
+        (*params, limit),
+    )
+    return [
+        {**row, "ran_at": _dt(row["ran_at"]), "skipped": _json_value(row["skipped"]) or []}
+        for row in rows
+    ]
+
 
 # ── College-wide settings ──────────────────────────────────────────────────
 
